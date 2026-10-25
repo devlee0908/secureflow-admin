@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 2026 Modern Clean Light Theme */
+    --background: 210 20% 98%;        /* #f8fafc slate-50 */
+    --foreground: 222.2 47.4% 11.2%;   /* #0f172a slate-900 */
+
+    --card: 0 0% 100%;                /* #ffffff */
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --popover: 0 0% 100%;             /* #ffffff */
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 238.7 82% 58%;         /* #4f46e5 indigo-600 */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 214.3 31.8% 91.4%;   /* #e2e8f0 slate-200 */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;           /* #f1f5f9 slate-100 */
+    --muted-foreground: 215.4 16.3% 46.9%; /* #64748b slate-500 */
+
+    --accent: 238.7 77.2% 96%;        /* #eef2ff indigo-50 */
+    --accent-foreground: 238.7 77.2% 40%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 88%;        /* #e2e8f0 */
+    --input: 214.3 31.8% 88%;
+    --ring: 238.7 82% 58%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* 2026 Deep Obsidian Dark Theme */
+    --background: 224 33% 4.3%;        /* #07090e */
+    --foreground: 210 40% 98%;         /* #f8fafc */
+
+    --card: 222 35% 7.5%;              /* #0c1017 */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 35% 8.5%;           /* #0e131d */
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 238.7 82% 64%;          /* #6366f1 indigo-500 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 25% 14%;          /* #1a2233 */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 222 25% 12%;              /* #141b29 */
+    --muted-foreground: 215 18% 60%;   /* #8b9bb4 */
+
+    --accent: 238.7 60% 18%;
+    --accent-foreground: 238.7 82% 75%;
+
+    --destructive: 345 80% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 25% 14%;             /* border-white/[0.08] */
+    --input: 222 25% 14%;
+    --ring: 238.7 82% 64%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+  :root:not(.dark) {
+    color-scheme: light;
+  }
+}
+
+/* Custom scrollbar for tables & code logs */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #07090e;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-cable-dash {
+  animation: dash 0.8s linear infinite;
+}
+
+/* Utility: hide scrollbar but keep scroll functionality */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

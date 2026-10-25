@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# System & IDE files
+.DS_Store
+.vscode/
+.idea/
+
+# Environment variables & Local Vault Master Key
+.env
+.env.local
+.env.*.local
+server/data/.vault_master_key
+
+# SQLite runtime database files (automatically created and seeded on server startup)
+server/data/*.db
+server/data/*.db-shm
+server/data/*.db-wal
+
+# Scratch test files
+scratch*
