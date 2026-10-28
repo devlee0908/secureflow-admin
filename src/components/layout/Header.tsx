@@ -95,10 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
   const checkHealth = async () => {
     const t0 = performance.now();
     try {
-      const [data, guardData] = await Promise.all([
-        api.getHealth(),
-        api.getSecurityGuardStats().catch(() => null),
-      ]);
+      const data = await api.getHealth();
       const t1 = performance.now();
       if (data && data.status === 'ok') {
         setEngineHealth({
@@ -107,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
           database: data.database,
           engineInfo: data.engineInfo,
           scannerWorkers: data.scannerWorkers,
-          securityGuard: guardData || null,
+          securityGuard: data.securityGuard || null,
           stats: data.stats,
           uptime: (data as any).uptime,
           lastChecked: new Date().toLocaleTimeString(),

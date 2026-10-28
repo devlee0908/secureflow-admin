@@ -111,6 +111,7 @@ export function apiMiddleware(req, res, next) {
           database: engineInfo.engine,
           engineInfo,
           scannerWorkers,
+          securityGuard: securityGuard.getStats(),
           stats,
           uptime: process.uptime(),
           time: new Date().toISOString(),

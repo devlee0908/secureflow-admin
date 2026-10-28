@@ -20,16 +20,16 @@ export const CorporateBenchmarkChart: React.FC<CorporateBenchmarkChartProps> = (
   const { entities, selectedEntityId, setSelectedEntityId } = useDevSecOps();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // 8 division benchmark bars matching reference image's dense pill bar chart (Eanculations $450.0%)
+  // 8 division benchmark bars mapped to valid corporate EntityIds (ENT-01 ~ ENT-04)
   const benchmarkBars = [
-    { code: 'HLD-1', name: '지주 코어', score: 94, isAmber: true, entityId: 'holding' },
-    { code: 'HLD-2', name: '지주 클라우드', score: 88, isAmber: false, entityId: 'holding' },
-    { code: 'FIN-1', name: '핀테크 결제', score: 76, isAmber: true, entityId: 'finance' },
-    { code: 'FIN-2', name: '핀테크 뱅킹', score: 84, isAmber: false, entityId: 'finance' },
-    { code: 'COM-1', name: '커머스 쇼핑몰', score: 82, isAmber: true, entityId: 'commerce' },
-    { code: 'COM-2', name: '커머스 물류', score: 78, isAmber: false, entityId: 'commerce' },
-    { code: 'ENT-1', name: '엔터 플랫폼', score: 91, isAmber: true, entityId: 'enterprise' },
-    { code: 'ENT-2', name: '엔터 인프라', score: 96, isAmber: false, entityId: 'enterprise' },
+    { code: 'HLD-1', name: '테크 코어', score: 94, isAmber: true, entityId: 'ENT-01' },
+    { code: 'HLD-2', name: '테크 AI플랫폼', score: 88, isAmber: false, entityId: 'ENT-01' },
+    { code: 'FIN-1', name: '파이낸스 결제', score: 76, isAmber: true, entityId: 'ENT-02' },
+    { code: 'FIN-2', name: '파이낸스 뱅킹', score: 84, isAmber: false, entityId: 'ENT-02' },
+    { code: 'COM-1', name: '커머스 스토어', score: 82, isAmber: true, entityId: 'ENT-03' },
+    { code: 'COM-2', name: '커머스 물류', score: 78, isAmber: false, entityId: 'ENT-03' },
+    { code: 'CLD-1', name: '클라우드 아키텍처', score: 91, isAmber: true, entityId: 'ENT-04' },
+    { code: 'CLD-2', name: '클라우드 인프라', score: 96, isAmber: false, entityId: 'ENT-04' },
   ];
 
   return (

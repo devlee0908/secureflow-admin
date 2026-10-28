@@ -573,7 +573,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               </div>
             );
           }
-          const scoreInfo = calculateProjectSecurityScore(p.id, findings);
+          const scoreInfo = calculateProjectSecurityScore(p.id, getProjectFindings(p.id));
           return (
             <div className="flex items-center">
               <SecurityScoreBadge scoreInfo={scoreInfo} showLabel />
@@ -707,7 +707,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
         },
       },
     ],
-    [getProjectOverallStatus, getProjectLatestScan, getProjectUnresolvedHighCriticalCount, triggerScan]
+    [getProjectOverallStatus, getProjectLatestScan, getProjectUnresolvedHighCriticalCount, getProjectFindings, triggerScan]
   );
 
   const table = useReactTable({
@@ -1181,7 +1181,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
 
               {/* Security Scorecard & SLA Health */}
               {(() => {
-                const scoreInfo = calculateProjectSecurityScore(detailProject.id, findings);
+                const scoreInfo = calculateProjectSecurityScore(detailProject.id, getProjectFindings(detailProject.id));
                 return (
                   <div className="rounded-lg border border-slate-200 bg-white p-4 space-y-3 shadow-xs">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-2">

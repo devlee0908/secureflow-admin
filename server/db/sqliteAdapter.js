@@ -27,11 +27,13 @@ export class SqliteDatabaseAdapter {
   }
 
   init() {
-    // Enable WAL Mode and in-memory page caching for maximum single-node concurrency
+    // Enable WAL Mode, memory temp store, and 256MB mmap I/O for maximum single-node concurrency
     this.db.exec(`
       PRAGMA journal_mode = WAL;
       PRAGMA synchronous = NORMAL;
       PRAGMA cache_size = -64000;
+      PRAGMA temp_store = MEMORY;
+      PRAGMA mmap_size = 268435456;
     `);
 
     // Schema Initialization
@@ -230,6 +232,9 @@ export class SqliteDatabaseAdapter {
       CREATE INDEX IF NOT EXISTS idx_findings_project_status ON findings(project_id, status);
       CREATE INDEX IF NOT EXISTS idx_reviews_project ON deployment_reviews(project_id, requested_at DESC);
       CREATE INDEX IF NOT EXISTS idx_audit_logs_cat_time ON audit_logs(category, timestamp DESC);
+      CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_time ON webhook_deliveries(processed_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_notification_history_time ON notification_history(sent_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_notification_dlq_status ON notification_dlq(status, failed_at DESC);
     `);
 
     // Dynamic schema migrations for existing database files

@@ -81,6 +81,7 @@ export interface BackendHealth {
   database: string;
   engineInfo?: DatabaseEngineInfo;
   scannerWorkers?: ScannerWorkerStats;
+  securityGuard?: SecurityGuardStats;
   stats: BackendStats;
   uptime?: number;
   time?: string;

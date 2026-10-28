@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDevSecOps } from '@/context/DevSecOpsContext';
 import { ExecutiveHeroCards } from '@/components/dashboard/ExecutiveHeroCards';
 import { PipelineScanTrendChart } from '@/components/dashboard/PipelineScanTrendChart';
@@ -52,74 +52,98 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
 
   const scopeLabel = isAllEntities ? '전체 법인 기준' : `${currentEntity?.name} 기준`;
 
-  // 1. Filtered data according to entity
-  const filteredProjects = projects.filter((p) =>
-    isAllEntities ? true : p.entityId === selectedEntityId
-  );
+  // 1. Filtered data & KPI Metrics memoized to prevent redundant recalculations
+  const {
+    registeredProjectsCount,
+    prodProjectsCount,
+    devProjectsCount,
+    unresolvedHighCriticalFindings,
+    unresolvedHighCriticalCount,
+    pendingReviews,
+    pendingReviewsCount,
+    avgSecurityScore,
+    overdueFindings,
+    computedAutoBlockRate,
+    computedMttrHours,
+  } = useMemo(() => {
+    const filteredProjects = projects.filter((p) =>
+      isAllEntities ? true : p.entityId === selectedEntityId
+    );
+    const filteredFindings = findings.filter((f) =>
+      isAllEntities ? true : f.entityId === selectedEntityId
+    );
+    const filteredReviews = reviews.filter((r) =>
+      isAllEntities ? true : r.entityId === selectedEntityId
+    );
 
-  const filteredScans = scans.filter((s) =>
-    isAllEntities ? true : s.entityId === selectedEntityId
-  );
+    const regCount = filteredProjects.length;
+    const prodCount = filteredProjects.filter((p) => p.status === '운영 중').length;
+    const devCount = filteredProjects.filter((p) => p.status !== '운영 중').length;
 
-  const filteredFindings = findings.filter((f) =>
-    isAllEntities ? true : f.entityId === selectedEntityId
-  );
+    const unresolvedHighCrit = filteredFindings.filter(
+      (f) =>
+        (f.severity === '치명적' || f.severity === '높음') &&
+        f.status !== '해결' &&
+        f.status !== '오탐' &&
+        f.status !== '예외 승인'
+    );
 
-  const filteredReviews = reviews.filter((r) =>
-    isAllEntities ? true : r.entityId === selectedEntityId
-  );
+    const pendRevs = filteredReviews.filter(
+      (r) => r.approvalStatus === '대기' || r.securityVerdict === '검토 필요'
+    );
 
-  // 2. Metrics Calculations
-  const registeredProjectsCount = filteredProjects.length;
-  const prodProjectsCount = filteredProjects.filter((p) => p.status === '운영 중').length;
-  const devProjectsCount = filteredProjects.filter((p) => p.status !== '운영 중').length;
+    const today = '2026-10-02';
+    const findingsByProj = new Map<string, typeof findings>();
+    for (const f of filteredFindings) {
+      const list = findingsByProj.get(f.projectId);
+      if (list) list.push(f);
+      else findingsByProj.set(f.projectId, [f]);
+    }
 
-  const unresolvedHighCriticalFindings = filteredFindings.filter(
-    (f) =>
-      (f.severity === '치명적' || f.severity === '높음') &&
-      f.status !== '해결' &&
-      f.status !== '오탐' &&
-      f.status !== '예외 승인'
-  );
-  const unresolvedHighCriticalCount = unresolvedHighCriticalFindings.length;
+    const projectScores = filteredProjects.map((p) =>
+      calculateProjectSecurityScore(p.id, findingsByProj.get(p.id) || [], today)
+    );
+    const avgScore = Math.round(
+      projectScores.reduce((acc, cur) => acc + cur.score, 0) / (projectScores.length || 1)
+    );
 
-  const pendingReviews = filteredReviews.filter(
-    (r) => r.approvalStatus === '대기' || r.securityVerdict === '검토 필요'
-  );
-  const pendingReviewsCount = pendingReviews.length;
+    const overdue = filteredFindings.filter((f) => {
+      if (f.status === '해결' || f.status === '오탐' || f.status === '예외 승인') return false;
+      return f.dueDate < today;
+    });
+
+    const blockedOrReviewCount = filteredReviews.filter(
+      (r) => r.securityVerdict === '차단' || r.approvalStatus === '반려'
+    ).length;
+    const autoBlockRate =
+      filteredReviews.length > 0
+        ? Number(((blockedOrReviewCount / filteredReviews.length) * 100).toFixed(1))
+        : 4.8;
+
+    const resolvedFindingsCount = filteredFindings.filter(
+      (f) => f.status === '해결' || f.status === '오탐' || f.status === '예외 승인'
+    ).length;
+    const mttrHours =
+      unresolvedHighCrit.length === 0 && resolvedFindingsCount > 0
+        ? 1.8
+        : Number(Math.max(1.8, 3.6 + unresolvedHighCrit.length * 0.6).toFixed(1));
+
+    return {
+      registeredProjectsCount: regCount,
+      prodProjectsCount: prodCount,
+      devProjectsCount: devCount,
+      unresolvedHighCriticalFindings: unresolvedHighCrit,
+      unresolvedHighCriticalCount: unresolvedHighCrit.length,
+      pendingReviews: pendRevs,
+      pendingReviewsCount: pendRevs.length,
+      avgSecurityScore: avgScore,
+      overdueFindings: overdue,
+      computedAutoBlockRate: autoBlockRate,
+      computedMttrHours: mttrHours,
+    };
+  }, [projects, findings, reviews, isAllEntities, selectedEntityId]);
 
   const todayStr = '2026-10-02';
-
-  // Average Project Security Score
-  const projectScores = filteredProjects.map((p) =>
-    calculateProjectSecurityScore(p.id, findings, todayStr)
-  );
-  const avgSecurityScore = Math.round(
-    projectScores.reduce((acc, cur) => acc + cur.score, 0) / (projectScores.length || 1)
-  );
-
-  // Overdue findings
-  const overdueFindings = filteredFindings.filter((f) => {
-    if (f.status === '해결' || f.status === '오탐' || f.status === '예외 승인') return false;
-    return f.dueDate < todayStr;
-  });
-
-  // Dynamic Auto-Block Rate & MTTR Calculations
-  const blockedOrReviewCount = filteredReviews.filter(
-    (r) => r.securityVerdict === '차단' || r.approvalStatus === '반려'
-  ).length;
-  const computedAutoBlockRate =
-    filteredReviews.length > 0
-      ? Number(((blockedOrReviewCount / filteredReviews.length) * 100).toFixed(1))
-      : 4.8;
-
-  const resolvedFindingsCount = filteredFindings.filter(
-    (f) => f.status === '해결' || f.status === '오탐' || f.status === '예외 승인'
-  ).length;
-  const computedMttrHours =
-    unresolvedHighCriticalCount === 0 && resolvedFindingsCount > 0
-      ? 1.8
-      : Number(Math.max(1.8, 3.6 + unresolvedHighCriticalCount * 0.6).toFixed(1));
 
   return (
     <div className="relative min-h-screen text-slate-900 dark:text-slate-100 select-none space-y-6 pb-12 animate-in fade-in-50 duration-200">

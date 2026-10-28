@@ -35,13 +35,19 @@ class SSEBroadcaster {
         res.write(': ping\n\n');
       } catch (e) {
         clearInterval(pingTimer);
+        this.clients.delete(client);
       }
     }, 25000);
+    if (pingTimer.unref) pingTimer.unref();
 
-    req.on('close', () => {
+    const cleanup = () => {
       clearInterval(pingTimer);
       this.clients.delete(client);
-    });
+    };
+
+    req.on('close', cleanup);
+    res.on('close', cleanup);
+    res.on('error', cleanup);
   }
 
   sendToClient(client, eventType, data) {

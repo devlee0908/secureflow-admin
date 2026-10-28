@@ -29,18 +29,16 @@ export default defineConfig({
     chunkSizeWarningLimit: 650,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-ui': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-checkbox',
-          ],
-          'vendor-table': ['@tanstack/react-table'],
-          'vendor-icons': ['lucide-react'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('@tanstack')) return 'vendor-table';
+            if (id.includes('@radix-ui') || id.includes('sonner')) return 'vendor-ui';
+            if (id.includes('react') || id.includes('scheduler')) return 'vendor-react';
+          }
+          if (id.includes('/src/mock/mockData')) {
+            return 'data-mock';
+          }
         },
       },
     },
