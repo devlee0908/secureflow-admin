@@ -445,12 +445,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
             <div className="flex flex-col">
               <span
                 onClick={() => setCanvasProject(p)}
-                className="font-semibold text-slate-900 hover:text-indigo-600 cursor-pointer flex items-center gap-1.5"
+                className="font-semibold text-zinc-950 dark:text-zinc-50 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-pointer flex items-center gap-1.5 transition-colors"
                 title="클릭하여 대화면 파이프라인 캔버스 뷰 열기"
               >
                 {p.name}
               </span>
-              <span className="text-[11px] text-slate-400 font-mono">{p.id}</span>
+              <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">{p.id}</span>
             </div>
           );
         },
@@ -566,7 +566,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           if (!latestScan) {
             return (
               <div className="flex flex-col">
-                <span className="font-mono text-xs font-bold text-slate-400 italic">
+                <span className="font-mono text-xs font-bold text-zinc-400 dark:text-zinc-500 italic">
                   -- (미측정)
                 </span>
                 <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">최초 점검 필요</span>
@@ -590,7 +590,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
         accessorKey: 'createdAt',
         header: ({ column }) => <DataTableColumnHeader column={column} title="등록일" />,
         cell: ({ row }) => (
-          <span className="text-[11px] text-slate-500 font-mono">
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono">
             {row.original.createdAt}
           </span>
         ),
@@ -626,7 +626,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                     setIsDetailOpen(true);
                   }}
                   title="상세 보기"
-                  className="text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
+                  className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
                 >
                   <Eye className="w-3.5 h-3.5" />
                 </Button>
@@ -642,7 +642,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                   variant="outline"
                   onClick={() => setIsOnboardingPrModalOpen(true)}
                   title="점검 결과 생성된 보안 에러 PR(3건) 확인"
-                  className="h-7 px-2 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-semibold gap-1 shrink-0 bg-rose-50/50"
+                  className="h-7 px-2 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-semibold gap-1 shrink-0 bg-rose-50/50 dark:bg-rose-950/20"
                 >
                   <GitPullRequest className="w-3 h-3 text-rose-500" />
                   <span>PR #1 에러 (3건)</span>
@@ -653,7 +653,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 size="iconSm"
                 onClick={() => triggerScan(p.id, '수동')}
                 title="보안 점검 실행 시뮬레이션"
-                className="text-indigo-600 hover:bg-indigo-50"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
               >
                 <Play className="w-3.5 h-3.5" />
               </Button>
@@ -662,7 +662,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 size="iconSm"
                 onClick={() => setCanvasProject(p)}
                 title="대화면 파이프라인 캔버스 뷰 열기"
-                className="text-indigo-600 hover:bg-indigo-50"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
               >
                 <GitBranch className="w-3.5 h-3.5" />
               </Button>
@@ -674,7 +674,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                   setIsDetailOpen(true);
                 }}
                 title="상세 보기"
-                className="text-slate-600 hover:bg-slate-100"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
               >
                 <Eye className="w-3.5 h-3.5" />
               </Button>
@@ -683,7 +683,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 size="iconSm"
                 onClick={() => handleOpenEdit(p)}
                 title="수정"
-                className="text-slate-600 hover:bg-slate-100"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
               >
                 <Edit className="w-3.5 h-3.5" />
               </Button>
@@ -698,7 +698,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                   }
                 }}
                 title={isDev ? '삭제 권한 없음 (그룹 관리자 전용)' : '삭제'}
-                className={isDev ? 'text-slate-300 hover:text-slate-300 cursor-not-allowed' : 'text-rose-600 hover:bg-rose-50'}
+                className={isDev ? 'text-zinc-300 dark:text-zinc-700 cursor-not-allowed' : 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30'}
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
@@ -1093,17 +1093,17 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-44 text-center">
-                  <div className="flex flex-col items-center justify-center text-slate-400">
+                  <div className="flex flex-col items-center justify-center text-zinc-400">
                     <FolderGit2 className="w-10 h-10 mb-2 stroke-[1.2]" />
                     {projects.length === 0 ? (
                       <div>
-                        <p className="font-semibold text-slate-700 text-sm">등록된 프로젝트가 없습니다</p>
-                        <p className="text-xs text-slate-500 mt-1">상단의 [신규 프로젝트 등록] 버튼을 눌러 추가해주세요.</p>
+                        <p className="font-semibold text-zinc-700 dark:text-zinc-300 text-sm">등록된 프로젝트가 없습니다</p>
+                        <p className="text-xs text-zinc-500 mt-1">상단의 [신규 프로젝트 등록] 버튼을 눌러 추가해주세요.</p>
                       </div>
                     ) : (
                       <div>
-                        <p className="font-semibold text-slate-700 text-sm">검색 조건과 일치하는 프로젝트가 없습니다</p>
-                        <p className="text-xs text-slate-500 mt-1">검색어나 상태 필터 조건을 완화해보세요.</p>
+                        <p className="font-semibold text-zinc-700 dark:text-zinc-300 text-sm">검색 조건과 일치하는 프로젝트가 없습니다</p>
+                        <p className="text-xs text-zinc-500 mt-1">검색어나 상태 필터 조건을 완화해보세요.</p>
                       </div>
                     )}
                   </div>
@@ -1136,16 +1136,16 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                       setIsDetailOpen(false);
                       setCanvasProject(detailProject);
                     }}
-                    className="h-7 text-xs border-indigo-200 text-indigo-700 bg-indigo-50/70 hover:bg-indigo-100 gap-1.5 font-semibold"
+                    className="h-7 text-xs border-zinc-200 dark:border-white/[0.12] text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-white/[0.04] hover:bg-zinc-100 dark:hover:bg-white/[0.08] gap-1.5 font-semibold"
                   >
                     <Maximize2 className="w-3.5 h-3.5" />
                     대화면 캔버스 뷰 열기
                   </Button>
                 </div>
-                <SheetTitle className="text-xl font-bold mt-1 text-slate-900">
+                <SheetTitle className="text-xl font-bold mt-1 text-zinc-950 dark:text-zinc-50">
                   {detailProject.name}
                 </SheetTitle>
-                <SheetDescription className="text-xs text-slate-500">
+                <SheetDescription className="text-xs text-zinc-500 dark:text-zinc-400">
                   {detailProject.description || '등록된 프로젝트 설명이 없습니다.'}
                 </SheetDescription>
               </SheetHeader>
@@ -1180,11 +1180,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               {(() => {
                 const scoreInfo = calculateProjectSecurityScore(detailProject.id, getProjectFindings(detailProject.id));
                 return (
-                  <div className="rounded-lg border border-slate-200 bg-white p-4 space-y-3 shadow-xs">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3 shadow-xs">
+                    <div className="flex items-center justify-between border-b border-zinc-100 dark:border-white/[0.06] pb-2">
                       <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                        <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                        <ShieldCheck className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
                           보안 성숙도 평가 점수 및 SLA 현황
                         </h4>
                       </div>
@@ -1192,26 +1192,26 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center font-mono">
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[10px] text-slate-400 font-sans block">종합 점수</span>
-                        <span className="text-lg font-bold text-slate-900">
+                      <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.06]">
+                        <span className="text-[10px] text-zinc-400 font-sans block">종합 점수</span>
+                        <span className="text-lg font-bold text-zinc-950 dark:text-zinc-50">
                           {scoreInfo.score}
-                          <span className="text-xs text-slate-400">/100</span>
+                          <span className="text-xs text-zinc-400">/100</span>
                         </span>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[10px] text-slate-400 font-sans block">SLA 준수율</span>
-                        <span className="text-lg font-bold text-indigo-600">{scoreInfo.slaComplianceRate}%</span>
+                      <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.06]">
+                        <span className="text-[10px] text-zinc-400 font-sans block">SLA 준수율</span>
+                        <span className="text-lg font-bold text-zinc-950 dark:text-zinc-50">{scoreInfo.slaComplianceRate}%</span>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[10px] text-slate-400 font-sans block">미해결 결함</span>
-                        <span className="text-lg font-bold text-amber-600">
+                      <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.06]">
+                        <span className="text-[10px] text-zinc-400 font-sans block">미해결 결함</span>
+                        <span className="text-lg font-bold text-amber-600 dark:text-amber-400">
                           {scoreInfo.breakdown.critCount + scoreInfo.breakdown.highCount + scoreInfo.breakdown.medCount}건
                         </span>
                       </div>
-                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                        <span className="text-[10px] text-slate-400 font-sans block">SLA 초과 결함</span>
-                        <span className={`text-lg font-bold ${scoreInfo.breakdown.overdueCount > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                      <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.06]">
+                        <span className="text-[10px] text-zinc-400 font-sans block">SLA 초과 결함</span>
+                        <span className={`text-lg font-bold ${scoreInfo.breakdown.overdueCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                           {scoreInfo.breakdown.overdueCount}건
                         </span>
                       </div>
@@ -1221,34 +1221,34 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               })()}
 
               {/* 1. Basic & Data Type Info */}
-              <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 space-y-3">
-                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+              <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-zinc-50/50 dark:bg-[#141417] p-4 space-y-3">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
                   기본 메타데이터 및 처리 데이터 유형
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">소속 법인</span>
-                    <span className="font-semibold text-slate-800">{detailProject.entityName}</span>
+                    <span className="text-zinc-400 block text-[11px]">소속 법인</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">{detailProject.entityName}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">담당 부서</span>
-                    <span className="font-semibold text-slate-800">{detailProject.department}</span>
+                    <span className="text-zinc-400 block text-[11px]">담당 부서</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">{detailProject.department}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">프로젝트 담당자</span>
-                    <span className="font-semibold text-slate-800">
+                    <span className="text-zinc-400 block text-[11px]">프로젝트 담당자</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                       {detailProject.owner} ({detailProject.ownerEmail})
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">처리 데이터 유형</span>
-                    <span className="font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                    <span className="text-zinc-400 block text-[11px]">처리 데이터 유형</span>
+                    <span className="font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-white/[0.06] px-2 py-0.5 rounded border border-zinc-200 dark:border-white/[0.1]">
                       {detailProject.serviceType}
                     </span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-slate-400 block text-[11px]">Git 저장소 URL & 기본 브랜치</span>
-                    <span className="font-mono text-[11px] text-slate-700 bg-white p-1.5 rounded border border-slate-200 block truncate">
+                    <span className="text-zinc-400 block text-[11px]">Git 저장소 URL & 기본 브랜치</span>
+                    <span className="font-mono text-[11px] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#09090b] p-1.5 rounded border border-zinc-200 dark:border-white/[0.08] block truncate">
                       {detailProject.repository} (Branch: {detailProject.defaultBranch})
                     </span>
                   </div>
@@ -1256,17 +1256,17 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               </div>
 
               {/* 2. Latest Scan Execution */}
-              <div className="rounded-lg border border-slate-200 p-4 space-y-3">
+              <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <Scan className="w-4 h-4 text-indigo-600" />
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
+                    <Scan className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
                     최근 보안 점검 결과
                   </h4>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => triggerScan(detailProject.id, '수동')}
-                    className="h-7 text-xs text-indigo-700 bg-indigo-50"
+                    className="h-7 text-xs"
                   >
                     <Play className="w-3 h-3 mr-1" />
                     재점검 실행
@@ -1275,15 +1275,15 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 {(() => {
                   const latestScan = getProjectLatestScan(detailProject.id);
                   if (!latestScan) {
-                    return <p className="text-xs text-slate-400">아직 실행된 점검 이력이 없습니다.</p>;
+                    return <p className="text-xs text-zinc-400">아직 실행된 점검 이력이 없습니다.</p>;
                   }
                   return (
-                    <div className="text-xs space-y-2 bg-slate-50 p-3 rounded-md">
+                    <div className="text-xs space-y-2 bg-zinc-50 dark:bg-white/[0.03] p-3 rounded-md border border-zinc-100 dark:border-white/[0.06]">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-slate-600 font-semibold">{latestScan.id}</span>
+                        <span className="font-mono text-zinc-700 dark:text-zinc-300 font-semibold">{latestScan.id}</span>
                         <StatusBadge status={latestScan.status} size="sm" />
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500">
+                      <div className="grid grid-cols-2 gap-2 text-[11px] text-zinc-500 dark:text-zinc-400">
                         <span>실행 시각: {latestScan.startedAt}</span>
                         <span>커밋: {latestScan.commitId}</span>
                         <span>트리거: {latestScan.trigger}</span>
@@ -1295,22 +1295,22 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               </div>
 
               {/* 3. Related Findings */}
-              <div className="rounded-lg border border-slate-200 p-4 space-y-3">
-                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+              <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
                   관련 취약점·발견사항 ({getProjectFindings(detailProject.id).length}건)
                 </h4>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {getProjectFindings(detailProject.id).length === 0 ? (
-                    <p className="text-xs text-slate-400">발견된 보안 취약점이 없습니다.</p>
+                    <p className="text-xs text-zinc-400">발견된 보안 취약점이 없습니다.</p>
                   ) : (
                     getProjectFindings(detailProject.id).map((f) => (
                       <div
                         key={f.id}
-                        className="p-2.5 rounded border border-slate-100 bg-white hover:bg-slate-50 text-xs flex items-center justify-between"
+                        className="p-2.5 rounded border border-zinc-100 dark:border-white/[0.06] bg-zinc-50/50 dark:bg-white/[0.02] hover:bg-zinc-100 dark:hover:bg-white/[0.04] text-xs flex items-center justify-between"
                       >
                         <div className="truncate mr-2">
-                          <div className="font-semibold text-slate-800 truncate">{f.title}</div>
-                          <span className="font-mono text-[10px] text-slate-400 truncate block">
+                          <div className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">{f.title}</div>
+                          <span className="font-mono text-[10px] text-zinc-400 truncate block">
                             {f.filePath}:{f.lineNumber}
                           </span>
                         </div>
@@ -1322,20 +1322,20 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               </div>
 
               {/* 4. Latest Deployment Review */}
-              <div className="rounded-lg border border-slate-200 p-4 space-y-3">
-                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                  <FileCheck2 className="w-4 h-4 text-emerald-600" />
+              <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
+                  <FileCheck2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   최근 배포 심사 현황
                 </h4>
                 {(() => {
                   const rev = getProjectDeploymentReview(detailProject.id);
                   if (!rev) {
-                    return <p className="text-xs text-slate-400">등록된 배포 심사 요청이 없습니다.</p>;
+                    return <p className="text-xs text-zinc-400">등록된 배포 심사 요청이 없습니다.</p>;
                   }
                   return (
-                    <div className="text-xs bg-slate-50 p-3 rounded-md space-y-2">
+                    <div className="text-xs bg-zinc-50 dark:bg-white/[0.03] p-3 rounded-md border border-zinc-100 dark:border-white/[0.06] space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-slate-800">
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                           {rev.targetEnvironment} 배포 ({rev.id})
                         </span>
                         <div className="flex items-center gap-1.5">
@@ -1343,7 +1343,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                           <StatusBadge status={rev.approvalStatus} size="sm" />
                         </div>
                       </div>
-                      <p className="text-[11px] text-slate-500 leading-relaxed">{rev.verdictReason}</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">{rev.verdictReason}</p>
                     </div>
                   );
                 })()}
@@ -1575,7 +1575,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               </Button>
               <Button
                 type="submit"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? '저장 중...' : editingProject ? '수정 완료' : '등록하기'}
@@ -1603,19 +1603,19 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <div className="flex items-center gap-2 text-rose-600 mb-1">
+            <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 mb-1">
               <AlertTriangle className="w-5 h-5" />
               <AlertDialogTitle>프로젝트 삭제 확인</AlertDialogTitle>
             </div>
-            <AlertDialogDescription className="space-y-2 text-slate-600">
+            <AlertDialogDescription className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <p>
                 정말로 프로젝트{' '}
-                <strong className="text-slate-900 font-bold">
+                <strong className="text-zinc-950 dark:text-zinc-50 font-bold">
                   [{projectToDelete?.name}]
                 </strong>
                 을(를) 삭제하시겠습니까?
               </p>
-              <div className="p-3 bg-rose-50 text-rose-800 rounded-lg text-xs leading-relaxed border border-rose-200">
+              <div className="p-3 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 rounded-lg text-xs leading-relaxed border border-rose-200 dark:border-rose-900/50">
                 <strong className="block font-bold mb-1">⚠️ 연쇄 데이터 삭제 경고:</strong>
                 본 프로젝트와 연결된 모든{' '}
                 <strong>보안점검 이력, 발견사항(취약점), 배포 심사 기록</strong>이 데모

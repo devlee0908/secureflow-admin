@@ -78,22 +78,22 @@ const AppContent: React.FC = () => {
   // If simulated load error is active
   if (loadError) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
-        <div className="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-4">
-          <AlertCircle className="w-8 h-8" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#fafafa] dark:bg-[#09090b] p-6 text-center">
+        <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-4">
+          <AlertCircle className="w-6 h-6" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">데이터 로딩 오류 발생</h2>
-        <p className="text-sm text-slate-600 max-w-md mb-6 leading-relaxed">
+        <h2 className="text-xl font-bold text-zinc-950 dark:text-zinc-50 mb-2">데이터 로딩 오류 발생</h2>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 max-w-md mb-6 leading-relaxed">
           {loadError}
           <br />
-          <span className="text-xs text-slate-400 mt-1 block">
+          <span className="text-xs text-zinc-400 mt-1 block">
             (데모 오류 시뮬레이션 기능에 의해 발생한 화면입니다)
           </span>
         </p>
         <Button
           onClick={retryLoadData}
           disabled={isLoading}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs"
+          className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-semibold text-xs"
         >
           <RotateCcw className={`w-3.5 h-3.5 mr-1.5 ${isLoading ? 'animate-spin' : ''}`} />
           {isLoading ? '다시 연결 중...' : '데이터 다시 불러오기'}

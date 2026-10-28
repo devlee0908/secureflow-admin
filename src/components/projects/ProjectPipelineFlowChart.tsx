@@ -185,40 +185,34 @@ export const ProjectPipelineFlowChart: React.FC<ProjectPipelineFlowChartProps> =
     : 4;
 
   return (
-    <div className="rounded-xl border border-indigo-100 bg-gradient-to-b from-indigo-50/40 via-white to-slate-50/60 p-4 sm:p-5 space-y-4 shadow-xs">
+    <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/50 dark:bg-[#141417] p-4 sm:p-5 space-y-4">
       {/* 1. Header Summary Card: Who / Branch / PR or Push / Current Stage */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-indigo-100/80 pb-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200/70 dark:border-white/[0.06] pb-3.5">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-xs text-indigo-950 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="font-semibold text-xs text-zinc-950 dark:text-zinc-50 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
               DevSecOps 파이프라인 진행 상태 흐름도
             </span>
             <Badge
               variant="outline"
-              className={
-                triggerType === 'PR/MR'
-                  ? 'border-purple-300 bg-purple-50 text-purple-700 font-bold'
-                  : triggerType === 'Push'
-                  ? 'border-emerald-300 bg-emerald-50 text-emerald-700 font-bold'
-                  : 'border-indigo-300 bg-indigo-50 text-indigo-700'
-              }
+              className="border-zinc-300 dark:border-white/[0.12] bg-white dark:bg-white/[0.04] text-zinc-800 dark:text-zinc-200 font-semibold"
             >
-              {triggerType === 'PR/MR' ? '🔀 Pull/Merge Request' : triggerType === 'Push' ? '⚡ Direct Push' : '🛠️ 수동 실행'}
+              {triggerType === 'PR/MR' ? 'Pull/Merge Request' : triggerType === 'Push' ? 'Direct Push' : '수동 실행'}
             </Badge>
-            <span className="text-[11px] text-slate-400 font-mono">
-              Commit: <strong className="text-slate-700">@{commitId}</strong>
+            <span className="text-[11px] text-zinc-400 font-mono">
+              Commit: <strong className="text-zinc-700 dark:text-zinc-300">@{commitId}</strong>
             </span>
           </div>
 
           {/* Core Sentence Answering User Question */}
-          <div className="text-xs text-slate-700 leading-relaxed">
-            <span className="font-bold text-slate-900">{authorName}</span>님이{' '}
-            <code className="px-1.5 py-0.5 rounded bg-indigo-100/80 text-indigo-900 font-mono font-semibold text-[11px]">
+          <div className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <span className="font-bold text-zinc-900 dark:text-zinc-100">{authorName}</span>님이{' '}
+            <code className="px-1.5 py-0.5 rounded bg-zinc-200/70 dark:bg-white/[0.08] text-zinc-900 dark:text-zinc-100 font-mono font-semibold text-[11px]">
               {branchName}
             </code>{' '}
-            브랜치로 <strong className="text-indigo-700">{triggerType}</strong>를 실행하였으며, 현재{' '}
-            <strong className="text-slate-900">
+            브랜치로 <strong className="text-zinc-900 dark:text-zinc-100">{triggerType}</strong>를 실행하였으며, 현재{' '}
+            <strong className="text-zinc-950 dark:text-zinc-50">
               {currentStepNumber}단계 [{currentStepNumber === 2 ? '보안점검' : currentStepNumber === 3 ? '게이트 평가' : currentStepNumber === 4 ? '배포 심사' : '배포 완료'}]
             </strong>
             에 위치합니다.
@@ -232,7 +226,7 @@ export const ProjectPipelineFlowChart: React.FC<ProjectPipelineFlowChartProps> =
               size="sm"
               variant="outline"
               onClick={onOpenCanvas}
-              className="h-8 text-xs border-indigo-200 text-indigo-700 bg-white hover:bg-indigo-50 font-semibold gap-1.5 shadow-2xs"
+              className="h-8 text-xs font-semibold gap-1.5"
             >
               <Maximize2 className="w-3.5 h-3.5" />
               대화면 캔버스 열기
@@ -244,7 +238,7 @@ export const ProjectPipelineFlowChart: React.FC<ProjectPipelineFlowChartProps> =
               size="sm"
               onClick={() => onTriggerScan(project.id)}
               disabled={isScanning}
-              className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-1.5 shadow-2xs"
+              className="h-8 text-xs bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-semibold gap-1.5"
             >
               {isScanning ? (
                 <>
@@ -265,252 +259,252 @@ export const ProjectPipelineFlowChart: React.FC<ProjectPipelineFlowChartProps> =
       {/* 2. Visual 5-Stage Interactive Flowchart Diagram */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3 relative">
         {/* Node 1: Git Event */}
-        <div className="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs flex flex-col justify-between space-y-2 relative transition-all hover:border-indigo-300">
+        <div className="p-3 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] flex flex-col justify-between space-y-2 relative transition-all">
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                 Step 1 · 소스 이벤트
               </span>
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
             </div>
-            <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800">
+            <div className="flex items-center gap-1.5 font-bold text-xs text-zinc-900 dark:text-zinc-100">
               {triggerType === 'PR/MR' ? (
-                <GitPullRequest className="w-4 h-4 text-purple-600 shrink-0" />
+                <GitPullRequest className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0" />
               ) : (
-                <GitBranch className="w-4 h-4 text-emerald-600 shrink-0" />
+                <GitBranch className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               )}
               <span className="truncate">{triggerType === 'PR/MR' ? 'PR/MR 생성' : 'Git Push'}</span>
             </div>
           </div>
 
-          <div className="text-[11px] space-y-1 bg-slate-50 p-2 rounded-lg text-slate-600">
+          <div className="text-[11px] space-y-1 bg-zinc-50 dark:bg-white/[0.03] p-2 rounded-lg text-zinc-600 dark:text-zinc-400">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">작성자</span>
-              <span className="font-semibold text-slate-800 truncate">{authorName}</span>
+              <span className="text-zinc-400 text-[10px]">작성자</span>
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">{authorName}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">브랜치</span>
-              <span className="font-mono text-indigo-700 font-semibold truncate max-w-[90px]">
+              <span className="text-zinc-400 text-[10px]">브랜치</span>
+              <span className="font-mono text-zinc-800 dark:text-zinc-200 font-semibold truncate max-w-[90px]">
                 {branchName}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">커밋</span>
-              <span className="font-mono text-slate-700">{commitId}</span>
+              <span className="text-zinc-400 text-[10px]">커밋</span>
+              <span className="font-mono text-zinc-700 dark:text-zinc-300">{commitId}</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-100">
+          <div className="flex items-center justify-between text-[10px] text-zinc-400 pt-1 border-t border-zinc-100 dark:border-white/[0.06]">
             <span>{eventTime.slice(5, 16)}</span>
-            <Badge variant="outline" className="text-[9px] bg-emerald-50 text-emerald-700 border-emerald-200 h-4 px-1 font-bold">
+            <Badge variant="success" className="text-[9px] h-4 px-1 font-bold">
               완료
             </Badge>
           </div>
         </div>
 
         {/* Node 2: Security Scan Pipeline */}
-        <div className={`p-3 rounded-xl border bg-white shadow-2xs flex flex-col justify-between space-y-2 relative transition-all ${
+        <div className={`p-3 rounded-xl border bg-white dark:bg-[#0f0f11] flex flex-col justify-between space-y-2 relative transition-all ${
           isScanning
-            ? 'border-indigo-400 ring-2 ring-indigo-200/50 bg-indigo-50/20'
+            ? 'border-zinc-500 ring-1 ring-zinc-400/40'
             : isScanFailed
-            ? 'border-rose-300'
-            : 'border-slate-200 hover:border-indigo-300'
+            ? 'border-rose-300 dark:border-rose-900/60'
+            : 'border-zinc-200 dark:border-white/[0.08]'
         }`}>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                 Step 2 · 보안점검
               </span>
               <span className={`w-2 h-2 rounded-full ${
-                isScanning ? 'bg-indigo-500 animate-ping' : isScanFailed ? 'bg-rose-500' : isScanDone ? 'bg-emerald-500' : 'bg-slate-300'
+                isScanning ? 'bg-amber-500 animate-ping' : isScanFailed ? 'bg-rose-500' : isScanDone ? 'bg-emerald-500' : 'bg-zinc-300'
               }`} />
             </div>
-            <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800">
-              <Scan className={`w-4 h-4 shrink-0 ${isScanning ? 'text-indigo-600 animate-spin' : isScanFailed ? 'text-rose-600' : 'text-indigo-600'}`} />
+            <div className="flex items-center gap-1.5 font-bold text-xs text-zinc-900 dark:text-zinc-100">
+              <Scan className={`w-4 h-4 shrink-0 ${isScanning ? 'text-amber-500 animate-spin' : isScanFailed ? 'text-rose-500' : 'text-zinc-600 dark:text-zinc-400'}`} />
               <span className="truncate">SAST/SCA/Secret/IaC</span>
             </div>
           </div>
 
-          <div className="text-[11px] space-y-1 bg-slate-50 p-2 rounded-lg text-slate-600">
+          <div className="text-[11px] space-y-1 bg-zinc-50 dark:bg-white/[0.03] p-2 rounded-lg text-zinc-600 dark:text-zinc-400">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">러너 상태</span>
-              <span className={`font-semibold ${isScanning ? 'text-indigo-600 font-bold' : isScanFailed ? 'text-rose-600' : 'text-slate-800'}`}>
+              <span className="text-zinc-400 text-[10px]">러너 상태</span>
+              <span className={`font-semibold ${isScanning ? 'text-amber-600 dark:text-amber-400 font-bold' : isScanFailed ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-900 dark:text-zinc-100'}`}>
                 {stage2.status}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">소요 시간</span>
-              <span className="font-mono text-slate-700">{stage2.duration ? `${stage2.duration}초` : '-'}</span>
+              <span className="text-zinc-400 text-[10px]">소요 시간</span>
+              <span className="font-mono text-zinc-700 dark:text-zinc-300">{stage2.duration ? `${stage2.duration}초` : '-'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">검출 결함</span>
-              <span className={`font-bold font-mono ${stage2.findingsCount > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+              <span className="text-zinc-400 text-[10px]">검출 결함</span>
+              <span className={`font-bold font-mono ${stage2.findingsCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                 {stage2.findingsCount}건
               </span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-slate-100">
-            <span className="text-slate-400">4대 엔진 동시 점검</span>
+          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-zinc-100 dark:border-white/[0.06]">
+            <span className="text-zinc-400">4대 엔진 동시 점검</span>
             <StatusBadge status={stage2.status} size="sm" />
           </div>
         </div>
 
         {/* Node 3: Policy Gate */}
-        <div className={`p-3 rounded-xl border bg-white shadow-2xs flex flex-col justify-between space-y-2 relative transition-all ${
+        <div className={`p-3 rounded-xl border bg-white dark:bg-[#0f0f11] flex flex-col justify-between space-y-2 relative transition-all ${
           isGateBlocked
-            ? 'border-rose-300 bg-rose-50/20'
+            ? 'border-rose-300 dark:border-rose-900/60'
             : isGateReview
-            ? 'border-amber-300 bg-amber-50/20'
+            ? 'border-amber-300 dark:border-amber-900/60'
             : isGatePassed
-            ? 'border-emerald-300 bg-emerald-50/20'
-            : 'border-slate-200'
+            ? 'border-emerald-300 dark:border-emerald-900/60'
+            : 'border-zinc-200 dark:border-white/[0.08]'
         }`}>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                 Step 3 · 정책 게이트
               </span>
               <span className={`w-2 h-2 rounded-full ${
-                isGateBlocked ? 'bg-rose-500' : isGateReview ? 'bg-amber-500' : isGatePassed ? 'bg-emerald-500' : 'bg-slate-300'
+                isGateBlocked ? 'bg-rose-500' : isGateReview ? 'bg-amber-500' : isGatePassed ? 'bg-emerald-500' : 'bg-zinc-300'
               }`} />
             </div>
-            <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800">
+            <div className="flex items-center gap-1.5 font-bold text-xs text-zinc-900 dark:text-zinc-100">
               {isGateBlocked ? (
-                <ShieldX className="w-4 h-4 text-rose-600 shrink-0" />
+                <ShieldX className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               ) : isGateReview ? (
-                <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+                <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
               ) : (
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               )}
               <span className="truncate">게이트 자동 평가</span>
             </div>
           </div>
 
-          <div className="text-[11px] space-y-1 bg-slate-50 p-2 rounded-lg text-slate-600">
+          <div className="text-[11px] space-y-1 bg-zinc-50 dark:bg-white/[0.03] p-2 rounded-lg text-zinc-600 dark:text-zinc-400">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">치명적(Crit)</span>
-              <span className={`font-mono font-bold ${critCount > 0 ? 'text-rose-600' : 'text-slate-700'}`}>
+              <span className="text-zinc-400 text-[10px]">치명적(Crit)</span>
+              <span className={`font-mono font-bold ${critCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                 {critCount}건
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">높음(High)</span>
-              <span className={`font-mono font-bold ${highCount > 0 ? 'text-amber-600' : 'text-slate-700'}`}>
+              <span className="text-zinc-400 text-[10px]">높음(High)</span>
+              <span className={`font-mono font-bold ${highCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                 {highCount}건
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">중간(Med)</span>
-              <span className="font-mono text-slate-700">{medCount}건</span>
+              <span className="text-zinc-400 text-[10px]">중간(Med)</span>
+              <span className="font-mono text-zinc-700 dark:text-zinc-300">{medCount}건</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-slate-100">
-            <span className="text-slate-400">판정 결과</span>
+          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-zinc-100 dark:border-white/[0.06]">
+            <span className="text-zinc-400">판정 결과</span>
             <StatusBadge status={verdict} size="sm" />
           </div>
         </div>
 
         {/* Node 4: Deployment Review */}
-        <div className={`p-3 rounded-xl border bg-white shadow-2xs flex flex-col justify-between space-y-2 relative transition-all ${
+        <div className={`p-3 rounded-xl border bg-white dark:bg-[#0f0f11] flex flex-col justify-between space-y-2 relative transition-all ${
           stage4.isApproved
-            ? 'border-emerald-300 bg-emerald-50/20'
+            ? 'border-emerald-300 dark:border-emerald-900/60'
             : stage4.isRejected
-            ? 'border-rose-300 bg-rose-50/20'
-            : 'border-slate-200'
+            ? 'border-rose-300 dark:border-rose-900/60'
+            : 'border-zinc-200 dark:border-white/[0.08]'
         }`}>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                 Step 4 · 배포 심사
               </span>
               <span className={`w-2 h-2 rounded-full ${
                 stage4.isApproved ? 'bg-emerald-500' : stage4.isRejected ? 'bg-rose-500' : 'bg-amber-500'
               }`} />
             </div>
-            <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800">
-              <FileCheck2 className="w-4 h-4 text-indigo-600 shrink-0" />
+            <div className="flex items-center gap-1.5 font-bold text-xs text-zinc-900 dark:text-zinc-100">
+              <FileCheck2 className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0" />
               <span className="truncate">{stage4.targetEnv} 배포 승인</span>
             </div>
           </div>
 
-          <div className="text-[11px] space-y-1 bg-slate-50 p-2 rounded-lg text-slate-600">
+          <div className="text-[11px] space-y-1 bg-zinc-50 dark:bg-white/[0.03] p-2 rounded-lg text-zinc-600 dark:text-zinc-400">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">커밋 일치</span>
-              <span className={`font-semibold ${isCommitMatch ? 'text-emerald-700' : 'text-rose-700 font-bold'}`}>
-                {isCommitMatch ? '✅ 일치' : '❌ 불일치'}
+              <span className="text-zinc-400 text-[10px]">커밋 일치</span>
+              <span className={`font-semibold ${isCommitMatch ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400 font-bold'}`}>
+                {isCommitMatch ? '일치' : '불일치'}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[10px]">심사관</span>
-              <span className="truncate max-w-[85px] text-slate-800 font-medium">
+              <span className="text-zinc-400 text-[10px]">심사관</span>
+              <span className="truncate max-w-[85px] text-zinc-900 dark:text-zinc-100 font-medium">
                 {stage4.reviewer || '미지정'}
               </span>
             </div>
-            <div className="truncate text-[10px] text-slate-500 italic">
+            <div className="truncate text-[10px] text-zinc-500 dark:text-zinc-400 italic">
               "{stage4.comment || '심사 의견 대기'}"
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-slate-100">
-            <span className="text-slate-400">승인 상태</span>
+          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-zinc-100 dark:border-white/[0.06]">
+            <span className="text-zinc-400">승인 상태</span>
             <StatusBadge status={stage4.approvalStatus} size="sm" />
           </div>
         </div>
 
         {/* Node 5: Final Production Deployment */}
-        <div className={`p-3 rounded-xl border bg-white shadow-2xs flex flex-col justify-between space-y-2 relative transition-all ${
+        <div className={`p-3 rounded-xl border bg-white dark:bg-[#0f0f11] flex flex-col justify-between space-y-2 relative transition-all ${
           finalDeployStatus === '배포 완료'
-            ? 'border-emerald-400 bg-emerald-50/40 ring-2 ring-emerald-200/50'
+            ? 'border-emerald-400 dark:border-emerald-800'
             : finalDeployStatus === '배포 차단'
-            ? 'border-rose-400 bg-rose-50/40'
-            : 'border-slate-200'
+            ? 'border-rose-400 dark:border-rose-800'
+            : 'border-zinc-200 dark:border-white/[0.08]'
         }`}>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                 Step 5 · 배포 반영
               </span>
               <span className={`w-2 h-2 rounded-full ${
                 finalDeployStatus === '배포 완료' ? 'bg-emerald-500' : finalDeployStatus === '배포 차단' ? 'bg-rose-500' : 'bg-amber-500'
               }`} />
             </div>
-            <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800">
+            <div className="flex items-center gap-1.5 font-bold text-xs text-zinc-900 dark:text-zinc-100">
               {finalDeployStatus === '배포 완료' ? (
-                <Rocket className="w-4 h-4 text-emerald-600 shrink-0" />
+                <Rocket className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               ) : finalDeployStatus === '배포 차단' ? (
-                <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               ) : (
-                <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
               )}
               <span className="truncate">{finalDeployStatus}</span>
             </div>
           </div>
 
-          <div className="text-[11px] space-y-1 bg-slate-50 p-2 rounded-lg text-slate-600">
-            <div className="text-[10px] text-slate-400">배포 인프라 반영 결과</div>
+          <div className="text-[11px] space-y-1 bg-zinc-50 dark:bg-white/[0.03] p-2 rounded-lg text-zinc-600 dark:text-zinc-400">
+            <div className="text-[10px] text-zinc-400">배포 인프라 반영 결과</div>
             <div className={`font-semibold text-xs leading-snug ${
               finalDeployStatus === '배포 완료'
-                ? 'text-emerald-700 font-bold'
+                ? 'text-emerald-600 dark:text-emerald-400 font-bold'
                 : finalDeployStatus === '배포 차단'
-                ? 'text-rose-700 font-bold'
-                : 'text-amber-700'
+                ? 'text-rose-600 dark:text-rose-400 font-bold'
+                : 'text-amber-600 dark:text-amber-400'
             }`}>
               {finalDeployReason}
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-slate-100">
-            <span className="text-slate-400">환경</span>
+          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-zinc-100 dark:border-white/[0.06]">
+            <span className="text-zinc-400">환경</span>
             <Badge
               variant="outline"
               className={
                 finalDeployStatus === '배포 완료'
-                  ? 'border-emerald-300 bg-emerald-100 text-emerald-800 font-bold'
+                  ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 font-bold'
                   : finalDeployStatus === '배포 차단'
-                  ? 'border-rose-300 bg-rose-100 text-rose-800 font-bold'
-                  : 'border-amber-300 bg-amber-100 text-amber-800'
+                  ? 'border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 font-bold'
+                  : 'border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300'
               }
             >
               {stage4.targetEnv}

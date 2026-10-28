@@ -674,54 +674,54 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                     )}
                   </div>
                 </div>
-                <SheetTitle className="text-lg font-bold mt-1 text-slate-900">
+                <SheetTitle className="text-lg font-bold mt-1 text-zinc-950 dark:text-zinc-50">
                   {detailScan.projectName} 보안점검 파이프라인
                 </SheetTitle>
-                <SheetDescription className="text-xs text-slate-500">
+                <SheetDescription className="text-xs text-zinc-500 dark:text-zinc-400">
                   {detailScan.entityName} · 브랜치 {detailScan.branch} (Commit: {detailScan.commitId})
                 </SheetDescription>
               </SheetHeader>
 
               {/* Failure Notice Box (if failed) */}
               {detailScan.status === '실패' && (
-                <div className="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+                <div className="p-3.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 text-rose-800 dark:text-rose-200 text-xs">
                   <div className="flex items-center gap-1.5 font-bold mb-1">
-                    <XCircle className="w-4 h-4 text-rose-600" />
+                    <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                     점검 실행 실패 원인
                   </div>
-                  <p className="leading-relaxed font-mono text-[11px] bg-white p-2 rounded border border-rose-200">
+                  <p className="leading-relaxed font-mono text-[11px] bg-white dark:bg-[#09090b] p-2 rounded border border-rose-200 dark:border-rose-900/50">
                     {detailScan.failureReason || '스캐너 컨테이너 실행 중 알 수 없는 오류 발생'}
                   </p>
                 </div>
               )}
 
               {/* 1. Execution Info */}
-              <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 space-y-2.5 text-xs">
-                <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px]">
+              <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-zinc-50/50 dark:bg-[#141417] p-4 space-y-2.5 text-xs">
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                   실행 메타데이터
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span className="text-slate-400 block text-[10px]">실행 계기</span>
-                    <span className="font-semibold text-slate-800">{detailScan.trigger}</span>
+                    <span className="text-zinc-400 block text-[10px]">실행 계기</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">{detailScan.trigger}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">시작 시각 / 소요 시간</span>
-                    <span className="font-semibold text-slate-800">
+                    <span className="text-zinc-400 block text-[10px]">시작 시각 / 소요 시간</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                       {detailScan.startedAt} ({detailScan.durationSeconds}초)
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">검사 유형 ({detailScan.scanTypes.length}개)</span>
-                    <span className="font-medium text-slate-700">
+                    <span className="text-zinc-400 block text-[10px]">검사 유형 ({detailScan.scanTypes.length}개)</span>
+                    <span className="font-medium text-zinc-700 dark:text-zinc-300">
                       {detailScan.scanTypes.join(', ')}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">발견 결함 건수</span>
+                    <span className="text-zinc-400 block text-[10px]">발견 결함 건수</span>
                     <span
                       className={`font-bold ${
-                        detailScan.findingsCount > 0 ? 'text-rose-600' : 'text-emerald-600'
+                        detailScan.findingsCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
                       }`}
                     >
                       {detailScan.findingsCount}건
@@ -731,26 +731,26 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
               </div>
 
               {/* 2. Tool Execution Statuses */}
-              <div className="rounded-lg border border-slate-200 p-4 space-y-3">
-                <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                  <Wrench className="w-3.5 h-3.5 text-indigo-600" />
+              <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3">
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <Wrench className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                   스캐너 도구별 검사 결과
                 </h4>
                 <div className="space-y-2">
                   {detailScan.toolStatuses.map((tool, idx) => (
                     <div
                       key={idx}
-                      className="p-2.5 rounded-lg border border-slate-100 bg-white flex items-center justify-between text-xs"
+                      className="p-2.5 rounded-lg border border-zinc-100 dark:border-white/[0.06] bg-zinc-50/50 dark:bg-white/[0.02] flex items-center justify-between text-xs"
                     >
                       <div>
-                        <div className="font-semibold text-slate-800">{tool.name}</div>
-                        <span className="text-[10px] text-slate-400">{tool.category}</span>
+                        <div className="font-semibold text-zinc-900 dark:text-zinc-100">{tool.name}</div>
+                        <span className="text-[10px] text-zinc-400">{tool.category}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-[11px] text-slate-500 font-mono">
+                        <span className="text-[11px] text-zinc-500 font-mono">
                           {tool.durationSeconds}초
                         </span>
-                        <span className="text-[11px] font-semibold text-slate-700">
+                        <span className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300">
                           {tool.findingsCount}건 발견
                         </span>
                         <StatusBadge status={tool.status} size="sm" />
@@ -839,21 +839,21 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
               </div>
 
               {/* 4. Findings Discovered in this scan */}
-              <div className="rounded-lg border border-slate-200 p-4 space-y-3">
-                <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+              <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3">
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                   본 점검 보고 결함 ({relatedScanFindings.length}건)
                 </h4>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {relatedScanFindings.length === 0 ? (
-                    <p className="text-xs text-slate-400">검출된 취약점 또는 결함이 없습니다.</p>
+                    <p className="text-xs text-zinc-400">검출된 취약점 또는 결함이 없습니다.</p>
                   ) : (
                     relatedScanFindings.map((f) => (
                       <div
                         key={f.id}
-                        className="p-2 rounded border border-slate-100 bg-slate-50 text-xs flex items-center justify-between"
+                        className="p-2 rounded border border-zinc-100 dark:border-white/[0.06] bg-zinc-50 dark:bg-white/[0.02] text-xs flex items-center justify-between"
                       >
-                        <span className="font-semibold text-slate-800 truncate mr-2">
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate mr-2">
                           {f.title}
                         </span>
                         <StatusBadge status={f.status} size="sm" />
@@ -885,7 +885,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
 
           <div className="space-y-4 py-3 text-xs">
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">대상 프로젝트</label>
+              <label className="font-semibold text-zinc-700 dark:text-zinc-300">대상 프로젝트</label>
               <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
                 <SelectTrigger>
                   <SelectValue placeholder="프로젝트를 선택하세요" />
@@ -901,7 +901,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">실행 계기</label>
+              <label className="font-semibold text-zinc-700 dark:text-zinc-300">실행 계기</label>
               <Select
                 value={selectedTrigger}
                 onValueChange={(val) => setSelectedTrigger(val as ScanTrigger)}
@@ -919,7 +919,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
             </div>
 
             <div className="space-y-2">
-              <label className="font-semibold text-slate-700">점검 엔진 선택</label>
+              <label className="font-semibold text-zinc-700 dark:text-zinc-300">점검 엔진 선택</label>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { id: '소스코드 정적 분석', label: '소스코드 정적 분석 (SAST)' },
@@ -932,8 +932,8 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                     onClick={() => handleToggleScanType(item.id as ScanType)}
                     className={`p-2.5 rounded-lg border text-xs cursor-pointer flex items-center gap-2 transition-colors ${
                       selectedScanTypes.includes(item.id as ScanType)
-                        ? 'border-indigo-400 bg-indigo-50/60 font-semibold text-indigo-900'
-                        : 'border-slate-200 bg-white text-slate-600'
+                        ? 'border-zinc-900 dark:border-zinc-200 bg-zinc-900/[0.04] dark:bg-white/[0.06] font-semibold text-zinc-950 dark:text-zinc-100'
+                        : 'border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] text-zinc-600 dark:text-zinc-400'
                     }`}
                   >
                     <Checkbox checked={selectedScanTypes.includes(item.id as ScanType)} />
@@ -951,7 +951,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
             <Button
               size="sm"
               onClick={handleStartNewScan}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950"
             >
               스캐너 작업 큐 등록
             </Button>

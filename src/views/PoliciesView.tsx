@@ -566,8 +566,8 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                 <div className="lg:col-span-7 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {/* 1. Target Environment */}
-                    <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5">
-                      <Label className="text-[11px] text-slate-500 font-semibold block">
+                    <div className="p-3 bg-zinc-50/50 dark:bg-[#141417] rounded-xl border border-zinc-200 dark:border-white/[0.08] space-y-1.5">
+                      <Label className="text-[11px] text-zinc-500 font-semibold block">
                         배포 대상 환경 (Environment)
                       </Label>
                       <Select
@@ -583,12 +583,12 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           <SelectItem value="개발">개발 환경 (Development)</SelectItem>
                         </SelectContent>
                       </Select>
-                      <span className="text-[10px] text-slate-400">운영 환경은 엄격한 무결성 정책이 적용됩니다.</span>
+                      <span className="text-[10px] text-zinc-400">운영 환경은 엄격한 무결성 정책이 적용됩니다.</span>
                     </div>
 
                     {/* 2. Commit Match Toggle */}
-                    <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5">
-                      <Label className="text-[11px] text-slate-500 font-semibold block">
+                    <div className="p-3 bg-zinc-50/50 dark:bg-[#141417] rounded-xl border border-zinc-200 dark:border-white/[0.08] space-y-1.5">
+                      <Label className="text-[11px] text-zinc-500 font-semibold block">
                         커밋 해시 무결성 일치 여부
                       </Label>
                       <div className="flex items-center gap-2 pt-1">
@@ -615,13 +615,13 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           커밋 불일치
                         </Button>
                       </div>
-                      <span className="text-[10px] text-slate-400">배포 요청 커밋과 점검 완료 커밋의 일치성</span>
+                      <span className="text-[10px] text-zinc-400">배포 요청 커밋과 점검 완료 커밋의 일치성</span>
                     </div>
                   </div>
 
                   {/* 3. Scan Completion Status */}
-                  <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5">
-                    <Label className="text-[11px] text-slate-500 font-semibold block">
+                  <div className="p-3 bg-zinc-50/50 dark:bg-[#141417] rounded-xl border border-zinc-200 dark:border-white/[0.08] space-y-1.5">
+                    <Label className="text-[11px] text-zinc-500 font-semibold block">
                       필수 4대 보안점검 완료 상태
                     </Label>
                     <Select
@@ -633,25 +633,25 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all_completed">
-                          ✅ 필수 4종 점검 모두 정상 완료 (SAST, SCA, Secret, IaC)
+                          필수 4종 점검 모두 정상 완료 (SAST, SCA, Secret, IaC)
                         </SelectItem>
                         <SelectItem value="partial_missing">
-                          ⚠️ 일부 점검 누락 (예: IaC 미실행)
+                          일부 점검 누락 (예: IaC 미실행)
                         </SelectItem>
                         <SelectItem value="unscanned">
-                          ❌ 해당 커밋 점검 기록 전혀 없음 (미점검)
+                          해당 커밋 점검 기록 전혀 없음 (미점검)
                         </SelectItem>
                         <SelectItem value="scan_failed">
-                          💥 점검 파이프라인 엔진 오류 발생 (Scan Error)
+                          점검 파이프라인 엔진 오류 발생 (Scan Error)
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* 4. Sliders for finding counts */}
-                  <div className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-3">
+                  <div className="p-3.5 bg-zinc-50/50 dark:bg-[#141417] rounded-xl border border-zinc-200 dark:border-white/[0.08] space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-800 text-xs">
+                      <span className="font-bold text-zinc-900 dark:text-zinc-100 text-xs">
                         가상 미해결 결함 건수 시뮬레이션
                       </span>
                       <Button
@@ -664,7 +664,7 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           setSimLowCount(0);
                           setSimExceptionsCount(0);
                         }}
-                        className="h-6 text-[11px] text-slate-500 hover:text-indigo-600 gap-1 px-1.5"
+                        className="h-6 text-[11px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 gap-1 px-1.5"
                       >
                         <RotateCcw className="w-3 h-3" />
                         결함 초기화 (Clean)
@@ -675,8 +675,8 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                       {/* Critical */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-bold text-rose-600">치명적 (Critical)</span>
-                          <span className="font-mono font-bold text-slate-800">{simCriticalCount}건</span>
+                          <span className="font-bold text-rose-600 dark:text-rose-400">치명적 (Critical)</span>
+                          <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">{simCriticalCount}건</span>
                         </div>
                         <Input
                           type="number"
@@ -686,7 +686,7 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           onChange={(e) => setSimCriticalCount(Math.max(0, parseInt(e.target.value) || 0))}
                           className="h-8 text-xs font-mono font-semibold"
                         />
-                        <span className="text-[10px] text-slate-400 block">
+                        <span className="text-[10px] text-zinc-400 block">
                           정책: {policyForm.blockOnCritical ? '1건 이상 차단' : '차단 안 함'}
                         </span>
                       </div>
@@ -694,8 +694,8 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                       {/* High */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-bold text-orange-600">높음 (High)</span>
-                          <span className="font-mono font-bold text-slate-800">{simHighCount}건</span>
+                          <span className="font-bold text-amber-600 dark:text-amber-400">높음 (High)</span>
+                          <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">{simHighCount}건</span>
                         </div>
                         <Input
                           type="number"
@@ -705,7 +705,7 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           onChange={(e) => setSimHighCount(Math.max(0, parseInt(e.target.value) || 0))}
                           className="h-8 text-xs font-mono font-semibold"
                         />
-                        <span className="text-[10px] text-slate-400 block">
+                        <span className="text-[10px] text-zinc-400 block">
                           차단 임계: {policyForm.highThresholdForBlock}건 이상
                         </span>
                       </div>
@@ -713,8 +713,8 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                       {/* Medium */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-bold text-amber-600">중간 (Medium)</span>
-                          <span className="font-mono font-bold text-slate-800">{simMediumCount}건</span>
+                          <span className="font-bold text-amber-500">중간 (Medium)</span>
+                          <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">{simMediumCount}건</span>
                         </div>
                         <Input
                           type="number"
@@ -724,7 +724,7 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           onChange={(e) => setSimMediumCount(Math.max(0, parseInt(e.target.value) || 0))}
                           className="h-8 text-xs font-mono font-semibold"
                         />
-                        <span className="text-[10px] text-slate-400 block">
+                        <span className="text-[10px] text-zinc-400 block">
                           검토 임계: {policyForm.mediumThresholdForReview}건 이상
                         </span>
                       </div>
@@ -732,8 +732,8 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                       {/* Low */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-bold text-slate-600">낮음 (Low)</span>
-                          <span className="font-mono font-bold text-slate-800">{simLowCount}건</span>
+                          <span className="font-bold text-zinc-600 dark:text-zinc-400">낮음 (Low)</span>
+                          <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">{simLowCount}건</span>
                         </div>
                         <Input
                           type="number"
@@ -743,17 +743,17 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           onChange={(e) => setSimLowCount(Math.max(0, parseInt(e.target.value) || 0))}
                           className="h-8 text-xs font-mono font-semibold"
                         />
-                        <span className="text-[10px] text-slate-400 block">참고용 집계</span>
+                        <span className="text-[10px] text-zinc-400 block">참고용 집계</span>
                       </div>
                     </div>
 
                     {/* Exceptions count */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                    <div className="pt-2 border-t border-zinc-200/70 dark:border-white/[0.06] flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <span className="text-[11px] font-semibold text-purple-900 block">
+                        <span className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100 block">
                           승인된 보안 예외 (Security Exceptions / Waivers)
                         </span>
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[10px] text-zinc-500">
                           유효 기간 내 승인된 예외는 차단 판정 계산에서 우선 제외 차감됩니다.
                         </span>
                       </div>
@@ -766,7 +766,7 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                           onChange={(e) => setSimExceptionsCount(Math.max(0, parseInt(e.target.value) || 0))}
                           className="w-16 h-8 text-xs font-mono font-semibold"
                         />
-                        <span className="text-xs text-purple-900 font-semibold">건</span>
+                        <span className="text-xs text-zinc-900 dark:text-zinc-100 font-semibold">건</span>
                       </div>
                     </div>
                   </div>
@@ -775,18 +775,18 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                 {/* Right: Live Verdict Card & Step Breakdown */}
                 <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
                   <div
-                    className={`p-5 rounded-2xl border transition-all space-y-3.5 ${
+                    className={`p-5 rounded-xl border transition-all space-y-3.5 ${
                       simResult.verdict === '통과'
-                        ? 'border-emerald-300 bg-emerald-50/70 text-emerald-950 shadow-xs'
+                        ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-100'
                         : simResult.verdict === '검토 필요'
-                        ? 'border-amber-300 bg-amber-50/70 text-amber-950 shadow-xs'
+                        ? 'border-amber-300 dark:border-amber-800 bg-amber-50/70 dark:bg-amber-950/30 text-amber-950 dark:text-amber-100'
                         : simResult.verdict === '미점검'
-                        ? 'border-slate-300 bg-slate-100/80 text-slate-900 shadow-xs'
-                        : 'border-rose-300 bg-rose-50/80 text-rose-950 shadow-xs'
+                        ? 'border-zinc-300 dark:border-zinc-700 bg-zinc-100/80 dark:bg-[#141417] text-zinc-900 dark:text-zinc-100'
+                        : 'border-rose-300 dark:border-rose-800 bg-rose-50/80 dark:bg-rose-950/30 text-rose-950 dark:text-rose-100'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                         게이트 자동 평가 결과
                       </span>
                       <Badge
@@ -796,7 +796,7 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                             : simResult.verdict === '검토 필요'
                             ? 'bg-amber-600 text-white'
                             : simResult.verdict === '미점검'
-                            ? 'bg-slate-600 text-white'
+                            ? 'bg-zinc-600 text-white'
                             : 'bg-rose-600 text-white'
                         }`}
                       >
@@ -805,11 +805,11 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                     </div>
 
                     <div className="space-y-1">
-                      <h4 className="text-lg font-black tracking-tight">
-                        {simResult.verdict === '통과' && '✅ 배포 승인 (Pass)'}
-                        {simResult.verdict === '검토 필요' && '⚠️ 관리자 검토 필요 (Review Required)'}
-                        {simResult.verdict === '차단' && '🚫 배포 즉시 차단 (Blocked)'}
-                        {simResult.verdict === '미점검' && '⏸️ 보안점검 미실행 (Unchecked)'}
+                      <h4 className="text-lg font-bold tracking-tight">
+                        {simResult.verdict === '통과' && '배포 승인 (Pass)'}
+                        {simResult.verdict === '검토 필요' && '관리자 검토 필요 (Review Required)'}
+                        {simResult.verdict === '차단' && '배포 즉시 차단 (Blocked)'}
+                        {simResult.verdict === '미점검' && '보안점검 미실행 (Unchecked)'}
                       </h4>
                       <p className="text-xs font-medium leading-relaxed opacity-90">
                         "{simResult.reason}"
@@ -817,52 +817,52 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                     </div>
 
                     {/* Step-by-Step Rule Checklist */}
-                    <div className="pt-2 border-t border-black/10 space-y-1.5 text-[11px]">
-                      <span className="font-bold block text-[10px] text-slate-500 uppercase">
+                    <div className="pt-2 border-t border-black/10 dark:border-white/10 space-y-1.5 text-[11px]">
+                      <span className="font-bold block text-[10px] text-zinc-500 dark:text-zinc-400 uppercase">
                         정책 규칙 평가 단계:
                       </span>
                       <div className="flex items-center justify-between">
                         <span>1. 커밋 해시 무결성 일치:</span>
-                        <span className={simResult.stepCommit ? 'font-bold text-emerald-700' : 'font-bold text-rose-700'}>
+                        <span className={simResult.stepCommit ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'font-bold text-rose-700 dark:text-rose-400'}>
                           {simResult.stepCommit ? '충족 (OK)' : '불일치 (FAIL)'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>2. 필수 4대 점검 전수 완료:</span>
-                        <span className={simResult.stepScans ? 'font-bold text-emerald-700' : 'font-bold text-rose-700'}>
+                        <span className={simResult.stepScans ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'font-bold text-rose-700 dark:text-rose-400'}>
                           {simResult.stepScans ? '완료 (OK)' : '미완료 (FAIL)'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>3. 치명적(Critical) 결함 통제:</span>
-                        <span className={simResult.stepCrit ? 'font-bold text-emerald-700' : 'font-bold text-rose-700'}>
+                        <span className={simResult.stepCrit ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'font-bold text-rose-700 dark:text-rose-400'}>
                           {simResult.stepCrit ? '기준 충족 (0건)' : '위반 (FAIL)'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>4. 높음(High) 차단 임계값 통제:</span>
-                        <span className={simResult.stepHigh ? 'font-bold text-emerald-700' : 'font-bold text-rose-700'}>
+                        <span className={simResult.stepHigh ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'font-bold text-rose-700 dark:text-rose-400'}>
                           {simResult.stepHigh ? `허용 범위 (<${policyForm.highThresholdForBlock})` : '임계값 초과 (FAIL)'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>5. 중간(Medium) 검토 임계값:</span>
-                        <span className={simResult.stepMed ? 'font-bold text-emerald-700' : 'font-bold text-amber-700'}>
+                        <span className={simResult.stepMed ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'font-bold text-amber-700 dark:text-amber-400'}>
                           {simResult.stepMed ? `정상 (<${policyForm.mediumThresholdForReview})` : '검토 대상'}
                         </span>
                       </div>
                     </div>
 
                     {/* Action Advice Box */}
-                    <div className="p-2.5 rounded-lg bg-white/80 border border-black/5 text-[11px] space-y-0.5">
-                      <span className="font-bold block text-slate-700">💡 권장 조치 가이드:</span>
-                      <span className="text-slate-600 block">{simResult.advice}</span>
+                    <div className="p-2.5 rounded-lg bg-white/80 dark:bg-black/30 border border-black/5 dark:border-white/10 text-[11px] space-y-0.5">
+                      <span className="font-bold block text-zinc-800 dark:text-zinc-200">권장 조치 가이드:</span>
+                      <span className="text-zinc-600 dark:text-zinc-300 block">{simResult.advice}</span>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200 text-slate-500 text-[11px] space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-slate-700">
-                      <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <div className="p-3 bg-zinc-50/50 dark:bg-[#141417] rounded-xl border border-zinc-200 dark:border-white/[0.08] text-zinc-500 dark:text-zinc-400 text-[11px] space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-zinc-800 dark:text-zinc-200">
+                      <Sparkles className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                       실시간 게이트 연동 안내
                     </div>
                     <p>

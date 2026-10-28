@@ -40,7 +40,7 @@ export const calculateSlaStatus = (
       isDDay: false,
       daysRemaining: 0,
       label: status === '해결' ? '조치 완료' : status === '오탐' ? '오탐 처리' : '예외 승인',
-      badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200 font-medium',
+      badgeClass: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25 font-medium',
       policySlaDays,
     };
   }
@@ -57,8 +57,8 @@ export const calculateSlaStatus = (
       isOverdue: true,
       isDDay: false,
       daysRemaining: diffDays,
-      label: `🚨 D+${overdueDays}일 지연`,
-      badgeClass: 'bg-rose-50 text-rose-700 border-rose-300 font-bold shadow-sm',
+      label: `D+${overdueDays}일 지연`,
+      badgeClass: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/25 font-semibold',
       policySlaDays,
     };
   }
@@ -69,8 +69,8 @@ export const calculateSlaStatus = (
       isOverdue: false,
       isDDay: true,
       daysRemaining: 0,
-      label: '⚠️ 오늘 마감 (D-Day)',
-      badgeClass: 'bg-amber-50 text-amber-700 border-amber-300 font-bold',
+      label: '오늘 마감 (D-Day)',
+      badgeClass: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25 font-semibold',
       policySlaDays,
     };
   }
@@ -81,8 +81,8 @@ export const calculateSlaStatus = (
       isOverdue: false,
       isDDay: false,
       daysRemaining: diffDays,
-      label: `⏳ D-${diffDays}일 남음`,
-      badgeClass: 'bg-amber-50 text-amber-700 border-amber-200 font-semibold',
+      label: `D-${diffDays}일 남음`,
+      badgeClass: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25 font-medium',
       policySlaDays,
     };
   }
@@ -92,8 +92,8 @@ export const calculateSlaStatus = (
     isOverdue: false,
     isDDay: false,
     daysRemaining: diffDays,
-    label: `🗓️ D-${diffDays}일 남음`,
-    badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+    label: `D-${diffDays}일 남음`,
+    badgeClass: 'bg-zinc-500/10 text-zinc-700 dark:text-zinc-300 border-zinc-500/20 font-medium',
     policySlaDays,
   };
 };

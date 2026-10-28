@@ -1041,9 +1041,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
               </div>
 
               {/* Webhook Endpoint */}
-              <div className="space-y-1.5 pt-2 border-t border-slate-100">
-                <Label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <Server className="w-3.5 h-3.5 text-indigo-600" />
+              <div className="space-y-1.5 pt-2 border-t border-zinc-100 dark:border-white/[0.06]">
+                <Label className="text-xs font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                  <Server className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                   실시간 Webhook 수신 엔드포인트 URL
                 </Label>
                 <div className="flex items-center gap-2">
@@ -1969,15 +1969,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
 
         {/* 3. Tab: 데모 검증 샌드박스 */}
         <TabsContent value="sandbox" className="space-y-6 mt-0 animate-in fade-in-50 duration-200">
-          <Card className="border-amber-200 bg-amber-50/20 shadow-xs">
-            <CardHeader className="pb-3 border-b border-amber-100">
+          <Card className="border-amber-200 dark:border-amber-900/50 bg-amber-50/20 dark:bg-amber-950/10 shadow-xs">
+            <CardHeader className="pb-3 border-b border-amber-100 dark:border-amber-900/40">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base flex items-center gap-2 text-amber-900">
-                    <Zap className="w-4 h-4 text-amber-600" />
+                  <CardTitle className="text-base flex items-center gap-2 text-amber-900 dark:text-amber-200">
+                    <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     데모 검증 및 오류 시뮬레이션 도구 (Sandbox)
                   </CardTitle>
-                  <CardDescription className="text-xs text-amber-800">
+                  <CardDescription className="text-xs text-amber-800 dark:text-amber-300/80">
                     평가 및 프론트엔드 검증을 위해 오류 상황 재현, 데이터 비우기 및 초기 샘플 복원을 실행할 수 있습니다.
                   </CardDescription>
                 </div>
@@ -1988,10 +1988,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
             </CardHeader>
             <CardContent className="space-y-4 pt-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3 bg-white rounded-lg border border-amber-200 flex items-center justify-between">
+                <div className="p-3 bg-white dark:bg-[#141417] rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-center justify-between">
                   <div>
-                    <span className="font-semibold text-slate-800 block">다음 점검 실행 실패</span>
-                    <span className="text-[11px] text-slate-500">파이프라인 오류 상황 재현</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 block">다음 점검 실행 실패</span>
+                    <span className="text-[11px] text-zinc-500">파이프라인 오류 상황 재현</span>
                   </div>
                   <Button
                     variant={demoFaults.failNextScan ? 'destructive' : 'outline'}
@@ -2003,10 +2003,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                   </Button>
                 </div>
 
-                <div className="p-3 bg-white rounded-lg border border-amber-200 flex items-center justify-between">
+                <div className="p-3 bg-white dark:bg-[#141417] rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-center justify-between">
                   <div>
-                    <span className="font-semibold text-slate-800 block">다음 저장 실패</span>
-                    <span className="text-[11px] text-slate-500">API 쓰기 실패 재현</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 block">다음 저장 실패</span>
+                    <span className="text-[11px] text-zinc-500">API 쓰기 실패 재현</span>
                   </div>
                   <Button
                     variant={demoFaults.failNextSave ? 'destructive' : 'outline'}
@@ -2018,10 +2018,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                   </Button>
                 </div>
 
-                <div className="p-3 bg-white rounded-lg border border-amber-200 flex items-center justify-between">
+                <div className="p-3 bg-white dark:bg-[#141417] rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-center justify-between">
                   <div>
-                    <span className="font-semibold text-slate-800 block">데이터 로드 실패</span>
-                    <span className="text-[11px] text-slate-500">오류 전체화면 재현</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 block">데이터 로드 실패</span>
+                    <span className="text-[11px] text-zinc-500">오류 전체화면 재현</span>
                   </div>
                   <Button
                     variant={demoFaults.failNextLoad ? 'destructive' : 'outline'}
@@ -2034,10 +2034,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-amber-200/60 flex items-center justify-between">
+              <div className="pt-3 border-t border-amber-200/60 dark:border-amber-900/40 flex items-center justify-between">
                 <div>
-                  <span className="font-semibold text-slate-800 block">데이터 초기화 및 복원</span>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 block">데이터 초기화 및 복원</span>
+                  <span className="text-[11px] text-zinc-500">
                     전체 데이터를 기본 샘플 상태로 복원하거나 빈 데이터 상태로 전환합니다.
                   </span>
                 </div>
@@ -2046,7 +2046,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                     variant="outline"
                     size="sm"
                     onClick={resetDemoData}
-                    className="text-xs border-amber-300 text-amber-900 hover:bg-amber-100"
+                    className="text-xs border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/40"
                   >
                     <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
                     기본값 복원
@@ -2056,7 +2056,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                       variant="outline"
                       size="sm"
                       onClick={clearDummyData}
-                      className="text-xs border-rose-300 text-rose-700 hover:bg-rose-50"
+                      className="text-xs border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
                     >
                       <Trash2 className="w-3.5 h-3.5 mr-1.5" />
                       더미 파일 삭제
@@ -2065,7 +2065,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                     <Button
                       size="sm"
                       onClick={generateDummyData}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
+                      className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-semibold"
                     >
                       <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                       샘플 더미 데이터 생성

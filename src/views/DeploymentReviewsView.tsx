@@ -719,32 +719,32 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                     <StatusBadge status={detailReview.approvalStatus} size="sm" />
                   </div>
                 </div>
-                <SheetTitle className="text-xl font-bold mt-1 text-slate-900">
+                <SheetTitle className="text-xl font-bold mt-1 text-zinc-950 dark:text-zinc-50">
                   {detailReview.projectName} 배포 심사 게이트
                 </SheetTitle>
-                <SheetDescription className="text-xs text-slate-500">
+                <SheetDescription className="text-xs text-zinc-500 dark:text-zinc-400">
                   요청자: {detailReview.requester} · 요청일시: {detailReview.requestedAt}
                 </SheetDescription>
               </SheetHeader>
 
               {/* 1. Commit Comparison Card (Requirement: 커밋 일치 여부 명확히 시각화) */}
-              <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs space-y-3">
-                <h4 className="font-bold text-xs text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                  <GitCommit className="w-4 h-4 text-indigo-600" />
+              <div className="rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 shadow-2xs space-y-3">
+                <h4 className="font-bold text-xs text-zinc-900 dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
+                  <GitCommit className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
                   배포 요청 커밋 vs 보안점검 완료 커밋 비교
                 </h4>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                    <span className="text-[10px] text-slate-500 block">배포 요청 커밋</span>
-                    <span className="font-mono text-xs font-bold text-slate-900 mt-0.5 block">
+                  <div className="p-3 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08]">
+                    <span className="text-[10px] text-zinc-500 block">배포 요청 커밋</span>
+                    <span className="font-mono text-xs font-bold text-zinc-950 dark:text-zinc-50 mt-0.5 block">
                       {detailReview.requestCommitId}
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                    <span className="text-[10px] text-slate-500 block">보안점검 커밋</span>
-                    <span className="font-mono text-xs font-bold text-slate-900 mt-0.5 block">
+                  <div className="p-3 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08]">
+                    <span className="text-[10px] text-zinc-500 block">보안점검 커밋</span>
+                    <span className="font-mono text-xs font-bold text-zinc-950 dark:text-zinc-50 mt-0.5 block">
                       {detailReview.scanCommitId}
                     </span>
                   </div>
@@ -752,13 +752,13 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
 
                 <div className="pt-1">
                   {detailReview.requestCommitId === detailReview.scanCommitId ? (
-                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-medium">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-900/50 text-xs font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <span>커밋 일치: 배포 대상 소스코드가 점검된 코드와 완벽히 일치합니다.</span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-rose-50 text-rose-800 border border-rose-200 text-xs font-medium">
-                      <AlertOctagon className="w-4 h-4 text-rose-600 shrink-0" />
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-900/50 text-xs font-medium">
+                      <AlertOctagon className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                       <span>
                         커밋 불일치: 배포 요청 커밋과 점검 완료 커밋이 다릅니다! 동일 커밋 재점검 전까지 배포가 차단됩니다.
                       </span>
@@ -768,15 +768,15 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
               </div>
 
               {/* 2. Policy Verdict Reason Card (판정 근거) */}
-              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-2 text-xs">
-                <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5 text-indigo-600" />
+              <div className="rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-zinc-50/70 dark:bg-[#141417] p-4 space-y-2 text-xs">
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                   보안 정책 평가 및 판정 근거
                 </h4>
-                <div className="p-3 rounded-lg bg-white border border-slate-200 leading-relaxed font-medium text-slate-800">
+                <div className="p-3 rounded-lg bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-white/[0.08] leading-relaxed font-medium text-zinc-900 dark:text-zinc-100">
                   {detailReview.verdictReason}
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500 pt-1">
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-zinc-500 dark:text-zinc-400 pt-1">
                   <div>
                     필수 점검 4종 완료:{' '}
                     <strong>{detailReview.requiredScansCompleted ? '완료' : '미완료'}</strong>
@@ -788,19 +788,19 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
               </div>
 
               {/* 3. Unresolved Findings in Project */}
-              <div className="rounded-xl border border-slate-200 p-4 space-y-3 text-xs">
+              <div className="rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px]">
+                  <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                     미해결 보안 결함 현황
                   </h4>
                   <div className="flex items-center gap-2">
-                    <span className="text-rose-600 font-bold">치명적 {unresolvedCriticalCount}건</span>
-                    <span className="text-orange-600 font-bold">높음 {unresolvedHighCount}건</span>
+                    <span className="text-rose-600 dark:text-rose-400 font-bold">치명적 {unresolvedCriticalCount}건</span>
+                    <span className="text-amber-600 dark:text-amber-400 font-bold">높음 {unresolvedHighCount}건</span>
                   </div>
                 </div>
                 <div className="space-y-1.5 max-h-40 overflow-y-auto">
                   {projectActiveFindings.filter((f) => f.status !== '해결').length === 0 ? (
-                    <p className="text-slate-400 py-2">미해결 결함이 없습니다.</p>
+                    <p className="text-zinc-400 py-2">미해결 결함이 없습니다.</p>
                   ) : (
                     projectActiveFindings
                       .filter((f) => f.status !== '해결')
@@ -808,9 +808,9 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                       .map((f) => (
                         <div
                           key={f.id}
-                          className="p-2 rounded border border-slate-100 bg-white flex items-center justify-between"
+                          className="p-2 rounded border border-zinc-100 dark:border-white/[0.06] bg-zinc-50/50 dark:bg-white/[0.02] flex items-center justify-between"
                         >
-                          <span className="font-semibold text-slate-800 truncate mr-2">
+                          <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate mr-2">
                             [{f.severity}] {f.title}
                           </span>
                           <StatusBadge status={f.status} size="sm" />
@@ -826,31 +826,31 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                       setIsDetailOpen(false);
                       onNavigate('findings', { search: detailReview.projectName });
                     }}
-                    className="w-full mt-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800/80 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+                    className="w-full mt-2 text-xs font-semibold"
                   >
                     <Search className="w-3.5 h-3.5 mr-1.5" />
-                    🔍 관련 원인 결함 {projectActiveFindings.length}건 확인 및 조치 현황
+                    관련 원인 결함 {projectActiveFindings.length}건 확인 및 조치 현황
                   </Button>
                 )}
               </div>
 
               {/* 4. Active Security Exceptions (유효한 보안 예외) */}
-              <div className="rounded-xl border border-slate-200 p-4 space-y-2 text-xs">
-                <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                  <FileCheck2 className="w-3.5 h-3.5 text-purple-600" />
+              <div className="rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-2 text-xs">
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <FileCheck2 className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                   유효한 보안 예외 승인 건 ({activeExceptions.length}건)
                 </h4>
                 {activeExceptions.length === 0 ? (
-                  <p className="text-slate-400">등록된 유효 보안 예외가 없습니다.</p>
+                  <p className="text-zinc-400">등록된 유효 보안 예외가 없습니다.</p>
                 ) : (
                   <div className="space-y-1.5">
                     {activeExceptions.map((ex) => (
                       <div
                         key={ex.id}
-                        className="p-2.5 rounded-lg bg-purple-50/70 border border-purple-200 text-purple-900"
+                        className="p-2.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 text-amber-900 dark:text-amber-200"
                       >
                         <div className="font-semibold">{ex.title}</div>
-                        <div className="text-[11px] text-purple-700 mt-0.5">
+                        <div className="text-[11px] text-amber-700 dark:text-amber-300 mt-0.5">
                           사유: {ex.exceptionReason} (만료일: {ex.exceptionExpiresAt})
                         </div>
                       </div>
@@ -860,23 +860,23 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
               </div>
 
               {/* 5. Reviewer decision & Comment */}
-              <div className="rounded-xl border border-slate-200 p-4 space-y-3 text-xs bg-slate-50/40">
-                <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                  <MessageSquare className="w-3.5 h-3.5 text-indigo-600" />
+              <div className="rounded-xl border border-zinc-200 dark:border-white/[0.08] p-4 space-y-3 text-xs bg-zinc-50/40 dark:bg-[#141417]">
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                   심사 의견 및 최종 이력
                 </h4>
                 {detailReview.reviewComment ? (
-                  <div className="p-3 bg-white rounded-lg border border-slate-200 space-y-1">
-                    <div className="flex items-center justify-between text-slate-500 text-[11px]">
+                  <div className="p-3 bg-white dark:bg-[#09090b] rounded-lg border border-zinc-200 dark:border-white/[0.08] space-y-1">
+                    <div className="flex items-center justify-between text-zinc-500 text-[11px]">
                       <span>심사자: <strong>{detailReview.reviewer}</strong></span>
                       <span className="font-mono">{detailReview.reviewedAt}</span>
                     </div>
-                    <p className="text-slate-800 font-medium leading-relaxed">
+                    <p className="text-zinc-900 dark:text-zinc-100 font-medium leading-relaxed">
                       "{detailReview.reviewComment}"
                     </p>
                   </div>
                 ) : (
-                  <p className="text-slate-400 italic">아직 심사 의견이 등록되지 않았습니다.</p>
+                  <p className="text-zinc-400 italic">아직 심사 의견이 등록되지 않았습니다.</p>
                 )}
 
                 {/* Review action buttons (Requirement: 승인·반려에는 의견을 입력하게 하고 보안 판정 자체는 유지) */}

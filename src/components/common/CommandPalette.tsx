@@ -165,9 +165,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                     <button
                       key={item.id}
                       onClick={() => handleSelectMenu(item.id as ActiveMenu)}
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-100 text-slate-700 text-left transition-colors"
+                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/[0.06] text-zinc-700 dark:text-zinc-300 text-left transition-colors"
                     >
-                      <Icon className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                      <Icon className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400 shrink-0" />
                       <span className="font-medium text-xs truncate">{item.label}</span>
                     </button>
                   );
@@ -179,7 +179,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           {/* Matched Projects */}
           {matchedProjects.length > 0 && (
             <div className="pt-2">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2 px-2">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-2 px-2">
                 프로젝트 ({matchedProjects.length})
               </span>
               <div className="space-y-1">
@@ -187,16 +187,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   <div
                     key={p.id}
                     onClick={() => handleSelectMenu('projects', { projectId: p.id })}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-indigo-50/60 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-200 cursor-pointer transition-colors"
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/[0.06] text-zinc-700 dark:text-zinc-200 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-2.5 truncate">
-                      <FolderGit2 className="w-4 h-4 text-indigo-500 shrink-0" />
+                      <FolderGit2 className="w-4 h-4 text-zinc-500 shrink-0" />
                       <div className="truncate">
-                        <span className="font-semibold text-slate-900 mr-2">{p.name}</span>
-                        <span className="font-mono text-[11px] text-slate-400">{p.id}</span>
+                        <span className="font-semibold text-zinc-950 dark:text-zinc-50 mr-2">{p.name}</span>
+                        <span className="font-mono text-[11px] text-zinc-400">{p.id}</span>
                       </div>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono truncate max-w-[150px]">
+                    <span className="text-[10px] text-zinc-400 font-mono truncate max-w-[150px]">
                       {p.entityName}
                     </span>
                   </div>
@@ -208,7 +208,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           {/* Matched Findings */}
           {matchedFindings.length > 0 && (
             <div className="pt-2">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2 px-2">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-2 px-2">
                 취약점·발견사항 ({matchedFindings.length})
               </span>
               <div className="space-y-1">
@@ -216,24 +216,24 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   <div
                     key={f.id}
                     onClick={() => handleSelectMenu('findings', { findingId: f.id })}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-rose-50/60 text-slate-700 cursor-pointer transition-colors"
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-rose-50/60 dark:hover:bg-rose-950/30 text-zinc-700 dark:text-zinc-300 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-2.5 truncate">
                       <ShieldAlert
                         className={`w-4 h-4 shrink-0 ${
                           f.severity === '치명적'
-                            ? 'text-rose-600'
+                            ? 'text-rose-600 dark:text-rose-400'
                             : f.severity === '높음'
-                            ? 'text-orange-500'
+                            ? 'text-amber-600 dark:text-amber-400'
                             : 'text-amber-500'
                         }`}
                       />
                       <div className="truncate">
-                        <span className="font-semibold text-slate-900 mr-2">{f.title}</span>
-                        <span className="font-mono text-[10px] text-slate-400">{f.id}</span>
+                        <span className="font-semibold text-zinc-950 dark:text-zinc-50 mr-2">{f.title}</span>
+                        <span className="font-mono text-[10px] text-zinc-400">{f.id}</span>
                       </div>
                     </div>
-                    <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">
+                    <span className="text-[10px] bg-zinc-100 dark:bg-white/[0.06] text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded font-medium">
                       {f.severity}
                     </span>
                   </div>
@@ -245,7 +245,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           {/* Matched Scans */}
           {matchedScans.length > 0 && (
             <div className="pt-2">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2 px-2">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-2 px-2">
                 보안점검 이력
               </span>
               <div className="space-y-1">
@@ -253,16 +253,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   <div
                     key={s.id}
                     onClick={() => handleSelectMenu('scans', { scanId: s.id })}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.06] text-slate-700 dark:text-slate-200 cursor-pointer"
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/[0.06] text-zinc-700 dark:text-zinc-200 cursor-pointer"
                   >
                     <div className="flex items-center gap-2 font-mono">
-                      <Scan className="w-3.5 h-3.5 text-indigo-500" />
-                      <span className="font-semibold text-slate-900">{s.id}</span>
-                      <span className="text-slate-400 text-[11px] font-sans">
+                      <Scan className="w-3.5 h-3.5 text-zinc-500" />
+                      <span className="font-semibold text-zinc-950 dark:text-zinc-50">{s.id}</span>
+                      <span className="text-zinc-400 text-[11px] font-sans">
                         ({s.projectName})
                       </span>
                     </div>
-                    <span className="text-[10px] text-slate-500">{s.status}</span>
+                    <span className="text-[10px] text-zinc-500">{s.status}</span>
                   </div>
                 ))}
               </div>
