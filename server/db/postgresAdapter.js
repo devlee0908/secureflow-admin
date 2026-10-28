@@ -113,6 +113,188 @@ export class PostgresDatabaseAdapter {
     return this.mockStore.projects.get(id) || null;
   }
 
+  saveProject(proj) {
+    const id = proj.id || `PRJ-${Date.now().toString(36).toUpperCase()}`;
+    const saved = {
+      ...proj,
+      id,
+      name: proj.name || '신규 프로젝트',
+      repository: proj.repository || 'github.com/corp/new-repo',
+      defaultBranch: proj.defaultBranch || proj.default_branch || 'main',
+      entityId: proj.entityId || 'ENT-01',
+      entityName: proj.entityName || '테크솔루션즈',
+      status: proj.status || '운영 중',
+      createdAt: proj.createdAt || new Date().toISOString().slice(0, 10),
+    };
+    this.mockStore.projects.set(id, saved);
+    return saved;
+  }
+
+  deleteProject(id) {
+    this.mockStore.projects.delete(id);
+    for (const [rid, r] of this.mockStore.runs) {
+      if (r.projectId === id || r.project_id === id) this.mockStore.runs.delete(rid);
+    }
+    for (const [fid, f] of this.mockStore.findings) {
+      if (f.projectId === id) this.mockStore.findings.delete(fid);
+    }
+    for (const [revId, rev] of this.mockStore.reviews) {
+      if (rev.projectId === id) this.mockStore.reviews.delete(revId);
+    }
+    return { deleted: true, id };
+  }
+
+  resetAgentGateBaseline(projectId = 'PRJ-AGENTGATE') {
+    for (const [fid, f] of this.mockStore.findings) {
+      if (f.projectId === projectId) this.mockStore.findings.delete(fid);
+    }
+    for (const [revId, rev] of this.mockStore.reviews) {
+      if (rev.projectId === projectId) this.mockStore.reviews.delete(revId);
+    }
+    for (const [rid, r] of this.mockStore.runs) {
+      if (r.projectId === projectId || r.project_id === projectId) this.mockStore.runs.delete(rid);
+    }
+    return { reset: true, projectId };
+  }
+
+  commitAgentGateBaseline(projectId = 'PRJ-AGENTGATE') {
+    this.resetAgentGateBaseline(projectId);
+    const baselineFindings = [
+      {
+        id: 'FND-AGENTGATE-01',
+        projectId,
+        projectName: 'AgentGate 보안 게이트웨이 (연동 저장소)',
+        entityId: 'ENT-01',
+        entityName: '테크솔루션즈',
+        scanRunId: 'SCN-AGENTGATE-01',
+        commitId: 'e81a3d9',
+        scanType: '소스코드 정적 분석',
+        tool: 'SonarQube SAST',
+        title: 'CWE-327: JWT 토큰 알고리즘 고정 검증 누락',
+        description: 'jwt.verify() 호출 시 허용 알고리즘을 제한하지 않아 alg:none 공격에 노출될 수 있습니다.',
+        severity: '중간',
+        filePath: 'src/auth/jwt.ts',
+        lineNumber: 'Line 28',
+        codeSnippet: 'const decoded = jwt.verify(token, secretKey);',
+        remediationGuide: 'jwt.verify(token, secretKey, { algorithms: ["HS256"] }) 옵션을 적용하십시오.',
+        assignee: 'devlee0908',
+        status: '조치 중',
+        createdAt: '2026-10-05 16:32:00',
+        dueDate: '2026-10-19',
+        history: [{ timestamp: '2026-10-05 16:32:00', actor: '시스템', action: '베이스라인 점검 결과 자동 등록' }],
+        rescanResult: '미실행',
+      },
+      {
+        id: 'FND-AGENTGATE-02',
+        projectId,
+        projectName: 'AgentGate 보안 게이트웨이 (연동 저장소)',
+        entityId: 'ENT-01',
+        entityName: '테크솔루션즈',
+        scanRunId: 'SCN-AGENTGATE-01',
+        commitId: 'e81a3d9',
+        scanType: '의존성 취약점 분석',
+        tool: 'Trivy SCA',
+        title: 'CVE-2024-21538: cross-spawn 정규식 DoS 취약점',
+        description: 'cross-spawn 패키지 v7.0.3에 ReDoS 취약점이 존재합니다.',
+        severity: '중간',
+        filePath: 'package.json',
+        lineNumber: 'Line 18',
+        codeSnippet: '"cross-spawn": "^7.0.3"',
+        remediationGuide: 'cross-spawn >= 7.0.6 버전으로 의존성을 업데이트하십시오.',
+        assignee: 'devlee0908',
+        status: '신규',
+        createdAt: '2026-10-05 16:32:00',
+        dueDate: '2026-10-19',
+        history: [{ timestamp: '2026-10-05 16:32:00', actor: '시스템', action: '베이스라인 점검 결과 자동 등록' }],
+        rescanResult: '미실행',
+      },
+      {
+        id: 'FND-AGENTGATE-03',
+        projectId,
+        projectName: 'AgentGate 보안 게이트웨이 (연동 저장소)',
+        entityId: 'ENT-01',
+        entityName: '테크솔루션즈',
+        scanRunId: 'SCN-AGENTGATE-02',
+        commitId: 'f9c2a10',
+        scanType: '소스코드 정적 분석',
+        tool: 'SonarQube SAST',
+        title: 'CWE-89: SQL Injection Vulnerability in Session Store',
+        description: '사용자 토큰 문자열이 SQL 쿼리에 직접 결합되어 임의의 데이터베이스 조회가 가능합니다.',
+        severity: '치명적',
+        filePath: 'src/auth/session.ts',
+        lineNumber: 'Line 34',
+        codeSnippet: "const session = await db.query(`SELECT * FROM user_sessions WHERE session_token = '${token}'`);",
+        remediationGuide: 'db.query("SELECT * FROM user_sessions WHERE session_token = $1", [token]) 파라미터화된 쿼리를 사용하십시오.',
+        assignee: 'devlee0908',
+        status: '신규',
+        createdAt: '2026-10-05 17:00:00',
+        dueDate: '2026-10-08',
+        history: [{ timestamp: '2026-10-05 17:00:00', actor: '시스템', action: 'PR #1 증분 점검에서 신규 치명적 결함 탐지' }],
+        rescanResult: '미실행',
+      },
+    ];
+    for (const f of baselineFindings) this.saveFinding(f);
+
+    this.saveReview({
+      id: 'REV-AGENTGATE-01',
+      projectId,
+      projectName: 'AgentGate 보안 게이트웨이 (연동 저장소)',
+      entityId: 'ENT-01',
+      entityName: '테크솔루션즈',
+      targetEnvironment: '운영',
+      requestCommitId: 'f9c2a10',
+      scanCommitId: 'f9c2a10',
+      scanCompletedAt: '2026-10-05 17:00:00',
+      requiredScansCompleted: true,
+      securityVerdict: '차단',
+      verdictReason: '치명적 보안 결함 1건(CWE-89 SQLi) 미해결로 보안 게이트 자동 차단',
+      approvalStatus: '대기',
+      requester: 'devlee0908',
+      requestedAt: '2026-10-05 17:00:00',
+    });
+
+    return {
+      committed: true,
+      projectId,
+      findings: this.getFindings(projectId),
+      reviews: this.getReviews(projectId),
+    };
+  }
+
+  remediateAgentGate(customComment, projectId = 'PRJ-AGENTGATE') {
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    for (const f of this.getFindings(projectId)) {
+      this.updateFinding(f.id, {
+        status: '해결',
+        rescanResult: '확인 완료(해결)',
+        history: [
+          ...(f.history || []),
+          {
+            timestamp: nowStr,
+            actor: 'devlee0908 (Vault Auto-Remediation)',
+            action: '보안 패치 브랜치(fix/security-remediation) 병합 및 재검증 클린 통과 -> [해결] 전환',
+          },
+        ],
+      });
+    }
+    for (const r of this.getReviews(projectId)) {
+      this.updateReview(r.id, {
+        securityVerdict: '통과',
+        verdictReason: '3건 보안 결함(SQLi, JWT, cross-spawn) 패치 커밋 푸시 확인으로 배포 게이트 통과',
+        approvalStatus: '승인',
+        reviewer: '보안 심사관 (자동 재검증 통과)',
+        reviewComment: customComment || '3건 보안 취약점 조치 패치 커밋 푸시 확인 완료 — 운영 배포 자동 승인',
+        reviewedAt: nowStr,
+      });
+    }
+    return {
+      remediated: true,
+      projectId,
+      findings: this.getFindings(projectId),
+      reviews: this.getReviews(projectId),
+    };
+  }
+
   getRuns(projectId) {
     const all = Array.from(this.mockStore.runs.values());
     const filtered = projectId ? all.filter((r) => r.projectId === projectId || r.project_id === projectId) : all;

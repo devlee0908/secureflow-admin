@@ -122,6 +122,80 @@ export function apiMiddleware(req, res, next) {
         return sendJson(res, 200, scannerPool.getStats());
       }
 
+      // Manual / Scheduled Worker Thread Scan Dispatch Endpoint
+      if (pathname === '/api/scanners/run' && req.method === 'POST') {
+        const {
+          scanId,
+          projectId = 'PRJ-AGENTGATE',
+          repository = 'github.com/devlee0908/agentgate',
+          branch = 'main',
+          commitId = crypto.randomBytes(4).toString('hex').substring(0, 7),
+          commitMessage = 'manual: security inspection triggered from admin console',
+          author = '보안운영자',
+          authorEmail = 'secops@secureflow.co.kr',
+          trigger = '수동',
+          scanTypes = [],
+          filesChanged = ['src/index.ts'],
+          willFail = false,
+        } = parsedBody;
+
+        const { run: evaluatedRun, metrics } = await scannerPool.dispatch({
+          projectId,
+          repository,
+          branch,
+          commitId,
+          commitMessage,
+          author,
+          authorEmail,
+          trigger,
+          filesChanged,
+        });
+
+        const finalRun = {
+          ...evaluatedRun,
+          id: scanId || evaluatedRun.id,
+          projectId,
+          trigger,
+          scanTypes,
+          scanStatus: willFail ? 'failed' : 'completed',
+          executionLogs: [
+            ...(evaluatedRun.executionLogs || []),
+            `[${new Date().toLocaleTimeString()}] [WORKER] 격리된 스캐너 워커 스레드(#${metrics?.workerId || 1}) 정적/SCA/시크릿/IaC 분석 완료 (${metrics?.executionDurationMs || 12}ms)`,
+          ],
+        };
+
+        const savedRun = dbService.saveRun(finalRun);
+
+        dbService.saveAuditLog({
+          actorId: 'sec-admin',
+          actorName: author,
+          actorRole: '보안담당자',
+          actionType: 'MANUAL_SCAN_DISPATCHED',
+          category: 'SECURITY_GATE',
+          targetResource: savedRun.id,
+          details: {
+            projectId,
+            branch,
+            trigger,
+            workerId: metrics?.workerId || 1,
+            executionDurationMs: metrics?.executionDurationMs || 0,
+            status: savedRun.status,
+          },
+          resultStatus: willFail ? '실패' : '성공',
+        });
+
+        sseService.broadcast('scanner_job_completed', {
+          run: savedRun,
+          metrics,
+        });
+
+        return sendJson(res, 201, {
+          success: true,
+          run: savedRun,
+          metrics,
+        });
+      }
+
       if (pathname === '/api/database/engine' && req.method === 'GET') {
         const engineInfo = dbService.getEngineInfo();
         return sendJson(res, 200, engineInfo);

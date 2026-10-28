@@ -174,6 +174,32 @@ export const api = {
     }
   },
 
+  async triggerWorkerScan(payload: {
+    scanId?: string;
+    projectId: string;
+    repository?: string;
+    branch?: string;
+    commitId?: string;
+    commitMessage?: string;
+    author?: string;
+    trigger?: string;
+    scanTypes?: string[];
+    willFail?: boolean;
+  }) {
+    try {
+      const res = await fetch('/api/scanners/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (err) {
+      console.warn('[API] Failed to trigger worker scan:', err);
+      return null;
+    }
+  },
+
   async getWebhookDeliveries(limit = 10): Promise<WebhookDelivery[]> {
     try {
       const res = await fetch(`/api/webhooks/deliveries?limit=${limit}`);
