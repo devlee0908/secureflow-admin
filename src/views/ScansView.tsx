@@ -262,8 +262,8 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
           const s = row.original;
           return (
             <div>
-              <div className="font-semibold text-slate-900">{s.projectName}</div>
-              <div className="text-[11px] text-slate-500">{s.entityName}</div>
+              <div className="font-medium text-zinc-900 dark:text-zinc-100">{s.projectName}</div>
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">{s.entityName}</div>
             </div>
           );
         },
@@ -275,9 +275,9 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
           const s = row.original;
           return (
             <div className="flex items-center gap-1.5 font-mono text-xs">
-              <span className="text-slate-600">{s.branch}</span>
-              <span className="text-slate-400">@</span>
-              <span className="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded font-bold">
+              <span className="text-zinc-600 dark:text-zinc-400">{s.branch}</span>
+              <span className="text-zinc-400">@</span>
+              <span className="bg-zinc-100 dark:bg-white/[0.06] text-zinc-900 dark:text-zinc-200 border border-zinc-200/80 dark:border-white/[0.08] px-1.5 py-0.5 rounded font-semibold">
                 {s.commitId}
               </span>
             </div>
@@ -291,16 +291,16 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
           const t = row.original.trigger;
           return (
             <Badge
-              variant="outline"
-              className={
+              variant={
                 t === '수동'
-                  ? 'border-indigo-200 bg-indigo-50 text-indigo-700'
+                  ? 'info'
                   : t === 'Push'
-                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                  ? 'success'
                   : t === 'PR/MR'
-                  ? 'border-purple-200 bg-purple-50 text-purple-700'
-                  : 'border-slate-200 bg-slate-100 text-slate-700'
+                  ? 'warning'
+                  : 'neutral'
               }
+              className="font-mono"
             >
               {t}
             </Badge>
@@ -317,7 +317,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
               {types.map((type) => (
                 <span
                   key={type}
-                  className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 whitespace-nowrap"
+                  className="text-[10px] font-mono bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300 px-1.5 py-0.5 rounded border border-zinc-200/80 dark:border-white/[0.08] whitespace-nowrap"
                 >
                   {type === '소스코드 정적 분석'
                     ? 'SAST'
@@ -343,19 +343,19 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
         cell: ({ row }) => {
           const count = row.original.findingsCount;
           if (row.original.status === '실패') {
-            return <span className="text-slate-400 text-xs">-</span>;
+            return <span className="text-zinc-400 text-xs font-mono">-</span>;
           }
           if (count === 0) {
             return (
-              <span className="text-emerald-600 text-xs font-semibold flex items-center gap-1">
+              <span className="text-emerald-600 dark:text-emerald-400 text-xs font-medium font-mono flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> 0건 (Clean)
               </span>
             );
           }
           return (
-            <span className="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+            <Badge variant="danger" className="font-mono">
               {count}건 발견
-            </span>
+            </Badge>
           );
         },
       },
@@ -363,7 +363,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
         accessorKey: 'durationSeconds',
         header: ({ column }) => <DataTableColumnHeader column={column} title="소요 시간" />,
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-slate-600">
+          <span className="font-mono tabular-nums text-xs text-zinc-600 dark:text-zinc-400">
             {row.original.durationSeconds}초
           </span>
         ),
@@ -480,10 +480,10 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                 variant="outline"
                 size="sm"
                 onClick={clearDummyData}
-                className="text-xs border-amber-300 dark:border-amber-700/60 text-amber-700 dark:text-amber-300 bg-amber-50/70 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
                 title="기존 더미 파일들을 삭제하고 실제 연동된 프로젝트만 유지합니다"
               >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                <Trash2 className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
                 더미 파일 제거
               </Button>
             ) : (
@@ -491,10 +491,10 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                 variant="outline"
                 size="sm"
                 onClick={generateDummyData}
-                className="text-xs border-indigo-300 dark:border-indigo-700/60 text-indigo-700 dark:text-indigo-300 bg-indigo-50/70 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/40"
+                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
                 title="테스트 및 시뮬레이션을 위한 샘플 더미 프로젝트를 즉시 생성합니다"
               >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
                 더미 파일 생성
               </Button>
             )}
@@ -505,18 +505,18 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                 setSbomProjectId('PRJ-AGENTGATE');
                 setIsSbomModalOpen(true);
               }}
-              className="bg-emerald-50/80 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60 hover:bg-emerald-100 text-xs font-semibold gap-1.5 shadow-2xs"
+              className="h-8 border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06] text-xs font-medium gap-1.5 shadow-none"
             >
-              <Package className="w-3.5 h-3.5" />
+              <Package className="w-3.5 h-3.5 text-emerald-500" />
               SBOM &amp; SLSA 증명서
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={handleExportCsv}
-              className="bg-white text-slate-700 hover:text-indigo-600 border-slate-300 text-xs font-semibold gap-1.5 shadow-2xs"
+              className="h-8 border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06] text-xs font-medium gap-1.5 shadow-none"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 text-zinc-500" />
               점검 이력 CSV
             </Button>
             <Button
@@ -525,9 +525,9 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                 setSelectedProjectId(projects[0]?.id || '');
                 setIsNewScanOpen(true);
               }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-2xs"
+              className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-medium shadow-none"
             >
-              <Play className="w-4 h-4 mr-1.5" />
+              <Play className="w-3.5 h-3.5 mr-1.5 fill-current" />
               수동 점검 실행
             </Button>
           </div>
@@ -535,10 +535,10 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
       />
 
       {/* Filter and Search Bar */}
-      <div className="rounded-xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#0c1017]/90 backdrop-blur-md p-4 shadow-sm dark:shadow-xl space-y-3">
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] p-4 space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           <div className="relative lg:col-span-2">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-zinc-400" />
             <Input
               placeholder="점검 ID, 프로젝트명, 커밋, 브랜치 검색..."
               value={searchQuery}
@@ -583,7 +583,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
               variant="outline"
               size="sm"
               onClick={handleResetFilters}
-              className="h-9 text-xs w-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] border-slate-200 dark:border-white/[0.1]"
+              className="h-9 text-xs w-full text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] border-zinc-200 dark:border-white/[0.1]"
             >
               <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
               필터 초기화
@@ -593,7 +593,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
       </div>
 
       {/* TanStack Table Card */}
-      <div className="rounded-xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#0c1017]/90 backdrop-blur-md shadow-sm dark:shadow-xl overflow-hidden">
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

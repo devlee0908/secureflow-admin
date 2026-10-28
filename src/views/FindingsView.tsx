@@ -407,12 +407,12 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
                   setEditDueDate(f.dueDate);
                   setIsDetailOpen(true);
                 }}
-                className="font-semibold text-xs text-slate-900 hover:text-indigo-600 cursor-pointer truncate"
+                className="font-medium text-xs text-zinc-900 dark:text-zinc-100 hover:underline cursor-pointer truncate"
                 title={f.title}
               >
                 {f.title}
               </span>
-              <span className="text-[10px] text-slate-400 font-mono">{f.id}</span>
+              <span className="text-[10px] text-zinc-400 font-mono">{f.id}</span>
             </div>
           );
         },
@@ -434,8 +434,8 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
           const f = row.original;
           return (
             <div>
-              <div className="font-semibold text-slate-800">{f.projectName}</div>
-              <div className="text-[11px] text-slate-500">{f.entityName}</div>
+              <div className="font-medium text-zinc-900 dark:text-zinc-100">{f.projectName}</div>
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">{f.entityName}</div>
             </div>
           );
         },
@@ -447,11 +447,11 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
           const f = row.original;
           return (
             <div className="max-w-[200px]">
-              <div className="font-mono text-[11px] text-slate-700 truncate" title={f.filePath}>
+              <div className="font-mono text-[11px] text-zinc-700 dark:text-zinc-300 truncate" title={f.filePath}>
                 {f.filePath}
               </div>
               {f.lineNumber && (
-                <span className="text-[10px] text-slate-400 font-mono">{f.lineNumber}</span>
+                <span className="text-[10px] text-zinc-400 font-mono">{f.lineNumber}</span>
               )}
             </div>
           );
@@ -462,8 +462,8 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
         header: '점검 도구',
         cell: ({ row }) => (
           <div>
-            <div className="text-xs text-slate-800 font-medium">{row.original.tool}</div>
-            <div className="text-[10px] text-slate-400">{row.original.scanType}</div>
+            <div className="text-xs text-zinc-900 dark:text-zinc-100 font-medium">{row.original.tool}</div>
+            <div className="text-[10px] text-zinc-400">{row.original.scanType}</div>
           </div>
         ),
       },
@@ -471,7 +471,7 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
         accessorKey: 'assignee',
         header: ({ column }) => <DataTableColumnHeader column={column} title="담당자" />,
         cell: ({ row }) => (
-          <span className="text-xs text-slate-800 font-medium">{row.original.assignee}</span>
+          <span className="text-xs text-zinc-800 dark:text-zinc-200 font-medium">{row.original.assignee}</span>
         ),
       },
       {
@@ -606,16 +606,16 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
               variant="outline"
               size="sm"
               onClick={handleExportCsv}
-              className="text-xs text-slate-700 hover:bg-slate-100"
+              className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
             >
-              <Download className="w-3.5 h-3.5 mr-1.5" />
+              <Download className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
               CSV 보고서 다운로드
             </Button>
             {selectedCount > 0 && (
               <Button
                 size="sm"
                 onClick={() => setIsBatchAssigneeOpen(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
+                className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-medium shadow-none"
               >
                 <UserCheck className="w-4 h-4 mr-1.5" />
                 선택 {selectedCount}건 일괄 담당자 지정
@@ -626,19 +626,18 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
       />
 
       {/* Filter and Search Bar */}
-      <div className="rounded-xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#0c1017]/90 backdrop-blur-md p-4 shadow-sm dark:shadow-xl space-y-3">
-        {/* Smart Quick Filter Chips (Enterprise Feature) */}
-        <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100 dark:border-white/[0.04]">
-          <span className="text-[11px] font-bold text-slate-400 mr-1 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-            스마트 필터:
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] p-4 space-y-3">
+        {/* Smart Quick Filter Chips */}
+        <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-zinc-100 dark:border-white/[0.06]">
+          <span className="text-[11px] font-medium text-zinc-400 mr-1 flex items-center gap-1">
+            빠른 필터:
           </span>
           <button
             onClick={() => handleResetFilters()}
-            className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
               severityFilter === 'ALL' && statusFilter === 'ALL' && !onlyOverdue && assigneeFilter === 'ALL'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-slate-100 dark:bg-white/[0.05] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.1]'
+                ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950'
+                : 'bg-zinc-100 dark:bg-white/[0.05] text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-white/[0.1]'
             }`}
           >
             전체 결함 ({findings.length})
@@ -649,10 +648,10 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
               setOnlyOverdue(false);
               setAssigneeFilter('ALL');
             }}
-            className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors flex items-center gap-1 ${
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors flex items-center gap-1 border ${
               severityFilter === 'HIGH_CRITICAL'
-                ? 'bg-rose-600 text-white shadow-xs'
-                : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-950/60'
+                ? 'bg-rose-600 text-white border-rose-600'
+                : 'bg-rose-500/10 border-rose-500/25 text-rose-700 dark:text-rose-400 hover:bg-rose-500/15'
             }`}
           >
             <ShieldAlert className="w-3 h-3" />
@@ -660,10 +659,10 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
           </button>
           <button
             onClick={() => setOnlyOverdue(!onlyOverdue)}
-            className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors flex items-center gap-1 ${
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors flex items-center gap-1 border ${
               onlyOverdue
-                ? 'bg-amber-600 text-white shadow-xs'
-                : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/60'
+                ? 'bg-amber-600 text-white border-amber-600'
+                : 'bg-amber-500/10 border-amber-500/25 text-amber-700 dark:text-amber-400 hover:bg-amber-500/15'
             }`}
           >
             <AlertTriangle className="w-3 h-3" />
@@ -671,10 +670,10 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
           </button>
           <button
             onClick={() => setAssigneeFilter(currentUser.name)}
-            className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors flex items-center gap-1 ${
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors flex items-center gap-1 border ${
               assigneeFilter === currentUser.name
-                ? 'bg-sky-600 text-white shadow-xs'
-                : 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-950/60'
+                ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 border-transparent'
+                : 'bg-zinc-100 dark:bg-white/[0.05] border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200'
             }`}
           >
             <UserCheck className="w-3 h-3" />

@@ -550,16 +550,16 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
         onValueChange={(val) => setActiveTab(val as any)}
         className="space-y-6"
       >
-        <div className="border-b border-slate-200 dark:border-white/[0.08] pb-1">
-          <TabsList className="h-11 bg-slate-100/90 dark:bg-[#121620] p-1 rounded-xl border border-slate-200/70 dark:border-white/[0.08] gap-1 w-full sm:w-auto flex flex-wrap justify-start">
+        <div className="border-b border-zinc-200/80 dark:border-white/[0.08] pb-1">
+          <TabsList className="h-10 bg-zinc-100/90 dark:bg-[#141417] p-1 rounded-lg border border-zinc-200/70 dark:border-white/[0.08] gap-1 w-full sm:w-auto flex flex-wrap justify-start">
             <TabsTrigger
               value="git"
-              className="h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#1c2230] data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-xs transition-all flex items-center gap-2"
+              className="h-8 px-3.5 text-xs font-semibold rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#222226] data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-2xs transition-all flex items-center gap-2"
             >
-              <GitBranch className="w-3.5 h-3.5 text-sky-500" />
+              <GitBranch className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
               <span>Git 서버 &amp; PAT 연동</span>
               {githubPat ? (
-                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" title="GitHub PAT 연동됨" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" title="GitHub PAT 연동됨" />
               ) : (
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-amber-600 border-amber-300 hidden sm:inline-flex">
                   토큰 미등록
@@ -569,29 +569,29 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
 
             <TabsTrigger
               value="notifications"
-              className="h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#1c2230] data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-xs transition-all flex items-center gap-2"
+              className="h-8 px-3.5 text-xs font-semibold rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#222226] data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-2xs transition-all flex items-center gap-2"
             >
-              <Bell className="w-3.5 h-3.5 text-violet-500" />
+              <Bell className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
               <span>Slack &amp; Teams 알림 연동</span>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 border-violet-200 hidden sm:inline-flex">
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-white/[0.08] hidden sm:inline-flex">
                 {notificationChannels.length}개 채널
               </Badge>
             </TabsTrigger>
 
             <TabsTrigger
               value="theme"
-              className="h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#1c2230] data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-xs transition-all flex items-center gap-2"
+              className="h-8 px-3.5 text-xs font-semibold rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#222226] data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-2xs transition-all flex items-center gap-2"
             >
-              <Palette className="w-3.5 h-3.5 text-indigo-500" />
+              <Palette className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
               <span>화면 디스플레이 테마</span>
-              <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">
+              <span className="text-[10px] text-zinc-400 font-mono hidden sm:inline">
                 {theme === 'dark' ? '다크' : theme === 'light' ? '라이트' : '시스템'}
               </span>
             </TabsTrigger>
 
             <TabsTrigger
               value="sandbox"
-              className="h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#1c2230] data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-xs transition-all flex items-center gap-2"
+              className="h-8 px-3.5 text-xs font-semibold rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#222226] data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-2xs transition-all flex items-center gap-2"
             >
               <Zap className="w-3.5 h-3.5 text-amber-500" />
               <span>데모 검증 샌드박스</span>
@@ -605,12 +605,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
         {/* 1. Tab: Git 서버 & PAT 연동 */}
         <TabsContent value="git" className="space-y-6 mt-0 animate-in fade-in-50 duration-200">
           {/* GitHub Personal Access Token (PAT) 중앙 관리 센터 */}
-          <Card className="border-indigo-200 dark:border-indigo-900/50 bg-gradient-to-br from-white to-indigo-50/20 dark:from-[#0c1017] dark:to-indigo-950/10 shadow-sm">
-            <CardHeader className="pb-3 border-b border-indigo-100 dark:border-white/[0.06]">
+          <Card className="border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] shadow-xs">
+            <CardHeader className="pb-3 border-b border-zinc-200/70 dark:border-white/[0.06]">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base flex items-center gap-2 text-indigo-950 dark:text-indigo-200">
-                    <KeyRound className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <CardTitle className="text-base flex items-center gap-2 text-zinc-950 dark:text-zinc-100">
+                    <KeyRound className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                     GitHub Personal Access Token (PAT) 중앙 관리 센터
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -678,7 +678,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                     size="sm"
                     onClick={() => handleVerifyPat()}
                     disabled={isVerifyingPat || !githubPat.trim()}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs h-9 gap-1.5 shrink-0"
+                    className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-semibold text-xs h-9 gap-1.5 shrink-0"
                   >
                     {isVerifyingPat ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
                     <span>연결 테스트</span>
@@ -803,7 +803,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                 size="sm"
                 onClick={handleSavePat}
                 disabled={isSavingPat}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold h-8"
+                className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-semibold h-8"
               >
                 {isSavingPat ? (
                   <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" />
@@ -816,20 +816,20 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
           </Card>
 
           {/* Enterprise Envelope Encryption (DEK + KEK) & Cloud KMS Control Center */}
-          <Card className="border-indigo-200/80 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-50/30 via-white to-slate-50/50 dark:from-[#0c1017] dark:via-[#111622] dark:to-slate-900/40 shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="pb-3 border-b border-indigo-100 dark:border-white/[0.06] bg-slate-50/50 dark:bg-white/[0.01]">
+          <Card className="border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] shadow-xs rounded-xl overflow-hidden">
+            <CardHeader className="pb-3 border-b border-zinc-200/70 dark:border-white/[0.06] bg-zinc-50/50 dark:bg-white/[0.01]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <CardTitle className="text-base flex items-center gap-2 font-mono text-slate-900 dark:text-slate-100">
-                    <ShieldCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <CardTitle className="text-base flex items-center gap-2 font-sans text-zinc-950 dark:text-zinc-100">
+                    <ShieldCheck className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                     <span>엔터프라이즈 봉투 암호화(Envelope Encryption) &amp; Cloud KMS 금고</span>
                   </CardTitle>
-                  <CardDescription className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                     FIPS 140-3 및 전자금융감독규정 준수: 2계층 키 계층 구조(Two-Tier Key Hierarchy)를 적용하여 데이터 암호화 키(DEK)와 마스터 키(KEK)를 물리적으로 분리 격리 관리합니다.
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <Badge variant="outline" className="border-indigo-300 text-indigo-700 dark:text-indigo-300 font-mono text-[10px] bg-indigo-50/80 dark:bg-indigo-950/30">
+                  <Badge variant="outline" className="border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-mono text-[10px] bg-zinc-50 dark:bg-white/[0.03]">
                     FIPS 140-3 Mode
                   </Badge>
                   <Badge variant="outline" className="border-emerald-300 text-emerald-700 dark:text-emerald-300 font-mono text-[10px] bg-emerald-50/80 dark:bg-emerald-950/30">
@@ -963,7 +963,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                   size="sm"
                   onClick={handleRotateKek}
                   disabled={isRotatingKek || !isGroupAdmin}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs h-8 shrink-0 gap-1.5 shadow-xs"
+                  className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-semibold text-xs h-8 shrink-0 gap-1.5"
                 >
                   <RotateCcw className={cn("w-3.5 h-3.5", isRotatingKek && "animate-spin")} />
                   <span>마스터 KEK 로테이션 실행</span>
@@ -1194,7 +1194,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                 <Button
                   size="sm"
                   onClick={handleSaveGitConfig}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
+                  className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-semibold"
                 >
                   <Save className="w-3.5 h-3.5 mr-1.5" />
                   Git 설정 저장
@@ -1207,12 +1207,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
         {/* 2. Tab: Slack & Teams 알림 연동 */}
         <TabsContent value="notifications" className="space-y-6 mt-0 animate-in fade-in-50 duration-200">
           {/* Header Card */}
-          <Card className="border-violet-200 dark:border-violet-900/50 bg-gradient-to-br from-white to-violet-50/20 dark:from-[#0c1017] dark:to-violet-950/10 shadow-sm">
-            <CardHeader className="pb-3 border-b border-violet-100 dark:border-white/[0.06]">
+          <Card className="border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] shadow-xs">
+            <CardHeader className="pb-3 border-b border-zinc-200/70 dark:border-white/[0.06]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <CardTitle className="text-base flex items-center gap-2 text-violet-950 dark:text-violet-200">
-                    <Bell className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                  <CardTitle className="text-base flex items-center gap-2 text-zinc-950 dark:text-zinc-100">
+                    <Bell className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                     <span>엔터프라이즈 알림 &amp; 실시간 Webhook 연동 센터</span>
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -1223,7 +1223,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                   <Button
                     size="sm"
                     onClick={() => setIsAddChannelDialogOpen(true)}
-                    className="bg-violet-600 hover:bg-violet-700 text-white font-semibold text-xs h-8 gap-1.5 shadow-sm"
+                    className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-semibold text-xs h-8 gap-1.5"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>새 알림 채널 추가</span>

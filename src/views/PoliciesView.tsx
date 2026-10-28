@@ -243,26 +243,26 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
         onValueChange={(val) => setActiveTab(val as any)}
         className="space-y-6"
       >
-        <div className="border-b border-slate-200 dark:border-white/[0.08] pb-1">
-          <TabsList className="h-11 bg-slate-100/90 dark:bg-[#121620] p-1 rounded-xl border border-slate-200/70 dark:border-white/[0.08] gap-1 w-full sm:w-auto flex flex-wrap justify-start">
+        <div className="border-b border-zinc-200/80 dark:border-white/[0.08] pb-1">
+          <TabsList className="h-10 bg-zinc-100/90 dark:bg-[#141417] p-1 rounded-lg border border-zinc-200/70 dark:border-white/[0.08] gap-1 w-full sm:w-auto flex flex-wrap justify-start">
             <TabsTrigger
               value="thresholds"
-              className="h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#1c2230] data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-xs transition-all flex items-center gap-2"
+              className="h-8 px-3.5 text-xs font-semibold rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#222226] data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-2xs transition-all flex items-center gap-2"
             >
-              <ShieldAlert className="w-3.5 h-3.5 text-indigo-500" />
+              <ShieldAlert className="w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300" />
               <span>배포 차단 및 SLA 기준 설정</span>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-slate-100 dark:bg-white/[0.04] text-slate-500 border-slate-200 dark:border-white/[0.08] hidden sm:inline-flex">
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-zinc-100 dark:bg-white/[0.04] text-zinc-500 border-zinc-200 dark:border-white/[0.08] hidden sm:inline-flex">
                 전사 공통 정책
               </Badge>
             </TabsTrigger>
 
             <TabsTrigger
               value="simulator"
-              className="h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-[#1c2230] data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 data-[state=active]:shadow-xs transition-all flex items-center gap-2"
+              className="h-8 px-3.5 text-xs font-semibold rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-[#222226] data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-50 data-[state=active]:shadow-2xs transition-all flex items-center gap-2"
             >
-              <Calculator className="w-3.5 h-3.5 text-purple-500" />
+              <Calculator className="w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300" />
               <span>배포 게이트 모의 판정기</span>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800 hidden sm:inline-flex">
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-zinc-100 dark:bg-white/[0.04] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-white/[0.08] hidden sm:inline-flex">
                 What-If
               </Badge>
             </TabsTrigger>
@@ -271,12 +271,12 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
 
         {/* Tab 1: 배포 차단 및 SLA 기준 설정 */}
         <TabsContent value="thresholds" className="space-y-6 mt-0 animate-in fade-in-50 duration-200">
-          <Card className="border-slate-200">
+          <Card className="border-zinc-200/80 dark:border-white/[0.08]">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-base flex items-center gap-2">
-                    <ShieldAlert className="w-4 h-4 text-indigo-600" />
+                    <ShieldAlert className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                     보안 정책 및 배포 차단(Gate) 기준
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -291,8 +291,8 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
             <CardContent className="space-y-5 text-xs">
               {/* Thresholds */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2">
-                  <span className="font-bold text-slate-800 block text-xs">
+                <div className="p-3 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/50 dark:bg-[#141417] space-y-2">
+                  <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
                     치명적(Critical) 결함 정책
                   </span>
                   <div className="flex items-center space-x-2 pt-1">
@@ -304,17 +304,17 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                         setPolicyForm({ ...policyForm, blockOnCritical: !!checked })
                       }
                     />
-                    <Label htmlFor="blockCritical" className="text-xs cursor-pointer">
+                    <Label htmlFor="blockCritical" className="text-xs cursor-pointer text-zinc-800 dark:text-zinc-200">
                       1개 이상 발견 시 배포 즉시 차단 (권장)
                     </Label>
                   </div>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-zinc-500">
                     전자금융감독규정 및 ISMS-P 기준 미조치 치명적 결함은 프로덕션 배포가 불가합니다.
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2">
-                  <span className="font-bold text-slate-800 block text-xs">
+                <div className="p-3 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/50 dark:bg-[#141417] space-y-2">
+                  <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
                     높음(High) 차단 임계값
                   </span>
                   <div className="flex items-center gap-2 pt-1">
@@ -332,15 +332,15 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                       }
                       className="w-20 h-8 text-xs font-semibold"
                     />
-                    <span className="text-xs text-slate-600">개 이상 시 배포 차단</span>
+                    <span className="text-xs text-zinc-600 dark:text-zinc-400">개 이상 시 배포 차단</span>
                   </div>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-zinc-500">
                     높음 심각도 결함이 설정 개수 이상이면 배포가 자동 차단됩니다.
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2">
-                  <span className="font-bold text-slate-800 block text-xs">
+                <div className="p-3 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/50 dark:bg-[#141417] space-y-2">
+                  <span className="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">
                     중간(Medium) 검토 임계값
                   </span>
                   <div className="flex items-center gap-2 pt-1">
@@ -358,23 +358,23 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                       }
                       className="w-20 h-8 text-xs font-semibold"
                     />
-                    <span className="text-xs text-slate-600">개 이상 시 검토 필요</span>
+                    <span className="text-xs text-zinc-600 dark:text-zinc-400">개 이상 시 검토 필요</span>
                   </div>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-zinc-500">
                     중간 심각도 결함이 기준 이상이면 보안관리자 수동 검토 상태로 전환됩니다.
                   </p>
                 </div>
               </div>
 
               {/* SLA Days */}
-              <div className="pt-2 border-t border-slate-100">
-                <h4 className="font-bold text-slate-800 mb-2 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-indigo-600" />
+              <div className="pt-2 border-t border-zinc-200/70 dark:border-white/[0.06]">
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                   심각도별 취약점 조치 기한(SLA) 설정
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div>
-                    <Label className="text-[11px] text-slate-500">치명적 (Critical)</Label>
+                    <Label className="text-[11px] text-zinc-500">치명적 (Critical)</Label>
                     <div className="flex items-center gap-1.5 mt-1">
                       <Input
                         type="number"
@@ -390,12 +390,12 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                         }
                         className="h-8 text-xs font-semibold"
                       />
-                      <span className="text-xs text-slate-500">일 이내</span>
+                      <span className="text-xs text-zinc-500">일 이내</span>
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-[11px] text-slate-500">높음 (High)</Label>
+                    <Label className="text-[11px] text-zinc-500">높음 (High)</Label>
                     <div className="flex items-center gap-1.5 mt-1">
                       <Input
                         type="number"
@@ -411,12 +411,12 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                         }
                         className="h-8 text-xs font-semibold"
                       />
-                      <span className="text-xs text-slate-500">일 이내</span>
+                      <span className="text-xs text-zinc-500">일 이내</span>
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-[11px] text-slate-500">중간 (Medium)</Label>
+                    <Label className="text-[11px] text-zinc-500">중간 (Medium)</Label>
                     <div className="flex items-center gap-1.5 mt-1">
                       <Input
                         type="number"
@@ -432,12 +432,12 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                         }
                         className="h-8 text-xs font-semibold"
                       />
-                      <span className="text-xs text-slate-500">일 이내</span>
+                      <span className="text-xs text-zinc-500">일 이내</span>
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-[11px] text-slate-500">낮음 (Low)</Label>
+                    <Label className="text-[11px] text-zinc-500">낮음 (Low)</Label>
                     <div className="flex items-center gap-1.5 mt-1">
                       <Input
                         type="number"
@@ -453,20 +453,20 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                         }
                         className="h-8 text-xs font-semibold"
                       />
-                      <span className="text-xs text-slate-500">일 이내</span>
+                      <span className="text-xs text-zinc-500">일 이내</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Required Scans (Section 4.6 필수 점검 유형 4종) */}
-              <div className="pt-2 border-t border-slate-100">
+              <div className="pt-2 border-t border-zinc-200/70 dark:border-white/[0.06]">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-bold text-slate-800 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                  <h4 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                     배포 심사 게이트 통과를 위한 필수 보안점검 유형 (4종)
                   </h4>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-zinc-400">
                     선택된 점검이 모두 완료되어야 '통과' 판정 가능
                   </span>
                 </div>
@@ -487,15 +487,15 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
                         onClick={() => isGroupAdmin && handleToggleRequiredScan(type)}
                         className={`p-2.5 rounded-lg border text-xs flex items-center justify-between transition-colors ${
                           isChecked
-                            ? 'border-indigo-300 bg-indigo-50/40 text-indigo-900 font-semibold cursor-pointer'
-                            : 'border-slate-200 bg-white text-slate-500 cursor-pointer hover:bg-slate-50'
+                            ? 'border-zinc-900 dark:border-zinc-300 bg-zinc-900/[0.04] dark:bg-white/[0.06] text-zinc-950 dark:text-zinc-100 font-semibold cursor-pointer'
+                            : 'border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] text-zinc-500 cursor-pointer hover:bg-zinc-50 dark:hover:bg-white/[0.03]'
                         } ${!isGroupAdmin ? 'cursor-not-allowed opacity-75' : ''}`}
                       >
                         <span>{type}</span>
                         {isChecked ? (
-                          <CheckCircle2 className="w-4 h-4 text-indigo-600" />
+                          <CheckCircle2 className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
                         ) : (
-                          <span className="w-4 h-4 rounded-full border border-slate-300" />
+                          <span className="w-4 h-4 rounded-full border border-zinc-300 dark:border-zinc-700" />
                         )}
                       </div>
                     );
@@ -504,11 +504,11 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
               </div>
             </CardContent>
             {isGroupAdmin && (
-              <CardFooter className="flex justify-end pt-3 border-t border-slate-100">
+              <CardFooter className="flex justify-end pt-3 border-t border-zinc-100 dark:border-white/[0.06]">
                 <Button
                   size="sm"
                   onClick={handleSavePolicy}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
+                  className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-semibold"
                 >
                   <Save className="w-3.5 h-3.5 mr-1.5" />
                   보안 정책 저장
@@ -518,12 +518,12 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
           </Card>
 
           {/* What-If 시뮬레이터 이동 배너 */}
-          <div className="p-4 rounded-xl border border-indigo-200/80 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="p-4 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2.5">
-              <Calculator className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <Calculator className="w-4 h-4 text-zinc-700 dark:text-zinc-300 shrink-0" />
               <div>
-                <span className="font-bold text-indigo-950 dark:text-indigo-200">설정된 정책으로 모의 배포 심사를 테스트해보시겠습니까?</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                <span className="font-bold text-zinc-950 dark:text-zinc-100">설정된 정책으로 모의 배포 심사를 테스트해보시겠습니까?</span>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                   What-If 시뮬레이터를 통해 가상 취약점 수치 및 커밋 일치 조건에서의 통과/차단 판정을 실시간으로 검증할 수 있습니다.
                 </p>
               </div>
@@ -531,7 +531,7 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
             <Button
               size="sm"
               onClick={() => setActiveTab('simulator')}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shrink-0 gap-1.5 shadow-2xs"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-semibold text-xs shrink-0 gap-1.5 shadow-2xs"
             >
               <span>배포 게이트 모의 판정기 열기</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -541,20 +541,20 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
 
         {/* Tab 2: 배포 게이트 모의 판정기 (What-If Simulator) */}
         <TabsContent value="simulator" className="space-y-6 mt-0 animate-in fade-in-50 duration-200">
-          <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50/30 via-white to-slate-50/50 shadow-xs">
-            <CardHeader className="pb-3 border-b border-indigo-100/70">
+          <Card className="border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] shadow-xs">
+            <CardHeader className="pb-3 border-b border-zinc-200/70 dark:border-white/[0.06]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <CardTitle className="text-base flex items-center gap-2 text-indigo-950">
-                    <Calculator className="w-4 h-4 text-indigo-600" />
+                  <CardTitle className="text-base flex items-center gap-2 text-zinc-950 dark:text-zinc-100">
+                    <Calculator className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                     배포 게이트 정책 모의 판정기 (What-If Simulator)
                   </CardTitle>
-                  <CardDescription className="text-xs text-slate-600">
+                  <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
                     현재 설정된 정책 기준에 따라 가상의 취약점 건수, 점검 완료 상태, 커밋 일치 여부를 즉시 시뮬레이션하여 판정 결과를 확인합니다.
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-indigo-600 text-white text-[11px] font-medium">
+                  <Badge className="bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 text-[11px] font-medium">
                     실시간 계산 활성화
                   </Badge>
                 </div>

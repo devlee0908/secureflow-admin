@@ -462,8 +462,8 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           const p = row.original;
           return (
             <div>
-              <div className="font-medium text-slate-800">{p.entityName}</div>
-              <div className="text-[11px] text-slate-500">{p.department}</div>
+              <div className="font-medium text-zinc-900 dark:text-zinc-100">{p.entityName}</div>
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">{p.department}</div>
             </div>
           );
         },
@@ -475,8 +475,8 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           const p = row.original;
           return (
             <div>
-              <div className="font-medium text-slate-800">{p.owner}</div>
-              <div className="text-[10px] text-slate-400">{p.ownerEmail}</div>
+              <div className="font-medium text-zinc-900 dark:text-zinc-100">{p.owner}</div>
+              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">{p.ownerEmail}</div>
             </div>
           );
         },
@@ -488,10 +488,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           const p = row.original;
           return (
             <div className="max-w-[220px]">
-              <div className="font-mono text-[11px] text-slate-700 truncate" title={p.repository}>
+              <div className="font-mono text-[11px] text-zinc-700 dark:text-zinc-300 truncate" title={p.repository}>
                 {p.repository}
               </div>
-              <div className="flex items-center gap-1 text-[10px] text-indigo-600 font-mono mt-0.5">
+              <div className="flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-400 font-mono mt-0.5">
                 <GitBranch className="w-3 h-3" />
                 {p.defaultBranch}
               </div>
@@ -510,10 +510,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           if (!latestScan || overall === '미점검') {
             return (
               <div className="flex flex-col items-start gap-1">
-                <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/40 text-[11px] font-bold animate-pulse">
-                  🚨 미점검 (전체 점검 필수)
+                <Badge variant="warning" className="text-[11px] font-medium">
+                  미점검 (베이스라인 필요)
                 </Badge>
-                <span className="text-[10px] text-slate-400 font-mono">베이스라인 미수립</span>
+                <span className="text-[10px] text-zinc-400 font-mono">베이스라인 미수립</span>
               </div>
             );
           }
@@ -522,7 +522,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
             <div className="flex flex-col items-start gap-1">
               <StatusBadge status={overall} size="sm" />
               {latestScan && (
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-zinc-400 font-mono tabular-nums">
                   {latestScan.startedAt.slice(5, 16)}
                 </span>
               )}
@@ -537,7 +537,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           const latestScan = getProjectLatestScan(row.original.id);
           if (!latestScan) {
             return (
-              <span className="text-slate-400 text-xs font-mono">
+              <span className="text-zinc-400 text-xs font-mono">
                 -
               </span>
             );
@@ -545,15 +545,15 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           const count = getProjectUnresolvedHighCriticalCount(row.original.id);
           if (count === 0) {
             return (
-              <span className="text-emerald-600 text-xs font-semibold flex items-center gap-1">
+              <span className="text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center gap-1 font-mono">
                 <FileCheck2 className="w-3.5 h-3.5" /> 0건
               </span>
             );
           }
           return (
-            <span className="text-rose-600 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+            <Badge variant="danger" className="font-mono">
               {count}건 미해결
-            </span>
+            </Badge>
           );
         },
       },
@@ -954,11 +954,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
       )}
 
       {/* Filter and Search Bar */}
-      <div className="rounded-xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#0c1017]/90 backdrop-blur-md p-4 shadow-sm dark:shadow-xl space-y-3">
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] p-4 space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Search Box */}
           <div className="relative lg:col-span-2">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-zinc-400" />
             <Input
               placeholder="프로젝트명, 담당자, 저장소 URL 검색..."
               value={searchQuery}
@@ -1007,7 +1007,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               variant="outline"
               size="sm"
               onClick={handleResetFilters}
-              className="h-9 text-xs w-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] border-slate-200 dark:border-white/[0.1]"
+              className="h-9 text-xs w-full text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] border-zinc-200 dark:border-white/[0.1]"
             >
               <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
               필터 초기화
@@ -1015,9 +1015,9 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
           </div>
         </div>
 
-        {/* Date Filter Range (Section 6) */}
-        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-200/80 dark:border-white/[0.06] text-xs">
-          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+        {/* Date Filter Range */}
+        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-zinc-100 dark:border-white/[0.06] text-xs">
+          <div className="flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400">
             <Calendar className="w-3.5 h-3.5" />
             <span className="font-medium">등록일 기간:</span>
           </div>
@@ -1025,14 +1025,14 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-36 h-8 text-xs"
+            className="w-36 h-8 text-xs font-mono"
           />
-          <span className="text-slate-400">~</span>
+          <span className="text-zinc-400">~</span>
           <Input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="w-36 h-8 text-xs"
+            className="w-36 h-8 text-xs font-mono"
           />
 
           {dateError && (
@@ -1045,7 +1045,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
       </div>
 
       {/* TanStack Table Card */}
-      <div className="rounded-xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#0c1017]/90 backdrop-blur-md shadow-sm dark:shadow-xl overflow-hidden">
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -326,8 +326,8 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
           const r = row.original;
           return (
             <div>
-              <div className="font-semibold text-slate-900">{r.projectName}</div>
-              <div className="text-[11px] text-slate-500">{r.entityName}</div>
+              <div className="font-medium text-zinc-900 dark:text-zinc-100">{r.projectName}</div>
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">{r.entityName}</div>
             </div>
           );
         },
@@ -339,13 +339,12 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
           const env = row.original.targetEnvironment;
           return (
             <Badge
-              variant="outline"
-              className={
+              variant={
                 env === '운영'
-                  ? 'border-rose-300 text-rose-800 bg-rose-50 font-bold'
+                  ? 'danger'
                   : env === '검증'
-                  ? 'border-indigo-300 text-indigo-700 bg-indigo-50'
-                  : 'border-slate-300 text-slate-700 bg-slate-50'
+                  ? 'info'
+                  : 'neutral'
               }
             >
               {env}
@@ -357,7 +356,7 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
         accessorKey: 'requestCommitId',
         header: '배포 요청 커밋',
         cell: ({ row }) => (
-          <span className="font-mono text-xs font-semibold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">
+          <span className="font-mono text-xs font-semibold bg-zinc-100 dark:bg-white/[0.06] text-zinc-900 dark:text-zinc-200 border border-zinc-200/80 dark:border-white/[0.08] px-2 py-0.5 rounded">
             {row.original.requestCommitId}
           </span>
         ),
@@ -370,14 +369,14 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
           const isMatch = r.requestCommitId === r.scanCommitId;
           return (
             <div className="flex items-center gap-1.5">
-              <span className="font-mono text-xs text-slate-700">{r.scanCommitId}</span>
+              <span className="font-mono text-xs text-zinc-700 dark:text-zinc-300">{r.scanCommitId}</span>
               {isMatch ? (
                 <span title="커밋 일치">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 </span>
               ) : (
                 <span title="커밋 불일치">
-                  <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                 </span>
               )}
             </div>
@@ -398,7 +397,7 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
         accessorKey: 'requester',
         header: ({ column }) => <DataTableColumnHeader column={column} title="요청자" />,
         cell: ({ row }) => (
-          <span className="text-xs text-slate-800 font-medium">{row.original.requester}</span>
+          <span className="text-xs text-zinc-800 dark:text-zinc-200 font-medium">{row.original.requester}</span>
         ),
       },
       {
@@ -537,10 +536,10 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={clearDummyData}
-                className="text-xs border-amber-300 dark:border-amber-700/60 text-amber-700 dark:text-amber-300 bg-amber-50/70 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
                 title="기존 더미 파일들을 삭제하고 실제 연동된 프로젝트만 유지합니다"
               >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                <Trash2 className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
                 더미 파일 제거
               </Button>
             ) : (
@@ -548,20 +547,20 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={generateDummyData}
-                className="text-xs border-indigo-300 dark:border-indigo-700/60 text-indigo-700 dark:text-indigo-300 bg-indigo-50/70 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/40"
+                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
                 title="테스트 및 시뮬레이션을 위한 샘플 더미 프로젝트를 즉시 생성합니다"
               >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
                 더미 파일 생성
               </Button>
             )}
             <Button
               size="sm"
               onClick={() => simulateAgentGatePr('clean')}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold gap-1.5 shadow-xs"
+              className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-medium gap-1.5 shadow-none"
               title="결함 0건 클린 통과 PR #2 배포 심사 추가"
             >
-              <CheckCircle2 className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600" />
               <span>클린 통과 PR #2 추가</span>
             </Button>
             <Button
@@ -575,19 +574,19 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                   toast.info('다운로드할 배포 심사 대상이 없습니다.');
                 }
               }}
-              className="bg-white text-slate-700 hover:text-indigo-600 border-slate-300 text-xs font-semibold gap-1.5 shadow-2xs"
+              className="h-8 border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06] text-xs font-medium gap-1.5 shadow-none"
               title="ISMS-P 2.10 및 전자금융감독규정 제21조 준수 공식 보안 감사 증적 보고서(HTML)를 다운로드합니다"
             >
-              <FileCheck2 className="w-3.5 h-3.5 text-indigo-600" />
+              <FileCheck2 className="w-3.5 h-3.5 text-zinc-500" />
               ISMS-P 보안 감사 보고서
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={handleExportCsv}
-              className="bg-white text-slate-700 hover:text-indigo-600 border-slate-300 text-xs font-semibold gap-1.5 shadow-2xs"
+              className="h-8 border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06] text-xs font-medium gap-1.5 shadow-none"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 text-zinc-500" />
               심사 이력 CSV
             </Button>
           </div>
@@ -595,7 +594,7 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
       />
 
       {/* Filter and Search Bar */}
-      <div className="rounded-xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#0c1017]/90 backdrop-blur-md p-4 shadow-sm dark:shadow-xl space-y-3">
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] p-4 space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           <div className="relative lg:col-span-2">
             <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
