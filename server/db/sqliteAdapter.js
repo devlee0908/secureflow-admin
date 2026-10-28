@@ -220,6 +220,12 @@ export class SqliteDatabaseAdapter {
         updated_at TEXT NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS system_configs (
+        key TEXT PRIMARY KEY,
+        value_json TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
       CREATE INDEX IF NOT EXISTS idx_pipeline_runs_project ON pipeline_runs(project_id, started_at DESC);
       CREATE INDEX IF NOT EXISTS idx_findings_project_status ON findings(project_id, status);
       CREATE INDEX IF NOT EXISTS idx_reviews_project ON deployment_reviews(project_id, requested_at DESC);
@@ -1467,6 +1473,72 @@ export class SqliteDatabaseAdapter {
     return this.saveReview(merged);
   }
 
+  getPolicy() {
+    try {
+      const row = this.db.prepare("SELECT value_json FROM system_configs WHERE key = 'security_policy'").get();
+      if (row?.value_json) return JSON.parse(row.value_json);
+    } catch {}
+    return {
+      blockOnCritical: true,
+      highThresholdForBlock: 1,
+      mediumThresholdForReview: 3,
+      criticalSlaDays: 3,
+      highSlaDays: 7,
+      mediumSlaDays: 30,
+      lowSlaDays: 90,
+      requiredScanTypes: [
+        '소스코드 정적 분석',
+        '의존성 취약점 분석',
+        '비밀정보 탐지',
+        '설정 오류 분석',
+      ],
+    };
+  }
+
+  savePolicy(policy) {
+    const current = this.getPolicy();
+    const merged = { ...current, ...policy };
+    const now = new Date().toISOString();
+    this.db.prepare(`
+      INSERT INTO system_configs (key, value_json, updated_at)
+      VALUES ('security_policy', ?, ?)
+      ON CONFLICT(key) DO UPDATE SET
+        value_json = excluded.value_json,
+        updated_at = excluded.updated_at
+    `).run(JSON.stringify(merged), now);
+    return merged;
+  }
+
+  getGitConfig() {
+    try {
+      const row = this.db.prepare("SELECT value_json FROM system_configs WHERE key = 'git_config'").get();
+      if (row?.value_json) return JSON.parse(row.value_json);
+    } catch {}
+    return {
+      serverType: 'GitLab Enterprise',
+      serverUrl: 'https://git.internal-corp.net',
+      webhookUrl: 'https://secureflow.internal-corp.net/api/v1/webhooks/git',
+      connectionStatus: '연결됨',
+      lastEventAt: '2026-09-30 16:45:00',
+      lastEventType: 'push (refs/heads/main)',
+      apiVersion: 'GitLab v16.8-ee REST API v4',
+    };
+  }
+
+  saveGitConfig(config) {
+    const current = this.getGitConfig();
+    const merged = { ...current, ...config };
+    const now = new Date().toISOString();
+    this.db.prepare(`
+      INSERT INTO system_configs (key, value_json, updated_at)
+      VALUES ('git_config', ?, ?)
+      ON CONFLICT(key) DO UPDATE SET
+        value_json = excluded.value_json,
+        updated_at = excluded.updated_at
+    `).run(JSON.stringify(merged), now);
+    return merged;
+  }
+
   getSyncState() {
     return {
       version: Date.now(),
@@ -1475,6 +1547,8 @@ export class SqliteDatabaseAdapter {
       runs: this.getRuns(),
       findings: this.getFindings(),
       reviews: this.getReviews(),
+      policy: this.getPolicy(),
+      gitConfig: this.getGitConfig(),
     };
   }
 

@@ -30,6 +30,7 @@ export class PostgresDatabaseAdapter {
       findings: new Map(),
       reviews: new Map(),
       dlq: new Map(),
+      configs: new Map(),
     };
 
     this.init();
@@ -541,6 +542,54 @@ export class PostgresDatabaseAdapter {
     return merged;
   }
 
+  getPolicy() {
+    return (
+      this.mockStore.configs.get('security_policy') || {
+        blockOnCritical: true,
+        highThresholdForBlock: 1,
+        mediumThresholdForReview: 3,
+        criticalSlaDays: 3,
+        highSlaDays: 7,
+        mediumSlaDays: 30,
+        lowSlaDays: 90,
+        requiredScanTypes: [
+          '소스코드 정적 분석',
+          '의존성 취약점 분석',
+          '비밀정보 탐지',
+          '설정 오류 분석',
+        ],
+      }
+    );
+  }
+
+  savePolicy(policy) {
+    const current = this.getPolicy();
+    const merged = { ...current, ...policy };
+    this.mockStore.configs.set('security_policy', merged);
+    return merged;
+  }
+
+  getGitConfig() {
+    return (
+      this.mockStore.configs.get('git_config') || {
+        serverType: 'GitLab Enterprise',
+        serverUrl: 'https://git.internal-corp.net',
+        webhookUrl: 'https://secureflow.internal-corp.net/api/v1/webhooks/git',
+        connectionStatus: '연결됨',
+        lastEventAt: '2026-09-30 16:45:00',
+        lastEventType: 'push (refs/heads/main)',
+        apiVersion: 'GitLab v16.8-ee REST API v4',
+      }
+    );
+  }
+
+  saveGitConfig(config) {
+    const current = this.getGitConfig();
+    const merged = { ...current, ...config };
+    this.mockStore.configs.set('git_config', merged);
+    return merged;
+  }
+
   getSyncState() {
     return {
       version: Date.now(),
@@ -549,6 +598,8 @@ export class PostgresDatabaseAdapter {
       runs: this.getRuns(),
       findings: this.getFindings(),
       reviews: this.getReviews(),
+      policy: this.getPolicy(),
+      gitConfig: this.getGitConfig(),
     };
   }
 

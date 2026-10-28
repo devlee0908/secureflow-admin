@@ -56,6 +56,9 @@ const AppContent: React.FC = () => {
     onReviewUpdated: () => {
       invalidateCache('reviews');
     },
+    onScannerJobCompleted: () => {
+      invalidateCache('runs');
+    },
     onDatabaseEngineChanged: () => {
       invalidateCache('all');
     },

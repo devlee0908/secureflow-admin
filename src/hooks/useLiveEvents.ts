@@ -95,6 +95,15 @@ export function useLiveEvents(options?: {
       } catch (err) {}
     });
 
+    sse.addEventListener('findings_batch_updated', (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (optionsRef.current?.onFindingUpdated) {
+          optionsRef.current.onFindingUpdated(data);
+        }
+      } catch (err) {}
+    });
+
     sse.addEventListener('review_updated', (e: MessageEvent) => {
       try {
         const data = JSON.parse(e.data);

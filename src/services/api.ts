@@ -367,6 +367,8 @@ export const api = {
     runs: any[];
     findings: any[];
     reviews: any[];
+    policy?: any;
+    gitConfig?: any;
   } | null> {
     try {
       const res = await fetch('/api/sync/state');
@@ -631,6 +633,34 @@ export const api = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projectId }),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async savePolicy(policy: any, actor?: { id: string; name: string; role: string }): Promise<any> {
+    try {
+      const res = await fetch('/api/policy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ policy, actor }),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async saveGitConfig(gitConfig: any, actor?: { id: string; name: string; role: string }): Promise<any> {
+    try {
+      const res = await fetch('/api/git-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gitConfig, actor }),
       });
       if (!res.ok) return null;
       return await res.json();

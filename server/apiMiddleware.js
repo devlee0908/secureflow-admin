@@ -265,6 +265,51 @@ export function apiMiddleware(req, res, next) {
         return sendJson(res, 200, state);
       }
 
+      // 4-1b. Global Security Policy & Git Integration Config Persistence
+      if (pathname === '/api/policy' && req.method === 'GET') {
+        return sendJson(res, 200, { policy: dbService.getPolicy() });
+      }
+
+      if (pathname === '/api/policy' && (req.method === 'POST' || req.method === 'PUT')) {
+        const { policy, actor } = parsedBody;
+        const saved = dbService.savePolicy(policy || parsedBody);
+        const auditLog = dbService.saveAuditLog({
+          actorId: actor?.id || 'ciso-admin',
+          actorName: actor?.name || '강태우 (CISO)',
+          actorRole: actor?.role || '그룹 보안총괄',
+          actionType: 'SECURITY_POLICY_UPDATED',
+          category: 'GOVERNANCE',
+          targetResource: '전사 배포 게이트 보안 정책',
+          details: saved,
+          resultStatus: '성공',
+        });
+        sseService.broadcast('policy_updated', { policy: saved });
+        sseService.broadcast('audit_logged', { log: auditLog });
+        return sendJson(res, 200, { success: true, policy: saved });
+      }
+
+      if (pathname === '/api/git-config' && req.method === 'GET') {
+        return sendJson(res, 200, { gitConfig: dbService.getGitConfig() });
+      }
+
+      if (pathname === '/api/git-config' && (req.method === 'POST' || req.method === 'PUT')) {
+        const { gitConfig, actor } = parsedBody;
+        const saved = dbService.saveGitConfig(gitConfig || parsedBody);
+        const auditLog = dbService.saveAuditLog({
+          actorId: actor?.id || 'ciso-admin',
+          actorName: actor?.name || '강태우 (CISO)',
+          actorRole: actor?.role || '그룹 보안총괄',
+          actionType: 'GIT_ADAPTER_CONFIG_UPDATED',
+          category: 'INTEGRATION',
+          targetResource: `${saved.serverType} (${saved.serverUrl})`,
+          details: saved,
+          resultStatus: '성공',
+        });
+        sseService.broadcast('git_config_updated', { gitConfig: saved });
+        sseService.broadcast('audit_logged', { log: auditLog });
+        return sendJson(res, 200, { success: true, gitConfig: saved });
+      }
+
       // 4-2. Findings API
       if (pathname === '/api/findings' && req.method === 'GET') {
         const projectId = url.searchParams.get('projectId');

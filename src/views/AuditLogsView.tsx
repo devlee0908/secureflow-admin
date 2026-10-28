@@ -210,7 +210,7 @@ export const AuditLogsView: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/[0.04] p-1 rounded-xl text-[11px]">
-            {['ALL', 'GOVERNANCE', 'SECURITY_GATE', 'AUDIT', 'INTEGRATION'].map((cat) => (
+            {['ALL', 'GOVERNANCE', 'SECURITY_GATE', 'ORCHESTRATION', 'AUDIT', 'INTEGRATION'].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
@@ -226,6 +226,8 @@ export const AuditLogsView: React.FC = () => {
                   ? '거버넌스'
                   : cat === 'SECURITY_GATE'
                   ? '배포게이트'
+                  : cat === 'ORCHESTRATION'
+                  ? '자동패치'
                   : cat === 'AUDIT'
                   ? '예외승인'
                   : '외부연동'}

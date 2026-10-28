@@ -319,6 +319,19 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               return Array.from(map.values());
             });
           }
+          if (Array.isArray(syncState.runs) && syncState.runs.length > 0) {
+            const normalizedRuns = syncState.runs.map((r: any) => normalizeBackendRunToScanRun(r));
+            setScans((prev) => {
+              const nonAgentGate = prev.filter((s) => s.projectId !== 'PRJ-AGENTGATE');
+              const validBackend = isBaselineScanned
+                ? normalizedRuns
+                : normalizedRuns.filter((s: any) => s.projectId !== 'PRJ-AGENTGATE');
+              const combined = [...validBackend, ...nonAgentGate];
+              const map = new Map<string, ScanRun>();
+              for (const s of combined) map.set(s.id, s);
+              return Array.from(map.values());
+            });
+          }
           if (Array.isArray(syncState.reviews)) {
             setReviews((prev) => {
               const nonAgentGate = prev.filter((r) => r.projectId !== 'PRJ-AGENTGATE');
@@ -331,6 +344,26 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               return Array.from(map.values());
             });
           }
+          if (syncState.policy) {
+            setPolicy((prev) => ({ ...prev, ...syncState.policy }));
+          }
+          if (syncState.gitConfig) {
+            setGitConfig((prev) => ({ ...prev, ...syncState.gitConfig }));
+          }
+        }
+      } else if (scope === 'projects') {
+        const backendProjects = await api.getProjects();
+        if (backendProjects && backendProjects.length > 0) {
+          setProjects((prev) => {
+            const dummyOnly = prev.filter((p) => p.id !== 'PRJ-AGENTGATE' && p.id.startsWith('PRJ-0'));
+            const combined = [...REAL_PROJECTS, ...backendProjects, ...dummyOnly];
+            const map = new Map<string, Project>();
+            for (const p of combined) {
+              const existing = map.get(p.id);
+              map.set(p.id, existing ? { ...existing, ...p } : p);
+            }
+            return Array.from(map.values());
+          });
         }
       } else if (scope === 'findings') {
         const backendFindings = await api.getFindings();
@@ -1135,6 +1168,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       localStorage.setItem('secureflow_policy', JSON.stringify(newPolicy));
     } catch {}
+    api
+      .savePolicy(newPolicy, { id: currentUser.id, name: currentUser.name, role: currentUser.roleTitle })
+      .catch(() => {});
     toast.success('보안 정책이 성공적으로 저장되었습니다.');
     return true;
   };
@@ -1149,6 +1185,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       localStorage.setItem('secureflow_git_config', JSON.stringify(newConfig));
     } catch {}
+    api
+      .saveGitConfig(newConfig, { id: currentUser.id, name: currentUser.name, role: currentUser.roleTitle })
+      .catch(() => {});
     toast.success('사내 Git 서버 연동 정보가 갱신되었습니다.');
     return true;
   };
