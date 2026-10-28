@@ -544,6 +544,74 @@ export const api = {
       return null;
     }
   },
+
+  async saveProject(project: any): Promise<any> {
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(project),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async updateProject(id: string, updates: any): Promise<any> {
+    try {
+      const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async deleteProject(id: string): Promise<any> {
+    try {
+      const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async commitAgentGateBaseline(projectId = 'PRJ-AGENTGATE'): Promise<any> {
+    try {
+      const res = await fetch('/api/agentgate/baseline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId }),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async resetAgentGateBaseline(projectId = 'PRJ-AGENTGATE'): Promise<any> {
+    try {
+      const res = await fetch('/api/agentgate/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId }),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
 };
 
 export interface SbomBundle {

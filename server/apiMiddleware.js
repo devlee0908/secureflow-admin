@@ -138,10 +138,38 @@ export function apiMiddleware(req, res, next) {
         });
       }
 
-      // 2. Projects
+      // 2. Projects CRUD & AgentGate Lifecycle
       if (pathname === '/api/projects' && req.method === 'GET') {
         const projects = dbService.getProjects();
         return sendJson(res, 200, { projects });
+      }
+
+      if (pathname === '/api/projects' && req.method === 'POST') {
+        const saved = dbService.saveProject(parsedBody);
+        return sendJson(res, 201, { success: true, project: saved });
+      }
+
+      if (pathname.startsWith('/api/projects/') && (req.method === 'PUT' || req.method === 'PATCH')) {
+        const id = decodeURIComponent(pathname.replace('/api/projects/', ''));
+        const existing = dbService.getProjectById(id) || { id };
+        const saved = dbService.saveProject({ ...existing, ...parsedBody, id });
+        return sendJson(res, 200, { success: true, project: saved });
+      }
+
+      if (pathname.startsWith('/api/projects/') && req.method === 'DELETE') {
+        const id = decodeURIComponent(pathname.replace('/api/projects/', ''));
+        const result = dbService.deleteProject(id);
+        return sendJson(res, 200, { success: true, ...result });
+      }
+
+      if (pathname === '/api/agentgate/baseline' && req.method === 'POST') {
+        const result = dbService.commitAgentGateBaseline(parsedBody.projectId || 'PRJ-AGENTGATE');
+        return sendJson(res, 200, { success: true, ...result });
+      }
+
+      if (pathname === '/api/agentgate/reset' && req.method === 'POST') {
+        const result = dbService.resetAgentGateBaseline(parsedBody.projectId || 'PRJ-AGENTGATE');
+        return sendJson(res, 200, { success: true, ...result });
       }
 
       // 3. Pipeline Runs list
@@ -543,17 +571,19 @@ export function apiMiddleware(req, res, next) {
 
       // 8. Emergency Security Override
       if (pathname === '/api/overrides' && req.method === 'POST') {
-        const { runId, approver, reason, detail, slaHours } = parsedBody;
+        const { runId, projectId, approver, reason, detail, slaHours } = parsedBody;
+        const run = dbService.getRunById(runId);
+        const targetProjectId = projectId || run?.projectId || 'PRJ-AGENTGATE';
+
         dbService.saveOverride({
           runId,
-          projectId: 'PRJ-101',
+          projectId: targetProjectId,
           approver,
           reason,
           detail,
           slaHours,
         });
 
-        const run = dbService.getRunById(runId);
         if (run) {
           run.isOverridden = true;
           run.gateStatus = 'passed';
@@ -567,6 +597,23 @@ export function apiMiddleware(req, res, next) {
           dbService.saveRun(run);
         }
 
+        // Synchronize deployment_reviews table so DeploymentReviewsView reflects the CISO override immediately
+        const projectReviews = dbService.getReviews(targetProjectId);
+        const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        for (const rev of projectReviews) {
+          const updatedRev = dbService.updateReview(rev.id, {
+            securityVerdict: '통과',
+            verdictReason: `CISO 긴급 보안 예외 승인 적용 (사유: ${reason || '비상 핫픽스'}, SLA: ${slaHours || 24}h)`,
+            approvalStatus: '승인',
+            reviewer: `${approver} (CISO 긴급 예외 승인)`,
+            reviewComment: detail || reason || 'CISO 권한에 의한 긴급 배포 예외 승인 완료',
+            reviewedAt: nowStr,
+          });
+          if (updatedRev) {
+            sseService.broadcast('review_updated', { review: updatedRev, actor: { name: approver } });
+          }
+        }
+
         // Also record in immutable audit log
         const auditLog = dbService.saveAuditLog({
           actorId: 'ciso-admin',
@@ -574,12 +621,12 @@ export function apiMiddleware(req, res, next) {
           actorRole: '그룹 보안총괄(CISO)',
           actionType: 'EMERGENCY_OVERRIDE',
           category: 'AUDIT',
-          targetResource: runId,
-          details: { reason, detail, slaHours, approvedAt: new Date().toISOString() },
+          targetResource: `${targetProjectId} (${runId})`,
+          details: { projectId: targetProjectId, runId, reason, detail, slaHours, approvedAt: new Date().toISOString() },
           resultStatus: '승인',
         });
 
-        sseService.broadcast('override_approved', { runId, approver, auditLog });
+        sseService.broadcast('override_approved', { runId, projectId: targetProjectId, approver, auditLog });
 
         notificationService.dispatch(dbService, 'OVERRIDE_APPROVED', {
           repository: run ? run.repository : 'devlee0908/agentgate',
@@ -974,6 +1021,9 @@ export function apiMiddleware(req, res, next) {
         run.deployStatus = 'deployed';
         run.policyNotes = '보안 패치 브랜치(fix/) 자동 생성 및 4대 보안 점검 무결 통과 (0 Defects)';
         dbService.saveRun(run);
+
+        // Also persist resolved findings and approved deployment review in SQLite so F5 refresh stays resolved
+        const remediationState = dbService.remediateAgentGate(prTitle, projectId);
 
         const audit = dbService.saveAuditLog({
           actorId: author,

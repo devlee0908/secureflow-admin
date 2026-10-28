@@ -98,9 +98,12 @@ export const sbomGenerator = {
       gateStatus: 'passed',
     };
 
+    const isResolvedStatus = (s) => s === '해결' || s === '해결됨';
+    const isIgnoredStatus = (s) => s === '오탐' || s === '오탐 처리' || s === '예외 승인';
+
     const findings = dbService.getFindings(projectId);
     const openFindings = findings.filter(
-      (f) => f.status !== '해결됨' && f.status !== '오탐 처리' && f.status !== '예외 승인'
+      (f) => !isResolvedStatus(f.status) && !isIgnoredStatus(f.status)
     );
 
     const kmsInfo = vaultService.getKmsInfo();
@@ -144,8 +147,8 @@ export const sbomGenerator = {
     });
 
     const vulnerabilities = findings.map((f) => {
-      const isResolved = f.status === '해결됨';
-      const isException = f.status === '예외 승인' || f.status === '오탐 처리';
+      const isResolved = isResolvedStatus(f.status);
+      const isException = isIgnoredStatus(f.status);
       const severityMap = {
         치명적: 'critical',
         높음: 'high',

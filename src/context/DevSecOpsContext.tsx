@@ -185,8 +185,20 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
     return agentgateReviews;
   });
-  const [policy, setPolicy] = useState<SecurityPolicy>(INITIAL_SECURITY_POLICY);
-  const [gitConfig, setGitConfig] = useState<GitIntegrationConfig>(INITIAL_GIT_CONFIG);
+  const [policy, setPolicy] = useState<SecurityPolicy>(() => {
+    try {
+      const saved = localStorage.getItem('secureflow_policy');
+      if (saved) return { ...INITIAL_SECURITY_POLICY, ...JSON.parse(saved) };
+    } catch {}
+    return INITIAL_SECURITY_POLICY;
+  });
+  const [gitConfig, setGitConfig] = useState<GitIntegrationConfig>(() => {
+    try {
+      const saved = localStorage.getItem('secureflow_git_config');
+      if (saved) return { ...INITIAL_GIT_CONFIG, ...JSON.parse(saved) };
+    } catch {}
+    return INITIAL_GIT_CONFIG;
+  });
   const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
 
   const [selectedEntityId, setSelectedEntityId] = useState<EntityId | 'ALL'>('ALL');
@@ -207,10 +219,78 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncVersion, setSyncVersion] = useState<number>(1);
 
+  const normalizeBackendRunToScanRun = (r: any): ScanRun => {
+    const rawTools = r.toolStatuses || {};
+    const toolArray = Array.isArray(rawTools)
+      ? rawTools
+      : [
+          {
+            name: 'SonarQube SAST',
+            category: '소스코드 정적 분석' as ScanType,
+            status: rawTools.sast?.status || '성공',
+            findingsCount: rawTools.sast?.count || 0,
+            durationSeconds: rawTools.sast?.duration || 35,
+          },
+          {
+            name: 'Trivy SCA',
+            category: '의존성 취약점 분석' as ScanType,
+            status: rawTools.sca?.status || '성공',
+            findingsCount: rawTools.sca?.count || 0,
+            durationSeconds: rawTools.sca?.duration || 22,
+          },
+          {
+            name: 'Gitleaks',
+            category: '비밀정보 탐지' as ScanType,
+            status: rawTools.secret?.status || '성공',
+            findingsCount: rawTools.secret?.count || 0,
+            durationSeconds: rawTools.secret?.duration || 12,
+          },
+          {
+            name: 'Checkov IaC',
+            category: '설정 오류 분석' as ScanType,
+            status: rawTools.iac?.status || '성공',
+            findingsCount: rawTools.iac?.count || 0,
+            durationSeconds: rawTools.iac?.duration || 18,
+          },
+        ];
+
+    const pid = r.projectId || r.project_id || 'PRJ-AGENTGATE';
+    return {
+      ...r,
+      id: r.id,
+      projectId: pid,
+      projectName:
+        r.projectName ||
+        (pid === 'PRJ-AGENTGATE' ? 'AgentGate 보안 게이트웨이 (연동 저장소)' : pid),
+      entityId: r.entityId || 'ENT-01',
+      entityName: r.entityName || '테크솔루션즈',
+      branch: r.branch || 'main',
+      commitId: r.commitId || r.commit_id || 'HEAD',
+      trigger: r.trigger || 'PR/MR',
+      scanTypes: Array.isArray(r.scanTypes)
+        ? r.scanTypes
+        : ['소스코드 정적 분석', '의존성 취약점 분석', '비밀정보 탐지', '설정 오류 분석'],
+      status:
+        r.status === '완료' || r.scanStatus === 'completed'
+          ? '완료'
+          : r.status === '실패' || r.scanStatus === 'failed'
+          ? '실패'
+          : '완료',
+      startedAt: r.startedAt || r.started_at || new Date().toISOString().replace('T', ' ').substring(0, 19),
+      durationSeconds: r.durationSeconds ?? r.scanDuration ?? 87,
+      findingsCount:
+        r.findingsCount ?? (r.critCount || 0) + (r.highCount || 0) + (r.medCount || 0),
+      toolStatuses: toolArray,
+      executionLogs: Array.isArray(r.executionLogs) ? r.executionLogs : [],
+    };
+  };
+
   // Fine-Grained Cache Invalidation
   const invalidateCache = async (scope: 'findings' | 'runs' | 'projects' | 'reviews' | 'all' = 'all') => {
     setIsSyncing(true);
     setSyncError(null);
+    const isBaselineScanned = localStorage.getItem('secureflow_agentgate_scanned') === 'true';
+
     try {
       if (scope === 'all') {
         const syncState = await api.getSyncState();
@@ -218,25 +298,34 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           if (Array.isArray(syncState.projects) && syncState.projects.length > 0) {
             setProjects((prev) => {
               const dummyOnly = prev.filter((p) => p.id !== 'PRJ-AGENTGATE' && p.id.startsWith('PRJ-0'));
-              const combined = [...syncState.projects, ...dummyOnly];
-              const map = new Map();
-              for (const p of combined) map.set(p.id, p);
+              const combined = [...REAL_PROJECTS, ...syncState.projects, ...dummyOnly];
+              const map = new Map<string, Project>();
+              for (const p of combined) {
+                const existing = map.get(p.id);
+                map.set(p.id, existing ? { ...existing, ...p } : p);
+              }
               return Array.from(map.values());
             });
           }
-          if (Array.isArray(syncState.findings) && syncState.findings.length > 0) {
+          if (Array.isArray(syncState.findings)) {
             setFindings((prev) => {
               const nonAgentGate = prev.filter((f) => f.projectId !== 'PRJ-AGENTGATE');
-              const combined = [...syncState.findings, ...nonAgentGate];
+              const validBackend = isBaselineScanned
+                ? syncState.findings
+                : syncState.findings.filter((f: any) => f.projectId !== 'PRJ-AGENTGATE');
+              const combined = [...validBackend, ...nonAgentGate];
               const map = new Map();
               for (const f of combined) map.set(f.id, f);
               return Array.from(map.values());
             });
           }
-          if (Array.isArray(syncState.reviews) && syncState.reviews.length > 0) {
+          if (Array.isArray(syncState.reviews)) {
             setReviews((prev) => {
               const nonAgentGate = prev.filter((r) => r.projectId !== 'PRJ-AGENTGATE');
-              const combined = [...syncState.reviews, ...nonAgentGate];
+              const validBackend = isBaselineScanned
+                ? syncState.reviews
+                : syncState.reviews.filter((r: any) => r.projectId !== 'PRJ-AGENTGATE');
+              const combined = [...validBackend, ...nonAgentGate];
               const map = new Map();
               for (const r of combined) map.set(r.id, r);
               return Array.from(map.values());
@@ -245,10 +334,13 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
       } else if (scope === 'findings') {
         const backendFindings = await api.getFindings();
-        if (backendFindings && backendFindings.length > 0) {
+        if (backendFindings) {
           setFindings((prev) => {
             const nonAgentGate = prev.filter((f) => f.projectId !== 'PRJ-AGENTGATE');
-            const combined = [...backendFindings, ...nonAgentGate];
+            const validBackend = isBaselineScanned
+              ? backendFindings
+              : backendFindings.filter((f: any) => f.projectId !== 'PRJ-AGENTGATE');
+            const combined = [...validBackend, ...nonAgentGate];
             const map = new Map();
             for (const f of combined) map.set(f.id, f);
             return Array.from(map.values());
@@ -256,10 +348,13 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
       } else if (scope === 'reviews') {
         const backendReviews = await api.getReviews();
-        if (backendReviews && backendReviews.length > 0) {
+        if (backendReviews) {
           setReviews((prev) => {
             const nonAgentGate = prev.filter((r) => r.projectId !== 'PRJ-AGENTGATE');
-            const combined = [...backendReviews, ...nonAgentGate];
+            const validBackend = isBaselineScanned
+              ? backendReviews
+              : backendReviews.filter((r: any) => r.projectId !== 'PRJ-AGENTGATE');
+            const combined = [...validBackend, ...nonAgentGate];
             const map = new Map();
             for (const r of combined) map.set(r.id, r);
             return Array.from(map.values());
@@ -268,8 +363,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       } else if (scope === 'runs') {
         const backendRuns = await api.getRuns();
         if (backendRuns && backendRuns.length > 0) {
+          const normalized = backendRuns.map((r: any) => normalizeBackendRunToScanRun(r));
           setScans((prev) => {
-            const combined = [...backendRuns, ...prev];
+            const combined = [...normalized, ...prev];
             const map = new Map();
             for (const s of combined) map.set(s.id, s);
             return Array.from(map.values());
@@ -429,32 +525,67 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [currentUser]);
 
-  // 1. Calculations
+  // 1. O(1) Indexed Lookups via useMemo (Eliminates O(N*M) repeated filtering & sorting on table renders)
+  const latestScanByProjectMap = useMemo(() => {
+    const map = new Map<string, ScanRun>();
+    for (const s of scans) {
+      const existing = map.get(s.projectId);
+      if (!existing || new Date(s.startedAt).getTime() > new Date(existing.startedAt).getTime()) {
+        map.set(s.projectId, s);
+      }
+    }
+    return map;
+  }, [scans]);
+
+  const findingsByProjectMap = useMemo(() => {
+    const map = new Map<string, Finding[]>();
+    for (const f of findings) {
+      const list = map.get(f.projectId);
+      if (list) {
+        list.push(f);
+      } else {
+        map.set(f.projectId, [f]);
+      }
+    }
+    return map;
+  }, [findings]);
+
+  const reviewByProjectMap = useMemo(() => {
+    const map = new Map<string, DeploymentReview>();
+    for (const r of reviews) {
+      if (!map.has(r.projectId)) {
+        map.set(r.projectId, r);
+      }
+    }
+    return map;
+  }, [reviews]);
+
   const getProjectLatestScan = (projectId: string): ScanRun | undefined => {
-    const projectScans = scans.filter((s) => s.projectId === projectId);
-    if (projectScans.length === 0) return undefined;
-    return [...projectScans].sort(
-      (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
-    )[0];
+    return latestScanByProjectMap.get(projectId);
   };
 
   const getProjectFindings = (projectId: string): Finding[] => {
-    return findings.filter((f) => f.projectId === projectId);
+    return findingsByProjectMap.get(projectId) || [];
   };
 
   const getProjectUnresolvedHighCriticalCount = (projectId: string): number => {
-    return findings.filter(
-      (f) =>
-        f.projectId === projectId &&
+    const projectFindings = findingsByProjectMap.get(projectId) || [];
+    let count = 0;
+    for (const f of projectFindings) {
+      if (
         (f.severity === '치명적' || f.severity === '높음') &&
         f.status !== '해결' &&
         f.status !== '오탐' &&
         f.status !== '예외 승인'
-    ).length;
+      ) {
+        count++;
+      }
+    }
+    return count;
   };
 
   const getProjectOverallStatus = (projectId: string): ScanOverallStatus => {
-    const latestScan = getProjectLatestScan(projectId);
+    const latestScan = latestScanByProjectMap.get(projectId);
     if (!latestScan) return '미점검';
     if (latestScan.status === '실행 중' || latestScan.status === '대기') return '점검 중';
     if (latestScan.status === '실패') return '실패';
@@ -462,9 +593,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const unresolvedHighCrit = getProjectUnresolvedHighCriticalCount(projectId);
     if (unresolvedHighCrit > 0) return '위험';
 
-    const unresolvedMedium = findings.filter(
+    const projectFindings = findingsByProjectMap.get(projectId) || [];
+    const unresolvedMedium = projectFindings.filter(
       (f) =>
-        f.projectId === projectId &&
         f.severity === '중간' &&
         f.status !== '해결' &&
         f.status !== '오탐' &&
@@ -476,7 +607,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getProjectDeploymentReview = (projectId: string): DeploymentReview | undefined => {
-    return reviews.find((r) => r.projectId === projectId);
+    return reviewByProjectMap.get(projectId);
   };
 
   const evaluateDeploymentVerdict = (
@@ -510,9 +641,8 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
 
     // 3. Evaluate active findings for this project
-    const activeFindings = findings.filter(
+    const activeFindings = (findingsByProjectMap.get(projectId) || []).filter(
       (f) =>
-        f.projectId === projectId &&
         f.status !== '해결' &&
         f.status !== '오탐' &&
         f.status !== '예외 승인'
@@ -566,6 +696,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     setProjects((prev) => [newProj, ...prev]);
+    api.saveProject(newProj).catch(() => {});
     toast.success(`프로젝트 [${data.name}] 등록 완료 (ID: ${newId})`);
     return true;
   };
@@ -580,6 +711,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, ...data } : p))
     );
+    api.updateProject(id, data).catch(() => {});
     toast.success('프로젝트 정보가 성공적으로 수정되었습니다.');
     return true;
   };
@@ -593,6 +725,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setScans((prev) => prev.filter((s) => s.projectId !== id));
     setFindings((prev) => prev.filter((f) => f.projectId !== id));
     setReviews((prev) => prev.filter((r) => r.projectId !== id));
+    api.deleteProject(id).catch(() => {});
 
     toast.success(`프로젝트 [${target.name}] 및 연결된 점검/발견사항/배포심사 데이터가 제거되었습니다.`);
     return true;
@@ -884,40 +1017,39 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // Resolve condition: 70% resolved, 30% recurring
     const resolved = Math.random() > 0.3;
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const historyEntry = {
+      timestamp: nowStr,
+      actor: `${currentUser.name} (재점검 러너)`,
+      action: resolved
+        ? '재점검 결과 취약점 코드 제거 확인 -> [해결] 상태 갱신'
+        : '재점검 결과 여전히 취약점 패턴이 검출됨 (미해결 유지)',
+    };
 
     setFindings((prev) =>
       prev.map((f) => {
         if (f.id !== findingId) return f;
-        if (resolved) {
-          return {
-            ...f,
-            status: '해결',
-            rescanResult: '확인 완료(해결)',
-            history: [
-              ...f.history,
-              {
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-                actor: `${currentUser.name} (재점검 러너)`,
-                action: '재점검 결과 취약점 코드 제거 확인 -> [해결] 상태 갱신',
-              },
-            ],
-          };
-        } else {
-          return {
-            ...f,
-            rescanResult: '재발견(미해결)',
-            history: [
-              ...f.history,
-              {
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-                actor: `${currentUser.name} (재점검 러너)`,
-                action: '재점검 결과 여전히 취약점 패턴이 검출됨 (미해결 유지)',
-              },
-            ],
-          };
-        }
+        return {
+          ...f,
+          status: resolved ? '해결' : f.status,
+          rescanResult: resolved ? '확인 완료(해결)' : '재발견(미해결)',
+          history: [...f.history, historyEntry],
+        };
       })
     );
+
+    // Persist rescan result to backend SQLite SSOT so page refresh preserves state
+    api
+      .updateFinding(
+        findingId,
+        {
+          status: resolved ? '해결' : finding.status,
+          rescanResult: resolved ? '확인 완료(해결)' : '재발견(미해결)',
+          history: [...finding.history, historyEntry],
+        },
+        { id: currentUser.id, name: currentUser.name, role: currentUser.role }
+      )
+      .catch(() => {});
 
     if (resolved) {
       toast.success(`[${findingId}] 재점검 완료: 취약점이 정상 해결되었습니다!`);
@@ -928,7 +1060,6 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return resolved;
   };
 
-  // Deployment Review mutations
   // Deployment Review mutations with Optimistic Update & Auto Rollback
   const reviewDeployment = async (
     reviewId: string,
@@ -985,6 +1116,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
     setPolicy(newPolicy);
+    try {
+      localStorage.setItem('secureflow_policy', JSON.stringify(newPolicy));
+    } catch {}
     toast.success('보안 정책이 성공적으로 저장되었습니다.');
     return true;
   };
@@ -996,6 +1130,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
     setGitConfig(newConfig);
+    try {
+      localStorage.setItem('secureflow_git_config', JSON.stringify(newConfig));
+    } catch {}
     toast.success('사내 Git 서버 연동 정보가 갱신되었습니다.');
     return true;
   };
@@ -1003,11 +1140,17 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const testGitConnection = async (): Promise<boolean> => {
     toast.info('사내 Git 서버 API 통신 테스트 중...');
     await new Promise((res) => setTimeout(res, 1200));
-    setGitConfig((prev) => ({
-      ...prev,
-      connectionStatus: '연결됨',
-      lastEventAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
-    }));
+    setGitConfig((prev) => {
+      const updated = {
+        ...prev,
+        connectionStatus: '연결됨' as const,
+        lastEventAt: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      };
+      try {
+        localStorage.setItem('secureflow_git_config', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
     toast.success('Git 서버 연결 테스트 성공: Webhook 및 API v4 통신 정상 확인');
     return true;
   };
@@ -1090,6 +1233,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       startedAt: scanTimeStr,
     };
 
+    localStorage.setItem('secureflow_agentgate_scanned', 'true');
+    api.commitAgentGateBaseline(projectId).catch(() => {});
+
     setScans((prev) => [
       scanRecord,
       BASELINE_AGENTGATE_PR_SCAN,
@@ -1104,7 +1250,6 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       ...BASELINE_AGENTGATE_REVIEWS,
       ...prev.filter((r) => r.projectId !== projectId),
     ]);
-    localStorage.setItem('secureflow_agentgate_scanned', 'true');
 
     // Add alert notification
     const newNoti: NotificationItem = {
@@ -1127,6 +1272,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setReviews((prev) => prev.filter((r) => r.projectId !== projectId));
     localStorage.removeItem('secureflow_agentgate_scanned');
     localStorage.removeItem('secureflow_custom_reviews');
+    api.resetAgentGateBaseline(projectId).catch(() => {});
     toast.info('AgentGate 프로젝트가 최초 미점검 상태로 재설정되었습니다.', {
       description: '프로젝트 목록 상단의 경고 알림에서 최초 전체 점검을 다시 실행할 수 있습니다.',
     });

@@ -219,12 +219,30 @@ export class SqliteDatabaseAdapter {
         requested_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       );
+
+      CREATE INDEX IF NOT EXISTS idx_pipeline_runs_project ON pipeline_runs(project_id, started_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_findings_project_status ON findings(project_id, status);
+      CREATE INDEX IF NOT EXISTS idx_reviews_project ON deployment_reviews(project_id, requested_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_audit_logs_cat_time ON audit_logs(category, timestamp DESC);
     `);
 
     // Dynamic schema migrations for existing database files
     try { this.db.prepare('ALTER TABLE credentials_vault ADD COLUMN wrapped_dek TEXT').run(); } catch {}
     try { this.db.prepare('ALTER TABLE credentials_vault ADD COLUMN kek_id TEXT').run(); } catch {}
     try { this.db.prepare('ALTER TABLE credentials_vault ADD COLUMN kms_provider TEXT').run(); } catch {}
+    try { this.db.prepare("ALTER TABLE projects ADD COLUMN entity_id TEXT DEFAULT 'ENT-01'").run(); } catch {}
+    try { this.db.prepare("ALTER TABLE projects ADD COLUMN entity_name TEXT DEFAULT '테크솔루션즈'").run(); } catch {}
+    try { this.db.prepare("ALTER TABLE projects ADD COLUMN service_type TEXT DEFAULT '사내 플랫폼'").run(); } catch {}
+    try { this.db.prepare("ALTER TABLE projects ADD COLUMN status TEXT DEFAULT '운영 중'").run(); } catch {}
+    try { this.db.prepare("ALTER TABLE projects ADD COLUMN description TEXT DEFAULT ''").run(); } catch {}
+
+    // Normalize legacy status values in findings & deployment_reviews
+    try {
+      this.db.prepare("UPDATE findings SET status = '조치 중' WHERE status = '진행 중'").run();
+      this.db.prepare("UPDATE findings SET status = '해결' WHERE status = '해결됨'").run();
+      this.db.prepare("UPDATE findings SET status = '오탐' WHERE status = '오탐 처리'").run();
+      this.db.prepare("UPDATE deployment_reviews SET target_environment = '운영' WHERE target_environment LIKE '운영%'").run();
+    } catch {}
 
     this.seedDefaults();
   }
@@ -382,7 +400,7 @@ export class SqliteDatabaseAdapter {
             codeSnippet: 'const decoded = jwt.verify(token, secretKey);',
             remediationGuide: 'jwt.verify(token, secretKey, { algorithms: ["HS256"] }) 옵션을 적용하십시오.',
             assignee: 'devlee0908',
-            status: '진행 중',
+            status: '조치 중',
             createdAt: '2026-10-05 16:32:00',
             dueDate: '2026-10-19',
             history: [{ timestamp: '2026-10-05 16:32:00', actor: '시스템', action: '베이스라인 점검 결과 자동 등록' }],
@@ -456,7 +474,7 @@ export class SqliteDatabaseAdapter {
           projectName: 'AgentGate 보안 게이트웨이 (연동 저장소)',
           entityId: 'ENT-01',
           entityName: '테크솔루션즈',
-          targetEnvironment: '운영 (Production)',
+          targetEnvironment: '운영',
           requestCommitId: 'f9c2a10',
           scanCommitId: 'f9c2a10',
           scanCompletedAt: '2026-10-05 17:00:00',
@@ -485,78 +503,90 @@ export class SqliteDatabaseAdapter {
     };
   }
 
-  findOrCreateProjectByRepo(repoName, owner = 'devlee0908', defaultBranch = 'main') {
-    const existing = this.db.prepare('SELECT * FROM projects WHERE repository LIKE ? OR repository LIKE ?').get(
-      `%${repoName}%`,
-      `%${repoName.split('/')[1] || repoName}%`
-    );
-    if (existing) return existing;
-
-    const shortName = repoName.split('/')[1] || repoName;
-    const projectId = `PRJ-${shortName.toUpperCase().replace(/[^A-Z0-9]/g, '')}`;
-
-    this.db.prepare(`
-      INSERT INTO projects (id, name, repository, default_branch, owner, owner_email, department, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      projectId,
-      `${shortName} 플랫폼 (${repoName})`,
-      `github.com/${repoName}`,
-      defaultBranch,
-      owner,
-      `${owner}@github.internal`,
-      '클라우드개발실',
-      new Date().toISOString()
-    );
-
-    return this.db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId);
-  }
-
-  getProjects() {
-    return this.db.prepare('SELECT * FROM projects').all();
-  }
-
-  getProjectById(id) {
-    return this.db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
-  }
-
-  getRuns(projectId) {
-    const rows = projectId
-      ? this.db.prepare('SELECT * FROM pipeline_runs WHERE project_id = ? ORDER BY started_at DESC').all(projectId)
-      : this.db.prepare('SELECT * FROM pipeline_runs ORDER BY started_at DESC').all();
-
-    return rows.map((r) => ({
-      ...r,
-      toolStatuses: JSON.parse(r.tool_statuses_json),
-      executionLogs: JSON.parse(r.execution_logs_json),
-      critCount: r.crit_count,
-      highCount: r.high_count,
-      medCount: r.med_count,
-      prNumber: r.pr_number,
-      commitId: r.commit_id,
-      commitMessage: r.commit_message,
-      authorEmail: r.author_email,
-      authorRole: r.author_role,
-      avatarColor: r.avatar_color,
-      targetBranch: r.target_branch,
-      targetEnvironment: r.target_environment,
-      currentStage: r.current_stage,
-      scanStatus: r.scan_status,
-      scanDuration: r.scan_duration,
-      gateStatus: r.gate_status,
-      reviewStatus: r.review_status,
-      deployStatus: r.deploy_status,
-      isOverridden: !!r.is_overridden,
-    }));
-  }
-
-  getRunById(id) {
-    const r = this.db.prepare('SELECT * FROM pipeline_runs WHERE id = ?').get(id);
+  _mapProjectRow(r) {
     if (!r) return null;
+    const isAgentGate = r.id === 'PRJ-AGENTGATE' || (r.repository && r.repository.includes('agentgate'));
     return {
       ...r,
-      toolStatuses: JSON.parse(r.tool_statuses_json),
-      executionLogs: JSON.parse(r.execution_logs_json),
+      id: isAgentGate ? 'PRJ-AGENTGATE' : r.id,
+      name: isAgentGate ? 'AgentGate 보안 게이트웨이 (연동 저장소)' : r.name,
+      entityId: r.entity_id || 'ENT-01',
+      entityName: r.entity_name || '테크솔루션즈',
+      department: r.department || 'AI보안플랫폼팀',
+      owner: r.owner || 'devlee0908',
+      ownerEmail: r.owner_email || 'devlee0908@github.com',
+      repository: r.repository,
+      defaultBranch: r.default_branch || 'main',
+      serviceType: r.service_type || (isAgentGate ? '사내 AI 보안 게이트웨이' : '사내 플랫폼'),
+      status: r.status || '운영 중',
+      createdAt: (r.created_at || new Date().toISOString()).slice(0, 10),
+      description:
+        r.description ||
+        (isAgentGate
+          ? '실제 GitHub 저장소(devlee0908/agentgate)와 실시간 Webhook 및 API로 연동된 엔터프라이즈 AI 에이전트 보안 게이트웨이 프로젝트입니다.'
+          : `${r.name} 연동 저장소 프로젝트`),
+    };
+  }
+
+  _mapRunRow(r) {
+    if (!r) return null;
+    const rawTools = JSON.parse(r.tool_statuses_json || '{}');
+    const logs = JSON.parse(r.execution_logs_json || '[]');
+    const findingsCount = (r.crit_count || 0) + (r.high_count || 0) + (r.med_count || 0);
+
+    // Build normalized array for ScansView.tsx compatibility while preserving object keys if accessed
+    const toolArray = Array.isArray(rawTools)
+      ? rawTools
+      : [
+          {
+            name: 'SonarQube SAST',
+            category: '소스코드 정적 분석',
+            status: rawTools.sast?.status || '성공',
+            findingsCount: rawTools.sast?.count || 0,
+            durationSeconds: rawTools.sast?.duration || 35,
+          },
+          {
+            name: 'Trivy SCA',
+            category: '의존성 취약점 분석',
+            status: rawTools.sca?.status || '성공',
+            findingsCount: rawTools.sca?.count || 0,
+            durationSeconds: rawTools.sca?.duration || 22,
+          },
+          {
+            name: 'Gitleaks',
+            category: '비밀정보 탐지',
+            status: rawTools.secret?.status || '성공',
+            findingsCount: rawTools.secret?.count || 0,
+            durationSeconds: rawTools.secret?.duration || 12,
+          },
+          {
+            name: 'Checkov IaC',
+            category: '설정 오류 분석',
+            status: rawTools.iac?.status || '성공',
+            findingsCount: rawTools.iac?.count || 0,
+            durationSeconds: rawTools.iac?.duration || 18,
+          },
+        ];
+
+    // Attach legacy object properties onto the array instance so BOTH `toolStatuses.map(...)` AND `toolStatuses.sast` work!
+    if (!Array.isArray(rawTools) && typeof rawTools === 'object' && rawTools !== null) {
+      Object.assign(toolArray, rawTools);
+    }
+
+    const isAgentGate = r.project_id === 'PRJ-AGENTGATE';
+    return {
+      ...r,
+      projectId: r.project_id,
+      projectName: isAgentGate ? 'AgentGate 보안 게이트웨이 (연동 저장소)' : r.project_id,
+      entityId: 'ENT-01',
+      entityName: '테크솔루션즈',
+      startedAt: r.started_at,
+      durationSeconds: r.scan_duration || 87,
+      findingsCount,
+      status: r.scan_status === 'completed' || r.scan_status === '완료' ? '완료' : r.scan_status === 'failed' || r.scan_status === '실패' ? '실패' : '실행 중',
+      scanTypes: ['소스코드 정적 분석', '의존성 취약점 분석', '비밀정보 탐지', '설정 오류 분석'],
+      toolStatuses: toolArray,
+      executionLogs: logs,
       critCount: r.crit_count,
       highCount: r.high_count,
       medCount: r.med_count,
@@ -576,6 +606,160 @@ export class SqliteDatabaseAdapter {
       deployStatus: r.deploy_status,
       isOverridden: !!r.is_overridden,
     };
+  }
+
+  findOrCreateProjectByRepo(repoName, owner = 'devlee0908', defaultBranch = 'main') {
+    const existing = this.db.prepare('SELECT * FROM projects WHERE repository LIKE ? OR repository LIKE ?').get(
+      `%${repoName}%`,
+      `%${repoName.split('/')[1] || repoName}%`
+    );
+    if (existing) return this._mapProjectRow(existing);
+
+    const shortName = repoName.split('/')[1] || repoName;
+    const isAgentGate = shortName.toLowerCase() === 'agentgate';
+    const projectId = isAgentGate ? 'PRJ-AGENTGATE' : `PRJ-${shortName.toUpperCase().replace(/[^A-Z0-9]/g, '')}`;
+
+    this.db.prepare(`
+      INSERT OR IGNORE INTO projects (id, name, repository, default_branch, owner, owner_email, department, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      projectId,
+      isAgentGate ? 'AgentGate 보안 게이트웨이 (연동 저장소)' : `${shortName} 플랫폼 (${repoName})`,
+      `github.com/${repoName.replace('github.com/', '')}`,
+      defaultBranch,
+      owner,
+      `${owner}@github.internal`,
+      isAgentGate ? 'AI보안플랫폼팀' : '클라우드개발실',
+      new Date().toISOString()
+    );
+
+    return this.getProjectById(projectId);
+  }
+
+  getProjects() {
+    return this.db.prepare('SELECT * FROM projects').all().map((r) => this._mapProjectRow(r));
+  }
+
+  getProjectById(id) {
+    return this._mapProjectRow(this.db.prepare('SELECT * FROM projects WHERE id = ?').get(id));
+  }
+
+  saveProject(proj) {
+    const id = proj.id || `PRJ-${Date.now().toString(36).toUpperCase()}`;
+    const now = proj.createdAt || new Date().toISOString().slice(0, 10);
+    this.db.prepare(`
+      INSERT INTO projects (
+        id, name, repository, default_branch, owner, owner_email, department, created_at,
+        entity_id, entity_name, service_type, status, description
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        name = excluded.name,
+        repository = excluded.repository,
+        default_branch = excluded.default_branch,
+        owner = excluded.owner,
+        owner_email = excluded.owner_email,
+        department = excluded.department,
+        entity_id = excluded.entity_id,
+        entity_name = excluded.entity_name,
+        service_type = excluded.service_type,
+        status = excluded.status,
+        description = excluded.description
+    `).run(
+      id,
+      proj.name || '신규 프로젝트',
+      proj.repository || 'github.com/corp/new-repo',
+      proj.defaultBranch || proj.default_branch || 'main',
+      proj.owner || 'devlee0908',
+      proj.ownerEmail || proj.owner_email || 'devlee0908@github.com',
+      proj.department || '플랫폼개발팀',
+      now,
+      proj.entityId || proj.entity_id || 'ENT-01',
+      proj.entityName || proj.entity_name || '테크솔루션즈',
+      proj.serviceType || proj.service_type || '사내 플랫폼',
+      proj.status || '운영 중',
+      proj.description || ''
+    );
+    return this.getProjectById(id);
+  }
+
+  deleteProject(id) {
+    this.db.prepare('DELETE FROM pipeline_runs WHERE project_id = ?').run(id);
+    this.db.prepare('DELETE FROM findings WHERE project_id = ?').run(id);
+    this.db.prepare('DELETE FROM deployment_reviews WHERE project_id = ?').run(id);
+    this.db.prepare('DELETE FROM projects WHERE id = ?').run(id);
+    return { deleted: true, id };
+  }
+
+  resetAgentGateBaseline(projectId = 'PRJ-AGENTGATE') {
+    this.db.prepare('DELETE FROM findings WHERE project_id = ?').run(projectId);
+    this.db.prepare('DELETE FROM deployment_reviews WHERE project_id = ?').run(projectId);
+    this.db.prepare('DELETE FROM pipeline_runs WHERE project_id = ?').run(projectId);
+    return { reset: true, projectId };
+  }
+
+  commitAgentGateBaseline(projectId = 'PRJ-AGENTGATE') {
+    this.resetAgentGateBaseline(projectId);
+    this.seedDefaults();
+    return {
+      committed: true,
+      projectId,
+      findings: this.getFindings(projectId),
+      reviews: this.getReviews(projectId),
+    };
+  }
+
+  remediateAgentGate(customComment, projectId = 'PRJ-AGENTGATE') {
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const findings = this.getFindings(projectId);
+    for (const f of findings) {
+      const nextHistory = [
+        ...(f.history || []),
+        {
+          timestamp: nowStr,
+          actor: 'devlee0908 (Vault Auto-Remediation)',
+          action: '보안 패치 브랜치(fix/security-remediation) 병합 및 재검증 클린 통과 -> [해결] 전환',
+        },
+      ];
+      this.updateFinding(f.id, {
+        status: '해결',
+        rescanResult: '확인 완료(해결)',
+        history: nextHistory,
+      });
+    }
+
+    const reviews = this.getReviews(projectId);
+    for (const r of reviews) {
+      this.updateReview(r.id, {
+        securityVerdict: '통과',
+        verdictReason: '3건 보안 결함(SQLi, JWT, cross-spawn) 패치 커밋 푸시 확인으로 배포 게이트 통과',
+        approvalStatus: '승인',
+        reviewer: '보안 심사관 (자동 재검증 통과)',
+        reviewComment:
+          customComment || '3건 보안 취약점 조치 패치 커밋 푸시 확인 완료 — 운영 배포 자동 승인',
+        reviewedAt: nowStr,
+      });
+    }
+
+    return {
+      remediated: true,
+      projectId,
+      findings: this.getFindings(projectId),
+      reviews: this.getReviews(projectId),
+    };
+  }
+
+  getRuns(projectId) {
+    const rows = projectId
+      ? this.db.prepare('SELECT * FROM pipeline_runs WHERE project_id = ? ORDER BY started_at DESC').all(projectId)
+      : this.db.prepare('SELECT * FROM pipeline_runs ORDER BY started_at DESC').all();
+
+    return rows.map((r) => this._mapRunRow(r));
+  }
+
+  getRunById(id) {
+    const r = this.db.prepare('SELECT * FROM pipeline_runs WHERE id = ?').get(id);
+    return this._mapRunRow(r);
   }
 
   saveRun(run) {
@@ -1302,7 +1486,7 @@ export class SqliteDatabaseAdapter {
     const channels = this.db.prepare('SELECT count(*) as count FROM notification_channels').get().count;
     const findings = this.db.prepare('SELECT count(*) as count FROM findings').get().count;
     const reviews = this.db.prepare('SELECT count(*) as count FROM deployment_reviews').get().count;
-    const dlqCount = this.db.prepare('SELECT count(*) as count FROM notification_dlq WHERE status = "DEAD_LETTER"').get().count;
+    const dlqCount = this.db.prepare("SELECT count(*) as count FROM notification_dlq WHERE status = 'DEAD_LETTER'").get().count;
     return { projects, runs, webhooks, auditLogs, channels, findings, reviews, dlqCount, dbPath: this.dbPath };
   }
 }

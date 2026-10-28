@@ -19,6 +19,29 @@ class EnterpriseSecurityGuard {
       sbomAttestationsGenerated: 0,
       startedAt: new Date().toISOString(),
     };
+
+    // Automatic Sliding-Window Garbage Collection every 60s (.unref() so it never blocks process exit)
+    this.gcTimer = setInterval(() => this.pruneExpiredWindows(), 60000);
+    if (this.gcTimer && typeof this.gcTimer.unref === 'function') {
+      this.gcTimer.unref();
+    }
+  }
+
+  pruneExpiredWindows(now = Date.now()) {
+    let prunedKeys = 0;
+    for (const [key, timestamps] of this.windows.entries()) {
+      const bucket = key.split(':').pop() || 'general';
+      const windowMs = (this.limits[bucket] || this.limits.general).windowMs;
+      const cutoff = now - windowMs;
+      const valid = timestamps.filter((t) => t > cutoff);
+      if (valid.length === 0) {
+        this.windows.delete(key);
+        prunedKeys++;
+      } else if (valid.length !== timestamps.length) {
+        this.windows.set(key, valid);
+      }
+    }
+    return prunedKeys;
   }
 
   resolveBucket(pathname) {
@@ -36,6 +59,11 @@ class EnterpriseSecurityGuard {
     const key = `${ip}:${bucket}`;
     const now = Date.now();
     const cutoff = now - config.windowMs;
+
+    // Safeguard against high-cardinality IP flood (> 5000 keys)
+    if (this.windows.size > 5000) {
+      this.pruneExpiredWindows(now);
+    }
 
     let timestamps = this.windows.get(key) || [];
     timestamps = timestamps.filter((t) => t > cutoff);
