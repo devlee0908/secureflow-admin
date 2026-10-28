@@ -72,56 +72,56 @@ export const calculateProjectSecurityScore = (
   let grade: SecurityGrade = 'F';
   let gradeLabel = '위험 (배포 차단 권고)';
   let gradeColor = {
-    text: 'text-rose-700',
-    bg: 'bg-rose-50',
-    border: 'border-rose-300',
-    badge: 'bg-rose-100 text-rose-800 border-rose-200',
+    text: 'text-rose-700 dark:text-rose-400',
+    bg: 'bg-rose-500/10',
+    border: 'border-rose-500/25',
+    badge: 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30',
   };
 
   if (score >= 95) {
     grade = 'A+';
     gradeLabel = '최우수 (무결점 클린)';
     gradeColor = {
-      text: 'text-emerald-700',
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-300',
-      badge: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      text: 'text-emerald-700 dark:text-emerald-400',
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/25',
+      badge: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
     };
   } else if (score >= 88) {
     grade = 'A';
     gradeLabel = '우수 (배포 권장)';
     gradeColor = {
-      text: 'text-emerald-700',
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-300',
-      badge: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      text: 'text-emerald-700 dark:text-emerald-400',
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/25',
+      badge: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
     };
   } else if (score >= 80) {
     grade = 'B';
     gradeLabel = '양호 (보통)';
     gradeColor = {
-      text: 'text-indigo-700',
-      bg: 'bg-indigo-50',
-      border: 'border-indigo-300',
-      badge: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      text: 'text-sky-700 dark:text-sky-400',
+      bg: 'bg-sky-500/10',
+      border: 'border-sky-500/25',
+      badge: 'bg-sky-500/15 text-sky-800 dark:text-sky-300 border-sky-500/30',
     };
   } else if (score >= 70) {
     grade = 'C';
     gradeLabel = '주의 (개선 권고)';
     gradeColor = {
-      text: 'text-amber-700',
-      bg: 'bg-amber-50',
-      border: 'border-amber-300',
-      badge: 'bg-amber-100 text-amber-800 border-amber-200',
+      text: 'text-amber-700 dark:text-amber-400',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/25',
+      badge: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30',
     };
   } else if (score >= 60) {
     grade = 'D';
     gradeLabel = '경고 (고위험 잔존)';
     gradeColor = {
-      text: 'text-orange-700',
-      bg: 'bg-orange-50',
-      border: 'border-orange-300',
-      badge: 'bg-orange-100 text-orange-800 border-orange-200',
+      text: 'text-orange-700 dark:text-orange-400',
+      bg: 'bg-orange-500/10',
+      border: 'border-orange-500/25',
+      badge: 'bg-orange-500/15 text-orange-800 dark:text-orange-300 border-orange-500/30',
     };
   }
 

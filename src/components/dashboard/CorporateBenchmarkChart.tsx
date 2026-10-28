@@ -33,41 +33,41 @@ export const CorporateBenchmarkChart: React.FC<CorporateBenchmarkChartProps> = (
   ];
 
   return (
-    <div className="p-5 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#121620]/90 backdrop-blur-xl shadow-sm dark:shadow-2xl relative overflow-hidden flex flex-col justify-between h-full">
+    <div className="p-5 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] relative overflow-hidden flex flex-col justify-between h-full">
       {/* Top Header & Big Metric */}
       <div>
-        <div className="flex items-center justify-between pb-2.5 border-b border-slate-200/80 dark:border-white/[0.06]">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-200/80 dark:border-white/[0.08]">
           <div>
-            <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">
+            <div className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-medium">
               CORPORATE BENCHMARK
             </div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5 mt-0.5">
-              <Building2 className="w-4 h-4 text-amber-500" />
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 mt-0.5">
+              <Building2 className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
               법인별 보안 위험 벤치마크
             </h3>
           </div>
           <div className="text-right">
-            <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 font-mono tracking-tight">
+            <span className="text-xl sm:text-2xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               88.5점
             </span>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block font-mono font-bold">
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block font-mono font-medium">
               전사 평균 양호
             </span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between py-1.5 text-xs text-slate-500 dark:text-slate-400 font-sans">
+        <div className="flex items-center justify-between py-2 text-xs text-zinc-500 dark:text-zinc-400 font-sans">
           <span>법인별 8개 핵심 조직 보안 지수</span>
-          <span className="text-amber-600 dark:text-amber-400 font-bold font-mono text-xs">최고 96점 (엔터 인프라)</span>
+          <span className="text-zinc-800 dark:text-zinc-200 font-semibold font-mono tabular-nums text-xs">최고 96점</span>
         </div>
 
-        {/* 8-bar dense vertical pill chart matching reference photo */}
-        <div className="h-34 sm:h-36 w-full flex items-end justify-between gap-2 pt-4 pb-1 px-1 border-b border-slate-200/80 dark:border-white/[0.06] relative">
+        {/* 8-bar crisp vertical chart */}
+        <div className="h-34 sm:h-36 w-full flex items-end justify-between gap-2 pt-4 pb-1 px-1 border-b border-zinc-200/80 dark:border-white/[0.08] relative">
           {/* Subtle guide lines */}
-          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 dark:opacity-15">
-            <div className="border-b border-dashed border-slate-300 dark:border-slate-600 w-full" />
-            <div className="border-b border-dashed border-slate-300 dark:border-slate-600 w-full" />
-            <div className="border-b border-dashed border-slate-300 dark:border-slate-700 w-full" />
+          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+            <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
+            <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
+            <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
           </div>
 
           {benchmarkBars.map((item, idx) => {
@@ -85,34 +85,32 @@ export const CorporateBenchmarkChart: React.FC<CorporateBenchmarkChartProps> = (
               >
                 {/* Floating highlight badge on hover */}
                 {isHovered && (
-                  <div className="absolute -top-7 px-2 py-0.5 rounded-full bg-slate-900 border border-white/20 text-white font-bold text-[9px] font-mono shadow-xl pointer-events-none z-30 whitespace-nowrap">
+                  <div className="absolute -top-7 px-2 py-0.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold text-[9.5px] font-mono tabular-nums shadow-md pointer-events-none z-30 whitespace-nowrap">
                     {item.name}: {item.score}점
                   </div>
                 )}
 
-                {/* Vertical Pill Bar with alternating Amber / Sky-Blue gradients matching reference image */}
+                {/* Vertical Bar (Geist monochrome + semantic accent) */}
                 <div
                   style={{ height: `${heightPct}%` }}
                   className={cn(
-                    'w-4 sm:w-5 rounded-full transition-all duration-300 relative shadow-sm',
-                    item.isAmber
-                      ? 'bg-gradient-to-t from-orange-600 via-amber-500 to-amber-300'
-                      : 'bg-gradient-to-t from-blue-700 via-sky-500 to-sky-300',
-                    isHovered
-                      ? 'brightness-125 scale-110 shadow-md'
-                      : isSelected
-                      ? 'ring-2 ring-amber-400/80 brightness-110'
-                      : 'opacity-90 dark:opacity-85'
+                    'w-4 sm:w-5 rounded-t-xs transition-all duration-200 relative',
+                    isSelected
+                      ? 'bg-emerald-500 dark:bg-emerald-400'
+                      : item.isAmber
+                      ? 'bg-zinc-800 dark:bg-zinc-200'
+                      : 'bg-zinc-400 dark:bg-zinc-600',
+                    isHovered ? 'opacity-100' : 'opacity-85'
                   )}
                 />
 
                 {/* X-axis Entity Code */}
                 <span
                   className={cn(
-                    'text-[9px] font-mono mt-1.5 truncate transition-colors',
+                    'text-[9px] font-mono tabular-nums mt-1.5 truncate transition-colors',
                     isSelected
-                      ? 'text-amber-600 dark:text-amber-400 font-bold'
-                      : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200'
+                      ? 'text-emerald-600 dark:text-emerald-400 font-semibold'
+                      : 'text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200'
                   )}
                 >
                   {item.code}
@@ -124,16 +122,16 @@ export const CorporateBenchmarkChart: React.FC<CorporateBenchmarkChartProps> = (
       </div>
 
       {/* Footer Quick Action */}
-      <div className="pt-2.5 border-t border-slate-100 dark:border-white/[0.06] mt-1 flex items-center justify-between text-xs">
-        <span className="text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="pt-2.5 border-t border-zinc-100 dark:border-white/[0.06] mt-1 flex items-center justify-between text-xs">
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
           조직 클릭 시 실시간 법인 관제 동기화
         </span>
         <button
           onClick={() => onNavigate('projects')}
-          className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-mono text-[11px] font-bold flex items-center gap-1 group"
+          className="text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white font-medium text-[11px] flex items-center gap-1 group"
         >
           <span>법인별 자산</span>
-          <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>
     </div>

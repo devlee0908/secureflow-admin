@@ -22,10 +22,10 @@ const SettingsView = lazy(() => import('@/views/SettingsView').then((m) => ({ de
 
 const ViewFallback: React.FC = () => (
   <div className="w-full min-h-[350px] flex flex-col items-center justify-center p-12 space-y-3">
-    <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500">
-      <RotateCcw className="w-5 h-5 animate-spin" />
+    <div className="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-white/[0.06] border border-zinc-200/80 dark:border-white/[0.1] flex items-center justify-center text-zinc-700 dark:text-zinc-300">
+      <RotateCcw className="w-4 h-4 animate-spin" />
     </div>
-    <span className="text-xs text-slate-400 font-mono">SecureFlow 컴포넌트 온디맨드 로딩 중...</span>
+    <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono">모듈 온디맨드 로딩 중...</span>
   </div>
 );
 
@@ -103,7 +103,7 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-[#07090e] text-slate-900 dark:text-slate-100 font-sans selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+    <div className="flex min-h-screen bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-950 transition-colors duration-200">
       {/* Sidebar */}
       <Sidebar
         activeMenu={activeMenu}
@@ -118,7 +118,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex flex-1 flex-col min-w-0 bg-slate-50 dark:bg-[#07090e] transition-colors duration-200">
+      <div className="flex flex-1 flex-col min-w-0 bg-[#fafafa] dark:bg-[#09090b] transition-colors duration-200">
         <Header
           onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
           onNavigateMenu={(menu) => handleNavigate(menu)}
@@ -161,13 +161,13 @@ const AppContent: React.FC = () => {
           </Suspense>
         </main>
 
-        <footer className="border-t border-slate-200/80 dark:border-white/[0.06] bg-white/80 dark:bg-[#0c1017]/80 py-4 px-4 sm:px-6 lg:px-8 transition-colors">
-          <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 font-mono">
+        <footer className="border-t border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#09090b] py-3.5 px-4 sm:px-6 lg:px-8 transition-colors">
+          <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500 dark:text-zinc-500 font-mono">
             <div className="flex items-center gap-3">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">
+              <span className="font-semibold text-zinc-800 dark:text-zinc-300">
                 SECUREFLOW™ Enterprise DevSecOps Platform
               </span>
-              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <span className="text-zinc-300 dark:text-zinc-800">|</span>
               <span>v2.4.8 Enterprise Edition (Build 2026.10)</span>
             </div>
             <div className="flex items-center gap-3">
@@ -175,7 +175,7 @@ const AppContent: React.FC = () => {
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span>All Telemetry Operational</span>
               </span>
-              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <span className="text-zinc-300 dark:text-zinc-800">|</span>
               <span>ISMS-P &amp; ISO 27001 Certified</span>
             </div>
           </div>

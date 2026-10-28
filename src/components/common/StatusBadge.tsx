@@ -40,7 +40,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'defaul
     // Scan Run Status
     case '대기':
       return (
-        <Badge variant="outline" className="border-slate-300 text-slate-600 bg-slate-50">
+        <Badge variant="neutral">
           <Clock className={iconSizeClass} />
           대기
         </Badge>
@@ -48,7 +48,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'defaul
     case '실행 중':
     case '점검 중':
       return (
-        <Badge variant="outline" className="border-indigo-300 text-indigo-700 bg-indigo-50/80 animate-pulse">
+        <Badge variant="info">
           <Loader2 className={`${iconSizeClass} animate-spin`} />
           {status}
         </Badge>
@@ -94,7 +94,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'defaul
       );
     case '미점검':
       return (
-        <Badge variant="outline" className="border-slate-300 text-slate-500 bg-slate-100">
+        <Badge variant="neutral">
           <MinusCircle className={iconSizeClass} />
           미점검
         </Badge>
@@ -103,21 +103,21 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'defaul
     // Finding Status
     case '신규':
       return (
-        <Badge variant="danger" className="bg-red-50 text-red-700 border-red-200">
+        <Badge variant="danger">
           <ShieldAlert className={iconSizeClass} />
           신규
         </Badge>
       );
     case '검토 중':
       return (
-        <Badge variant="warning" className="bg-amber-50 text-amber-700 border-amber-200">
+        <Badge variant="warning">
           <Clock className={iconSizeClass} />
           검토 중
         </Badge>
       );
     case '조치 중':
       return (
-        <Badge variant="info" className="bg-sky-50 text-sky-700 border-sky-200">
+        <Badge variant="info">
           <Loader2 className={`${iconSizeClass} animate-spin`} />
           조치 중
         </Badge>
@@ -131,14 +131,14 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'defaul
       );
     case '오탐':
       return (
-        <Badge variant="neutral" className="bg-slate-100 text-slate-600 border-slate-300">
+        <Badge variant="neutral">
           <MinusCircle className={iconSizeClass} />
           오탐
         </Badge>
       );
     case '예외 승인':
       return (
-        <Badge variant="outline" className="border-purple-300 bg-purple-50 text-purple-700">
+        <Badge variant="outline" className="border-violet-500/25 bg-violet-500/10 text-violet-700 dark:text-violet-400">
           <FileCheck className={iconSizeClass} />
           예외 승인
         </Badge>
@@ -154,7 +154,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'defaul
       );
     case '차단':
       return (
-        <Badge variant="danger" className="bg-rose-100 text-rose-800 border-rose-300 font-bold">
+        <Badge variant="danger" className="font-semibold">
           <ShieldX className={iconSizeClass} />
           차단
         </Badge>
@@ -179,29 +179,29 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'defaul
     // Project Operation Status
     case '운영 중':
       return (
-        <Badge variant="outline" className="border-emerald-300 text-emerald-700 bg-emerald-50">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block"></span>
+        <Badge variant="outline" className="border-emerald-500/25 text-emerald-700 dark:text-emerald-400 bg-emerald-500/10">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block" />
           운영 중
         </Badge>
       );
     case '개발 중':
       return (
-        <Badge variant="outline" className="border-sky-300 text-sky-700 bg-sky-50">
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mr-1.5 inline-block"></span>
+        <Badge variant="outline" className="border-sky-500/25 text-sky-700 dark:text-sky-400 bg-sky-500/10">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mr-1.5 inline-block" />
           개발 중
         </Badge>
       );
     case '유지보수':
       return (
-        <Badge variant="outline" className="border-amber-300 text-amber-700 bg-amber-50">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 inline-block"></span>
+        <Badge variant="outline" className="border-amber-500/25 text-amber-700 dark:text-amber-400 bg-amber-500/10">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 inline-block" />
           유지보수
         </Badge>
       );
     case '보관(보류)':
       return (
-        <Badge variant="outline" className="border-slate-300 text-slate-500 bg-slate-50">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5 inline-block"></span>
+        <Badge variant="neutral">
+          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 mr-1.5 inline-block" />
           보관(보류)
         </Badge>
       );

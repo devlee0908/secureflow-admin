@@ -612,11 +612,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                     setTargetScanProject(p);
                     setIsBaselineWizardOpen(true);
                   }}
-                  className="h-7 px-2.5 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold text-[11px] gap-1 shadow-xs animate-pulse"
+                  className="h-7 px-2.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-medium text-[11px] gap-1 rounded-md shadow-none"
                   title="이 프로젝트의 최초 전체 소스코드 점검(Full Baseline Scan)을 실행합니다"
                 >
-                  <Sparkles className="w-3 h-3" />
-                  <span>⚡ 최초 전체 점검</span>
+                  <Play className="w-3 h-3 fill-current" />
+                  <span>최초 전체 점검</span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -626,7 +626,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                     setIsDetailOpen(true);
                   }}
                   title="상세 보기"
-                  className="text-slate-500 hover:bg-slate-100 dark:hover:bg-white/[0.06]"
+                  className="text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
                 >
                   <Eye className="w-3.5 h-3.5" />
                 </Button>
@@ -779,10 +779,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 variant="outline"
                 size="sm"
                 onClick={clearDummyData}
-                className="text-xs border-amber-300 dark:border-amber-700/60 text-amber-700 dark:text-amber-300 bg-amber-50/70 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
                 title="기존 더미 파일들을 삭제하고 실제 연동된 프로젝트만 유지합니다"
               >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                <Trash2 className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
                 더미 파일 제거
               </Button>
             ) : (
@@ -790,10 +790,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 variant="outline"
                 size="sm"
                 onClick={generateDummyData}
-                className="text-xs border-indigo-300 dark:border-indigo-700/60 text-indigo-700 dark:text-indigo-300 bg-indigo-50/70 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/40"
+                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
                 title="테스트 및 시뮬레이션을 위한 샘플 더미 프로젝트를 즉시 생성합니다"
               >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
                 더미 파일 생성
               </Button>
             )}
@@ -801,9 +801,9 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               variant="outline"
               size="sm"
               onClick={handleExportCsv}
-              className="text-xs text-slate-700 hover:bg-slate-100"
+              className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
             >
-              <Download className="w-3.5 h-3.5 mr-1.5" />
+              <Download className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
               CSV 목록 다운로드
             </Button>
             {selectedCount > 0 && (
@@ -811,7 +811,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 variant="outline"
                 size="sm"
                 onClick={handleBatchScan}
-                className="text-xs border-indigo-300 text-indigo-700 bg-indigo-50/60 hover:bg-indigo-100"
+                className="h-8 text-xs border-zinc-300 dark:border-white/[0.12] text-zinc-900 dark:text-zinc-100 bg-zinc-100 dark:bg-white/[0.08] hover:bg-zinc-200"
               >
                 <Play className="w-3.5 h-3.5 mr-1" />
                 선택 {selectedCount}개 일괄 점검
@@ -820,7 +820,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
             <Button
               size="sm"
               onClick={handleOpenAdd}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
+              className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-medium shadow-none"
             >
               <Plus className="w-4 h-4 mr-1" />
               신규 프로젝트 등록
@@ -831,58 +831,55 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
 
       {/* Role permission info banner */}
       {currentUser.role === 'developer' && (
-        <div className="p-3 bg-indigo-50/80 border border-indigo-200 rounded-xl text-xs text-indigo-900 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="p-3 bg-zinc-100 dark:bg-[#121214] border border-zinc-200 dark:border-white/[0.08] rounded-lg text-xs text-zinc-800 dark:text-zinc-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-bold bg-indigo-600 text-white px-2 py-0.5 rounded text-[10px]">
+            <span className="font-semibold bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-2 py-0.5 rounded text-[10px]">
               개발자 시뮬레이션
             </span>
             <span>
               현재 <strong>{currentUser.name}</strong> 님에게 배정된 프로젝트 관리 및 점검 실행을 수행합니다. (프로젝트 삭제는 그룹 관리자만 가능)
             </span>
           </div>
-          <span className="text-[11px] text-indigo-600 font-mono font-semibold">
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono font-medium">
             담당 프로젝트: {currentUser.assignedProjectIds?.join(', ')}
           </span>
         </div>
       )}
 
-      {/* 🚨 최초 전체 소스코드 점검(Full Baseline Scan) 미실행 알림 배너 */}
+      {/* 최초 전체 소스코드 점검(Full Baseline Scan) 미실행 알림 배너 (Vercel Geist Callout) */}
       {unscannedProjects.length > 0 ? (
-        <div className="rounded-2xl border-2 border-amber-400/90 dark:border-amber-500/70 bg-gradient-to-br from-amber-50 via-rose-50/40 to-amber-50/60 dark:from-amber-950/40 dark:via-[#16121f] dark:to-amber-950/20 p-5 shadow-lg shadow-amber-500/5 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="rounded-xl border border-zinc-200/80 dark:border-white/[0.08] border-l-4 border-l-amber-500 bg-white dark:bg-[#0f0f11] p-5 animate-in fade-in duration-200">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-3.5">
-              <div className="relative shrink-0 mt-0.5">
-                <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md animate-pulse">
-                  <ShieldAlert className="w-5 h-5" />
-                </div>
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-white dark:border-[#0c1017] animate-ping" />
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                <ShieldAlert className="w-4 h-4" />
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500 text-white shadow-xs">
-                    🚨 최초 전체 점검 필수
-                  </span>
-                  <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                    신규 등록 프로젝트 소스코드 무결성 베이스라인 미수립 경고
+                  <Badge variant="warning" className="text-[10px] font-mono">
+                    BASELINE REQUIRED
+                  </Badge>
+                  <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
+                    신규 등록 프로젝트 소스코드 무결성 베이스라인 미수립 안내
                   </h3>
-                  <Badge variant="outline" className="text-[11px] font-mono border-amber-400 text-amber-700 dark:text-amber-300 bg-amber-100/60 dark:bg-amber-950/40">
+                  <Badge variant="outline" className="text-[10px] font-mono">
                     미점검 {unscannedProjects.length}개 저장소
                   </Badge>
                 </div>
-                <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed max-w-3xl">
-                  신규 등록/연동된 저장소 <strong className="text-indigo-600 dark:text-indigo-400 font-mono">[{unscannedProjects.map((p) => p.name).join(', ')}]</strong>의 
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-3xl">
+                  신규 등록/연동된 저장소 <strong className="text-zinc-900 dark:text-zinc-200 font-mono">[{unscannedProjects.map((p) => p.name).join(', ')}]</strong>의 
                   전체 소스코드 보안 점검이 아직 수행되지 않았습니다. 
                   보안 품질 게이트(Quality Gate) 및 향후 <strong>신규 PR 증분 검증(Delta Scan)</strong>을 가동하려면 
                   기존 전체 코드를 대상으로 하는 <strong>최초 전체 점검(Full Baseline Scan)</strong>을 먼저 실행해야 합니다.
                 </p>
-                <div className="flex flex-wrap items-center gap-4 text-[11px] text-amber-800 dark:text-amber-300/90 pt-0.5">
-                  <span className="flex items-center gap-1 font-medium">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <div className="flex flex-wrap items-center gap-4 text-[11px] text-zinc-500 dark:text-zinc-400 pt-0.5">
+                  <span className="flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                     최초 점검 전까지는 보안 성숙도 점수가 산출되지 않으며(--), PR 보안 검증 게이트가 대기 상태로 유지됩니다.
                   </span>
                   <button
                     onClick={() => setIsWhyBaselineOpen(!isWhyBaselineOpen)}
-                    className="text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-2 flex items-center gap-1 hover:text-indigo-700"
+                    className="text-zinc-900 dark:text-zinc-200 font-medium underline underline-offset-2 flex items-center gap-1 hover:opacity-80"
                   >
                     <Info className="w-3 h-3" />
                     {isWhyBaselineOpen ? '설명 접기' : '최초 전체 점검이 왜 필수인가요?'}
@@ -890,12 +887,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                 </div>
 
                 {isWhyBaselineOpen && (
-                  <div className="mt-3 p-3.5 rounded-xl bg-white/95 dark:bg-[#0d1320] border border-amber-300 dark:border-amber-900/60 text-xs text-slate-700 dark:text-slate-300 space-y-2 animate-in fade-in">
-                    <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <div className="mt-3 p-3.5 rounded-lg bg-zinc-50 dark:bg-[#141417] border border-zinc-200/80 dark:border-white/[0.06] text-xs text-zinc-700 dark:text-zinc-300 space-y-2 animate-in fade-in">
+                    <div className="font-semibold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                       엔터프라이즈 최초 베이스라인 점검 &amp; 기술 부채 격리 원리:
                     </div>
-                    <ul className="list-disc pl-4 space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+                    <ul className="list-disc pl-4 space-y-1 text-[11px] text-zinc-600 dark:text-zinc-400">
                       <li>
                         <strong>초기 보안 기준점 수립:</strong> 기존 48개 소스코드 전체를 4대 엔진(SAST·SCA·Secret·IaC)으로 전수 스캔하여 기준 점수(88점, B+)를 산출합니다.
                       </li>
@@ -911,7 +908,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               </div>
             </div>
 
-            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-amber-200 dark:border-amber-900/50">
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-zinc-100 dark:border-white/[0.06]">
               <Button
                 size="default"
                 onClick={() => {
@@ -921,12 +918,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                     setIsBaselineWizardOpen(true);
                   }
                 }}
-                className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-md gap-2 animate-pulse"
+                className="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-medium text-xs px-4 py-2 rounded-md shadow-none gap-1.5"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>⚡ 지금 최초 전체 점검 실행하기</span>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>최초 전체 점검 실행</span>
               </Button>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono hidden sm:inline">
+              <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono hidden sm:inline">
                 4대 엔진(SAST·SCA·Secret·IaC) 자동 분석
               </span>
             </div>

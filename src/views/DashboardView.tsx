@@ -146,54 +146,50 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
   const todayStr = '2026-10-02';
 
   return (
-    <div className="relative min-h-screen text-slate-900 dark:text-slate-100 select-none space-y-6 pb-12 animate-in fade-in-50 duration-200">
-      {/* Ambient Sunset / Golden Top-Right Glow & Deep Indigo Glow */}
-      <div className="fixed top-0 right-0 w-[600px] h-[500px] bg-gradient-to-bl from-amber-400/10 via-orange-400/05 to-transparent dark:from-amber-500/15 dark:via-orange-500/05 dark:to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-400/05 via-indigo-400/05 to-transparent dark:from-cyan-500/10 dark:via-indigo-500/05 dark:to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
-
-      {/* 1. Header Bar: Dual-mode compatible with Capsule Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/70 dark:border-white/[0.06]">
+    <div className="relative min-h-screen text-zinc-900 dark:text-zinc-100 select-none space-y-6 pb-12 animate-in fade-in-50 duration-200">
+      {/* 1. Header Bar: Vercel Geist Monochrome Precision */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-200/80 dark:border-white/[0.08]">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight font-sans">
-              Dashboard
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-semibold text-zinc-950 dark:text-zinc-50 tracking-tight font-sans">
+              보안 관제 대시보드
             </h1>
-            <span className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/15 dark:border-emerald-500/30 dark:text-emerald-400 font-mono text-[10px] font-semibold shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 font-mono text-[10px] font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               LIVE TELEMETRY
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed mt-1">
             그룹 4대 법인 DevSecOps 파이프라인 · 5대 보안 분석 엔진 · 배포 게이트 실시간 통합 관제
           </p>
         </div>
 
-        {/* Header Right Action Capsules */}
+        {/* Header Right Action Controls */}
         <div className="flex items-center gap-2 shrink-0 flex-wrap">
-          {/* Entity Scope Selector Capsule */}
+          {/* Entity Scope Selector Control */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="h-9 px-4 rounded-full bg-slate-100/80 hover:bg-slate-200/70 border border-slate-200/80 text-slate-800 hover:text-slate-900 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] dark:border-white/[0.08] dark:text-slate-200 dark:hover:text-white text-xs font-semibold flex items-center gap-2 transition-all shadow-2xs">
-                <Building2 className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+              <button className="h-8 px-3 rounded-md bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 hover:text-zinc-950 dark:bg-[#121214] dark:hover:bg-white/[0.06] dark:border-white/[0.08] dark:text-zinc-200 dark:hover:text-white text-xs font-medium flex items-center gap-2 transition-colors">
+                <Building2 className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
                 <span>{isAllEntities ? '전체 법인 통합' : currentEntity?.name}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
+                <ChevronDown className="w-3 h-3 text-zinc-400" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-[#0e121a] border border-slate-200 dark:border-white/10 text-xs text-slate-800 dark:text-slate-200 rounded-2xl shadow-xl z-[9999]">
-              <DropdownMenuLabel className="text-[10px] text-slate-400 font-mono">법인 관제 범위 선택</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setSelectedEntityId('ALL')} className="cursor-pointer font-semibold">
-                🌐 전체 법인 통합 관제 (Global Group)
+            <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-[#0f0f11] border border-zinc-200 dark:border-white/[0.1] text-xs text-zinc-800 dark:text-zinc-200 rounded-lg shadow-lg z-[9999]">
+              <DropdownMenuLabel className="text-[10px] text-zinc-400 font-mono uppercase">법인 관제 범위 선택</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => setSelectedEntityId('ALL')} className="cursor-pointer font-medium">
+                전체 법인 통합 관제 (Global Group)
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/10" />
+              <DropdownMenuSeparator className="bg-zinc-100 dark:bg-white/[0.08]" />
               {entities.map((ent) => (
                 <DropdownMenuItem
                   key={ent.id}
                   onClick={() => setSelectedEntityId(ent.id as any)}
                   className="cursor-pointer"
                 >
-                  <span className="w-2 h-2 rounded-full bg-sky-500 mr-2" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 mr-2" />
                   <span>{ent.name}</span>
-                  <span className="text-[10px] font-mono text-slate-400 ml-auto">{ent.code}</span>
+                  <span className="text-[10px] font-mono text-zinc-400 ml-auto">{ent.code}</span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -204,9 +200,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
             variant="outline"
             size="sm"
             onClick={() => setIsAuditModalOpen(true)}
-            className="h-9 px-4 rounded-full bg-slate-100/80 hover:bg-slate-200/70 border-slate-200/80 text-slate-700 hover:text-slate-900 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] dark:border-white/[0.08] dark:text-slate-300 dark:hover:text-white text-xs font-semibold gap-1.5 shadow-2xs transition-all"
+            className="h-8 px-3 rounded-md bg-white hover:bg-zinc-50 border-zinc-200 text-zinc-700 hover:text-zinc-950 dark:bg-[#121214] dark:hover:bg-white/[0.06] dark:border-white/[0.08] dark:text-zinc-300 dark:hover:text-white text-xs font-medium gap-1.5 shadow-none transition-colors"
           >
-            <FileText className="w-3.5 h-3.5 text-sky-500" />
+            <FileText className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
             <span className="hidden sm:inline">정기 보안감사</span> 보고서
           </Button>
 
@@ -214,9 +210,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
           <Button
             size="sm"
             onClick={() => onNavigate('projects')}
-            className="h-9 px-4 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 transition-all gap-1.5"
+            className="h-8 px-3 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-medium text-xs shadow-none transition-colors gap-1.5"
           >
-            <FolderGit2 className="w-3.5 h-3.5 text-slate-950" />
+            <FolderGit2 className="w-3.5 h-3.5" />
             <span>프로젝트 자산</span>
           </Button>
         </div>

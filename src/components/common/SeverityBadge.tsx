@@ -14,37 +14,37 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({ severity, size = '
   switch (severity) {
     case '치명적':
       return (
-        <Badge className="bg-red-600 hover:bg-red-700 text-white border-transparent font-bold">
-          <Flame className={iconSizeClass} />
+        <Badge className="bg-rose-500/10 hover:bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30 font-semibold">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5 shrink-0" />
           치명적 (Critical)
         </Badge>
       );
     case '높음':
       return (
-        <Badge className="bg-orange-600 hover:bg-orange-700 text-white border-transparent font-medium">
-          <AlertCircle className={iconSizeClass} />
+        <Badge className="bg-orange-500/10 hover:bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30 font-medium">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mr-1.5 shrink-0" />
           높음 (High)
         </Badge>
       );
     case '중간':
       return (
-        <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-transparent font-medium">
-          <AlertTriangle className={iconSizeClass} />
+        <Badge className="bg-amber-500/10 hover:bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30 font-medium">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 shrink-0" />
           중간 (Medium)
         </Badge>
       );
     case '낮음':
       return (
-        <Badge className="bg-blue-600 hover:bg-blue-700 text-white border-transparent font-normal">
-          <Info className={iconSizeClass} />
+        <Badge className="bg-sky-500/10 hover:bg-sky-500/15 text-sky-700 dark:text-sky-400 border-sky-500/30 font-normal">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mr-1.5 shrink-0" />
           낮음 (Low)
         </Badge>
       );
     case '정보':
     default:
       return (
-        <Badge className="bg-slate-600 hover:bg-slate-700 text-white border-transparent font-normal">
-          <HelpCircle className={iconSizeClass} />
+        <Badge className="bg-zinc-500/10 hover:bg-zinc-500/15 text-zinc-600 dark:text-zinc-400 border-zinc-500/25 font-normal">
+          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 mr-1.5 shrink-0" />
           정보 (Info)
         </Badge>
       );

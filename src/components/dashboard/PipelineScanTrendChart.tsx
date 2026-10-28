@@ -48,7 +48,7 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
   const displayData = timeRange === '7d' ? rhythmData.slice(7) : rhythmData;
   const maxScans = 62;
 
-  // 5 Security Engines (thick vertical pill bars matching reference image's lower bars)
+  // 5 Security Engines (Vercel Geist high-precision bar fills)
   const engines = [
     {
       id: 'sast',
@@ -57,8 +57,8 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
       desc: '소스 정적 분석',
       rate: 98.4,
       heightPercent: 88,
-      gradient: 'from-blue-700 via-sky-500 to-sky-300',
-      activeColor: 'bg-sky-400',
+      barColor: 'bg-zinc-900 dark:bg-zinc-100',
+      activeColor: 'bg-zinc-900 dark:bg-zinc-100',
     },
     {
       id: 'sca',
@@ -67,8 +67,8 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
       desc: '오픈소스 취약점',
       rate: 99.1,
       heightPercent: 92,
-      gradient: 'from-cyan-700 via-teal-500 to-cyan-300',
-      activeColor: 'bg-cyan-400',
+      barColor: 'bg-sky-500 dark:bg-sky-400',
+      activeColor: 'bg-sky-500',
     },
     {
       id: 'secret',
@@ -77,8 +77,8 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
       desc: '토큰/키 유출 탐지',
       rate: 99.8,
       heightPercent: 96,
-      gradient: 'from-amber-700 via-yellow-500 to-amber-300',
-      activeColor: 'bg-amber-400',
+      barColor: 'bg-amber-500 dark:bg-amber-400',
+      activeColor: 'bg-amber-500',
     },
     {
       id: 'iac',
@@ -87,8 +87,8 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
       desc: '인프라 설정 결함',
       rate: 97.6,
       heightPercent: 82,
-      gradient: 'from-purple-700 via-fuchsia-500 to-purple-300',
-      activeColor: 'bg-purple-400',
+      barColor: 'bg-zinc-500 dark:bg-zinc-400',
+      activeColor: 'bg-zinc-500',
     },
     {
       id: 'sbom',
@@ -97,8 +97,8 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
       desc: '공급망 서명 무결성',
       rate: 100.0,
       heightPercent: 100,
-      gradient: 'from-emerald-700 via-emerald-500 to-emerald-300',
-      activeColor: 'bg-emerald-400',
+      barColor: 'bg-emerald-500 dark:bg-emerald-400',
+      activeColor: 'bg-emerald-500',
     },
   ];
 
@@ -112,57 +112,45 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
   };
 
   return (
-    <div className="p-5 sm:p-6 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#121620]/90 backdrop-blur-xl shadow-sm dark:shadow-2xl relative overflow-hidden flex flex-col justify-between h-full">
-      {/* Ambient background glows */}
-      <div className="absolute -top-24 -left-24 w-80 h-80 bg-sky-500/08 dark:bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-amber-500/08 dark:bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* 1. Top Banner: Large Headline Metric & Circular Action Trigger */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-200/80 dark:border-white/[0.06] relative z-10">
+    <div className="p-5 sm:p-6 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] relative overflow-hidden flex flex-col justify-between h-full">
+      {/* 1. Top Banner: Headline Metric & Action Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-200/80 dark:border-white/[0.08]">
         <div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight flex items-baseline gap-0.5">
-              <span className="text-amber-500 font-sans text-xl font-bold">$</span>
+          <div className="flex items-baseline gap-2.5">
+            <span className="text-2xl sm:text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
               98.4%
             </span>
-            <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 font-mono">
               COMPLIANT
             </span>
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5">
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 font-sans mt-1">
             그룹 DevSecOps 규제 컴플라이언스 준수율 (ISMS-P &amp; 전자금융감독규정)
           </div>
         </div>
 
-        {/* Circular Action Button matching reference image */}
-        <div className="flex items-center gap-2.5">
+        {/* Action Button & Time Range Switcher */}
+        <div className="flex items-center gap-2">
           <button
             onClick={handleTriggerQuickScan}
             disabled={isScanning}
-            className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-slate-200/90 dark:border-white/[0.1] text-xs font-semibold text-slate-800 dark:text-white transition-all shadow-2xs group"
+            className="flex items-center gap-2 h-8 px-3 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-medium transition-colors cursor-pointer disabled:opacity-60"
           >
-            <div className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-              <Play className={cn('w-2.5 h-2.5 fill-current ml-0.5', isScanning && 'animate-spin')} />
-            </div>
-            <div className="text-left font-mono">
-              <span className="block text-[9.5px] text-slate-400 dark:text-slate-400 leading-none">TELEMETRY</span>
-              <span className="font-bold text-xs">
-                {isScanning ? '점검 중...' : '실시간 전사 점검'}
-              </span>
-            </div>
+            <Play className={cn('w-3 h-3 fill-current', isScanning && 'animate-spin')} />
+            <span>{isScanning ? '점검 실행 중...' : '전사 파이프라인 점검'}</span>
           </button>
 
-          {/* Time range pill */}
-          <div className="flex items-center gap-1 p-0.5 rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.06] text-xs">
+          {/* Time range switcher */}
+          <div className="flex items-center gap-0.5 p-0.5 rounded-md bg-zinc-100 dark:bg-[#161618] border border-zinc-200/80 dark:border-white/[0.08] text-xs">
             {(['7d', '14d'] as const).map((range) => (
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
                 className={cn(
-                  'px-2.5 py-0.5 rounded-full font-mono text-[10.5px] font-semibold transition-all',
+                  'px-2.5 py-1 rounded font-mono text-[11px] font-medium transition-colors',
                   timeRange === range
-                    ? 'bg-white dark:bg-amber-500/20 text-slate-900 dark:text-amber-300 shadow-2xs border border-slate-200/80 dark:border-amber-500/30'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-2xs'
+                    : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 )}
               >
                 {range === '7d' ? '7일' : '14일'}
@@ -172,44 +160,44 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
         </div>
       </div>
 
-      {/* 2. Middle Section: Split Layout (Dense Equalizer Bars on Left, Stat Summary on Right) */}
-      <div className="py-3 relative z-10 border-b border-slate-200/80 dark:border-white/[0.06]">
-        <div className="flex items-center justify-between mb-2">
+      {/* 2. Middle Section: Daily Scan Telemetry Bar Chart */}
+      <div className="py-4 border-b border-zinc-200/80 dark:border-white/[0.08]">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white text-sm font-sans flex items-center gap-2">
-              <Activity className="w-4 h-4 text-sky-500" />
+            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm font-sans flex items-center gap-2">
+              <Activity className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
               일별 보안점검 파이프라인 &amp; 결함 탐지 흐름
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-sans">
-              파이프라인 실행 횟수(청록색) 대비 탐지된 보안 결함(오렌지색) 일별 현황
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-sans">
+              파이프라인 실행 횟수 대비 탐지된 보안 결함 일별 추이
             </p>
           </div>
-          <div className="flex items-center gap-3 text-[11px] font-mono">
-            <span className="flex items-center gap-1.5 text-sky-700 dark:text-sky-300 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-[0_0_6px_#0ea5e9]" />
+          <div className="flex items-center gap-3.5 text-[11px] font-mono">
+            <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300 font-medium">
+              <span className="w-2 h-2 rounded-xs bg-zinc-900 dark:bg-zinc-200" />
               파이프라인 점검
             </span>
-            <span className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_6px_#f59e0b]" />
+            <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-medium">
+              <span className="w-2 h-2 rounded-xs bg-amber-500" />
               탐지 결함
             </span>
           </div>
         </div>
 
-        {/* Main Grid: Dense Rhythm Equalizer on Left, Stats Panel on Right matching reference image */}
+        {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end pt-1">
-          {/* Left 8.5 cols: Dense Vertical Pill Bars */}
-          <div className="lg:col-span-8 xl:col-span-9 relative h-36 sm:h-40 w-full flex items-end justify-between gap-1.5 pt-2 pb-1 px-1 border-r border-slate-200/80 dark:border-white/[0.06] pr-3">
+          {/* Left 9 cols: Telemetry Bars */}
+          <div className="lg:col-span-8 xl:col-span-9 relative h-36 sm:h-40 w-full flex items-end justify-between gap-1.5 pt-2 pb-1 px-1 border-r border-zinc-200/80 dark:border-white/[0.08] pr-3">
             {/* Horizontal guide lines */}
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 dark:opacity-15">
-              <div className="border-b border-dashed border-slate-300 dark:border-slate-600 w-full" />
-              <div className="border-b border-dashed border-slate-300 dark:border-slate-600 w-full" />
-              <div className="border-b border-dashed border-slate-300 dark:border-slate-700 w-full" />
+            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+              <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
+              <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
+              <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
             </div>
 
             {displayData.map((item, index) => {
-              const scanHeightPct = Math.max((item.scans / maxScans) * 100, 12);
-              const findingsHeightPct = Math.max((item.findings / maxScans) * 100, 10);
+              const scanHeightPct = Math.max((item.scans / maxScans) * 100, 10);
+              const findingsHeightPct = Math.max((item.findings / maxScans) * 100, 8);
               const isHovered = hoveredIndex === index;
 
               return (
@@ -221,35 +209,35 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
                 >
                   {/* Tooltip */}
                   {isHovered && (
-                    <div className="absolute -top-11 z-30 px-2.5 py-1 rounded-xl bg-slate-900/95 border border-white/20 shadow-xl backdrop-blur-md text-[10px] font-mono text-white whitespace-nowrap animate-in fade-in-0 pointer-events-none">
-                      <div className="font-bold text-amber-300">{item.label}</div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-sky-300">점검 {item.scans}회</span>
+                    <div className="absolute -top-11 z-30 px-2.5 py-1 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-md text-[10px] font-mono tabular-nums whitespace-nowrap pointer-events-none">
+                      <div className="font-semibold">{item.label}</div>
+                      <div className="flex items-center gap-1.5 mt-0.5 opacity-90">
+                        <span>점검 {item.scans}회</span>
                         <span>·</span>
-                        <span className="text-amber-300">결함 {item.findings}건</span>
+                        <span>결함 {item.findings}건</span>
                       </div>
                     </div>
                   )}
 
-                  {/* Dual Vertical Pill Bars */}
+                  {/* Dual Vertical Bars (Geist crisp rounded-t-xs) */}
                   <div className="w-full flex items-end justify-center gap-1 h-full pb-1">
                     <div
                       style={{ height: `${scanHeightPct}%` }}
                       className={cn(
-                        'w-2 sm:w-2.5 rounded-full bg-gradient-to-t from-blue-700 via-sky-500 to-sky-300 transition-all duration-200 shadow-xs',
-                        isHovered ? 'brightness-125 shadow-[0_0_8px_#38bdf8]' : 'opacity-90 dark:opacity-85'
+                        'w-2 sm:w-2.5 rounded-t-xs bg-zinc-900 dark:bg-zinc-200 transition-opacity duration-150',
+                        isHovered ? 'opacity-100' : 'opacity-85'
                       )}
                     />
                     <div
                       style={{ height: `${findingsHeightPct}%` }}
                       className={cn(
-                        'w-2 sm:w-2.5 rounded-full bg-gradient-to-t from-orange-700 via-amber-500 to-amber-300 transition-all duration-200 shadow-xs',
-                        isHovered ? 'brightness-125 shadow-[0_0_8px_#f59e0b]' : 'opacity-90 dark:opacity-85'
+                        'w-2 sm:w-2.5 rounded-t-xs bg-amber-500 dark:bg-amber-400 transition-opacity duration-150',
+                        isHovered ? 'opacity-100' : 'opacity-85'
                       )}
                     />
                   </div>
 
-                  <span className="text-[9.5px] font-mono text-slate-400 dark:text-slate-500 mt-1 truncate">
+                  <span className="text-[9.5px] font-mono tabular-nums text-zinc-400 dark:text-zinc-500 mt-1 truncate">
                     {item.label}
                   </span>
                 </div>
@@ -257,49 +245,49 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
             })}
           </div>
 
-          {/* Right 3.5 cols: Stat Breakdown Panel matching reference image */}
+          {/* Right 3 cols: Stat Breakdown Panel */}
           <div className="lg:col-span-4 xl:col-span-3 space-y-2 text-xs font-mono pb-1 pl-1">
-            <div className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider mb-1">
+            <div className="text-[10px] font-mono text-zinc-400 font-medium uppercase tracking-wider mb-1">
               CYCLE METRICS
             </div>
-            <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/[0.04]">
-              <div className="text-[10px] text-slate-400 font-sans">누적 파이프라인</div>
-              <div className="text-sm font-bold text-slate-900 dark:text-white font-mono mt-0.5">
-                428<span className="text-[10px] text-sky-500 font-sans ml-1">회 실행</span>
+            <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-[#141417] border border-zinc-200/70 dark:border-white/[0.06]">
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400 font-sans">누적 파이프라인</div>
+              <div className="text-sm font-semibold text-zinc-950 dark:text-white font-mono tabular-nums mt-0.5">
+                428<span className="text-[10px] text-zinc-500 font-sans ml-1 font-normal">회 실행</span>
               </div>
             </div>
-            <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/[0.04]">
-              <div className="text-[10px] text-slate-400 font-sans">탐지 결함 조치율</div>
-              <div className="text-sm font-bold text-amber-600 dark:text-amber-400 font-mono mt-0.5">
-                92.4%<span className="text-[10px] text-emerald-500 font-sans ml-1">우수</span>
+            <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-[#141417] border border-zinc-200/70 dark:border-white/[0.06]">
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400 font-sans">탐지 결함 조치율</div>
+              <div className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums mt-0.5">
+                92.4%<span className="text-[10px] text-zinc-500 font-sans ml-1 font-normal">SLA 준수</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3. Lower Section: 5 Core Security Engines Infographic */}
-      <div className="pt-3 relative z-10 flex flex-col justify-between">
+      {/* 3. Lower Section: 5 Core Security Engines Telemetry */}
+      <div className="pt-4 flex flex-col justify-between">
         <div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
             <div>
-              <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">
+              <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-medium">
                 ENGINE WORKLOAD TELEMETRY
               </span>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
-                <Cpu className="w-4 h-4 text-amber-500" />
+              <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 mt-0.5">
+                <Cpu className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                 5대 보안 점검 엔진별 가동 성능 및 정밀도
               </h4>
             </div>
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 shrink-0 self-start sm:self-auto">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/25 shrink-0 self-start sm:self-auto">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               5/5 엔진 온라인 정상
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-            {/* Left 7 cols: Thick Vertical Pill Bars matching reference photo (w-8/w-9) */}
-            <div className="lg:col-span-7 h-32 sm:h-34 flex items-end justify-around gap-3 px-2 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/[0.06] pb-2 lg:pb-0 lg:pr-4">
+            {/* Left 7 cols: Crisp Vertical Telemetry Bars */}
+            <div className="lg:col-span-7 h-32 flex items-end justify-around gap-3 px-2 border-b lg:border-b-0 lg:border-r border-zinc-200/80 dark:border-white/[0.08] pb-2 lg:pb-0 lg:pr-4">
               {engines.map((eng) => {
                 const isHovered = hoveredEngine === eng.id;
                 return (
@@ -311,23 +299,23 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
                   >
                     {/* Tooltip */}
                     {isHovered && (
-                      <div className="absolute -top-11 z-30 px-2.5 py-1 rounded-xl bg-slate-900 border border-white/20 text-[10px] font-mono text-white whitespace-nowrap shadow-xl pointer-events-none">
-                        <span className="font-bold text-amber-300">{eng.name}:</span> {eng.rate}%
+                      <div className="absolute -top-9 z-30 px-2 py-0.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-[10px] font-mono tabular-nums text-white dark:text-zinc-900 whitespace-nowrap shadow-md pointer-events-none">
+                        <span className="font-semibold">{eng.name}:</span> {eng.rate}%
                       </div>
                     )}
 
-                    {/* Thick Vertical Pill Bar (proper width: w-8 rounded-full) */}
+                    {/* Crisp Vertical Bar */}
                     <div
                       style={{ height: `${eng.heightPercent}%` }}
                       className={cn(
-                        'w-8 rounded-full bg-gradient-to-t transition-all duration-300 shadow-md',
-                        eng.gradient,
-                        isHovered ? 'scale-105 brightness-125 shadow-lg' : 'opacity-90 dark:opacity-85'
+                        'w-7 rounded-t-sm transition-opacity duration-200',
+                        eng.barColor,
+                        isHovered ? 'opacity-100' : 'opacity-85'
                       )}
                     />
 
                     {/* Engine short label */}
-                    <span className="text-[10px] font-mono font-bold text-slate-700 dark:text-slate-300 mt-2 truncate">
+                    <span className="text-[10px] font-mono font-medium text-zinc-600 dark:text-zinc-400 mt-2 truncate">
                       {eng.shortName}
                     </span>
                   </div>
@@ -335,18 +323,18 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
               })}
             </div>
 
-            {/* Right 5 cols: Legend Metrics for all 5 engines matching reference image */}
+            {/* Right 5 cols: Legend Metrics for all 5 engines */}
             <div className="lg:col-span-5 space-y-1.5 text-xs font-mono">
               {engines.map((eng) => (
                 <div
                   key={eng.id}
-                  className="flex items-center justify-between p-1 px-2.5 rounded-xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/[0.04]"
+                  className="flex items-center justify-between py-1.5 px-2.5 rounded-md bg-zinc-50 dark:bg-[#141417] border border-zinc-200/60 dark:border-white/[0.05]"
                 >
                   <div className="flex items-center gap-2">
-                    <span className={cn('w-2 h-2 rounded-full', eng.activeColor)} />
-                    <span className="text-slate-700 dark:text-slate-300 font-sans text-xs">{eng.name}</span>
+                    <span className={cn('w-2 h-2 rounded-xs', eng.activeColor)} />
+                    <span className="text-zinc-700 dark:text-zinc-300 font-sans text-xs">{eng.name}</span>
                   </div>
-                  <span className="font-bold text-slate-900 dark:text-white font-mono text-xs">{eng.rate}%</span>
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono tabular-nums text-xs">{eng.rate}%</span>
                 </div>
               ))}
             </div>
@@ -354,18 +342,18 @@ export const PipelineScanTrendChart: React.FC<PipelineScanTrendChartProps> = ({ 
         </div>
 
         {/* Micro Spec Indicator Bar at the bottom */}
-        <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-white/[0.04] grid grid-cols-3 gap-2 text-center text-[10.5px] font-mono text-slate-500 dark:text-slate-400">
-          <div className="flex items-center justify-center gap-1.5 p-1 rounded-xl bg-slate-50/80 dark:bg-white/[0.02]">
-            <Clock className="w-3 h-3 text-sky-500" />
-            <span>평균 스캔: <strong className="text-slate-800 dark:text-slate-200 font-bold">14.8초</strong></span>
+        <div className="mt-3.5 pt-3 border-t border-zinc-100 dark:border-white/[0.06] grid grid-cols-3 gap-2 text-center text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
+          <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-md bg-zinc-50 dark:bg-[#141417]">
+            <Clock className="w-3 h-3 text-zinc-400" />
+            <span>평균 스캔: <strong className="text-zinc-900 dark:text-zinc-200 font-semibold">14.8초</strong></span>
           </div>
-          <div className="flex items-center justify-center gap-1.5 p-1 rounded-xl bg-slate-50/80 dark:bg-white/[0.02]">
+          <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-md bg-zinc-50 dark:bg-[#141417]">
             <ShieldCheck className="w-3 h-3 text-emerald-500" />
-            <span>정밀도: <strong className="text-slate-800 dark:text-slate-200 font-bold">99.2% (오탐 0.8%↓)</strong></span>
+            <span>정밀도: <strong className="text-zinc-900 dark:text-zinc-200 font-semibold">99.2%</strong></span>
           </div>
-          <div className="flex items-center justify-center gap-1.5 p-1 rounded-xl bg-slate-50/80 dark:bg-white/[0.02]">
+          <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-md bg-zinc-50 dark:bg-[#141417]">
             <Zap className="w-3 h-3 text-amber-500" />
-            <span>사전 차단: <strong className="text-slate-800 dark:text-slate-200 font-bold">Zero-Tolerance</strong></span>
+            <span>사전 차단: <strong className="text-zinc-900 dark:text-zinc-200 font-semibold">Zero-Tolerance</strong></span>
           </div>
         </div>
       </div>

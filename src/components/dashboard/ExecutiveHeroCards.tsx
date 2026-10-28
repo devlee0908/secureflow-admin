@@ -45,179 +45,177 @@ export const ExecutiveHeroCards: React.FC<ExecutiveHeroCardsProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Frosted Obsidian Glass Card with Golden Aura (Card 1 in reference) */}
+      {/* 1. Security Posture Index (Vercel Geist Card) */}
       <div
         onClick={() => onNavigate('projects')}
-        className="relative group p-5 rounded-3xl cursor-pointer transition-all duration-300 overflow-hidden border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#121620]/90 backdrop-blur-xl shadow-sm dark:shadow-2xl hover:border-amber-400/50 hover:shadow-lg dark:hover:shadow-amber-500/10 flex flex-col justify-between"
+        className="group p-5 rounded-xl cursor-pointer transition-colors border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] hover:border-zinc-300 dark:hover:border-white/[0.16] flex flex-col justify-between"
       >
-        {/* Subtle Ambient Gold Glow */}
-        <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-400/10 dark:bg-amber-500/15 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-400/20 transition-all" />
-
         <div>
-          <div className="flex items-center justify-between mb-4 relative z-10">
+          <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.1] text-amber-500 dark:text-amber-400 flex items-center justify-center font-bold text-xs shadow-2xs">
-                <ShieldCheck className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-md bg-zinc-100 dark:bg-white/[0.06] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                <ShieldCheck className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">보안 건전성 지수</span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">GROUP INDEX</span>
+                <span className="text-xs font-medium text-zinc-900 dark:text-zinc-100 block">보안 건전성 지수</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">GROUP INDEX</span>
               </div>
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30 font-semibold flex items-center gap-1 shadow-2xs">
+            <span className="text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 font-medium flex items-center gap-1">
               +3.2%
               <TrendingUp className="w-2.5 h-2.5" />
             </span>
           </div>
 
-          <div className="relative z-10">
+          <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
+              <span className="text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
                 {avgSecurityScore}
               </span>
-              <span className="text-xs font-bold text-amber-600 dark:text-amber-400 font-mono">/ 100점</span>
+              <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500 font-mono">/ 100점</span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-sans">
-              등급: <strong className="text-amber-600 dark:text-amber-400 font-mono">{avgSecurityScore >= 85 ? 'A+ (최우수)' : avgSecurityScore >= 70 ? 'B (보통)' : 'C (위험)'}</strong> · ISMS-P 충족
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 font-sans">
+              등급: <strong className="text-emerald-600 dark:text-emerald-400 font-mono font-semibold">{avgSecurityScore >= 85 ? 'A+ (최우수)' : avgSecurityScore >= 70 ? 'B (양호)' : 'C (위험)'}</strong> · ISMS-P 충족
             </p>
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[11px] relative z-10">
-          <span className="text-slate-400 dark:text-slate-500 font-mono text-[10px]">{scopeLabel}</span>
-          <span className="text-amber-600 dark:text-amber-400 font-mono font-semibold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+        <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-[11px]">
+          <span className="text-zinc-400 dark:text-zinc-500 font-mono text-[10px]">{scopeLabel}</span>
+          <span className="text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white font-medium flex items-center gap-0.5 transition-colors">
             자세히 <ArrowUpRight className="w-3 h-3" />
           </span>
         </div>
       </div>
 
-      {/* 2. Vibrant Royal Indigo & Violet Gradient Card (Card 2 in reference) */}
+      {/* 2. Registered Projects Asset Card (Vercel Geist Card) */}
       <div
         onClick={() => onNavigate('projects')}
-        className="relative group p-5 rounded-3xl cursor-pointer transition-all duration-300 overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-indigo-800 text-white shadow-lg shadow-indigo-600/20 hover:shadow-xl hover:shadow-indigo-600/30 flex flex-col justify-between"
+        className="group p-5 rounded-xl cursor-pointer transition-colors border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] hover:border-zinc-300 dark:hover:border-white/[0.16] flex flex-col justify-between"
       >
-        <div className="absolute -top-12 -right-12 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-
         <div>
-          <div className="flex items-center justify-between mb-4 relative z-10">
+          <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/15 border border-white/20 text-white flex items-center justify-center font-bold text-xs backdrop-blur-md">
-                <FolderGit2 className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-md bg-zinc-100 dark:bg-white/[0.06] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                <FolderGit2 className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-white block">프로젝트 자산</span>
-                <span className="text-[10px] text-indigo-200 font-mono">ASSET TELEMETRY</span>
+                <span className="text-xs font-medium text-zinc-900 dark:text-zinc-100 block">프로젝트 자산</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">ASSET TELEMETRY</span>
               </div>
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/20 text-white font-semibold backdrop-blur-md border border-white/20 flex items-center gap-1">
-              4/4 엔진 <ChevronDown className="w-2.5 h-2.5" />
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-white/[0.06] text-zinc-600 dark:text-zinc-300 font-medium border border-zinc-200/80 dark:border-white/[0.08] flex items-center gap-1">
+              5/5 엔진 활성
             </span>
           </div>
 
-          <div className="relative z-10">
+          <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight">
+              <span className="text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
                 {registeredProjectsCount}
               </span>
-              <span className="text-xs font-semibold text-indigo-200 font-sans">개 프로젝트</span>
+              <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500 font-sans">개 프로젝트</span>
             </div>
-            <p className="text-xs text-indigo-100/90 mt-1 font-sans">
-              운영 {prodProjectsCount} · 개발 {devProjectsCount} 활성 파이프라인
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 font-sans">
+              운영 <strong className="text-zinc-800 dark:text-zinc-200 font-mono">{prodProjectsCount}</strong> · 개발 <strong className="text-zinc-800 dark:text-zinc-200 font-mono">{devProjectsCount}</strong> 활성 파이프라인
             </p>
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-[11px] relative z-10">
-          <span className="text-indigo-200 font-mono text-[10px]">전체 자동화 연동</span>
-          <span className="text-white font-mono font-semibold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
-            조회 <ArrowUpRight className="w-3 h-3" />
+        <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-[11px]">
+          <span className="text-zinc-400 dark:text-zinc-500 font-mono text-[10px]">전체 자동화 연동</span>
+          <span className="text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white font-medium flex items-center gap-0.5 transition-colors">
+            자산 조회 <ArrowUpRight className="w-3 h-3" />
           </span>
         </div>
       </div>
 
-      {/* 3. Deep Magenta & Royal Violet Gradient Card (Card 3 in reference) */}
+      {/* 3. Deployment Gate Reviews Card (Vercel Geist Card) */}
       <div
         onClick={() => onNavigate('reviews')}
-        className="relative group p-5 rounded-3xl cursor-pointer transition-all duration-300 overflow-hidden bg-gradient-to-br from-purple-600 via-fuchsia-600 to-indigo-700 text-white shadow-lg shadow-purple-600/20 hover:shadow-xl hover:shadow-purple-600/30 flex flex-col justify-between"
+        className="group p-5 rounded-xl cursor-pointer transition-colors border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] hover:border-zinc-300 dark:hover:border-white/[0.16] flex flex-col justify-between"
       >
-        <div className="absolute -top-12 -right-12 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-
         <div>
-          <div className="flex items-center justify-between mb-4 relative z-10">
+          <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/15 border border-white/20 text-white flex items-center justify-center font-bold text-xs backdrop-blur-md">
-                <GitPullRequest className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-md bg-zinc-100 dark:bg-white/[0.06] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                <GitPullRequest className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-white block">배포 통제 심사</span>
-                <span className="text-[10px] text-fuchsia-200 font-mono">DEPLOY GATE</span>
+                <span className="text-xs font-medium text-zinc-900 dark:text-zinc-100 block">배포 통제 심사</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">DEPLOY GATE</span>
               </div>
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/20 text-white font-semibold backdrop-blur-md border border-white/20 flex items-center gap-1">
+            <span className="text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-400 font-medium border border-amber-500/25">
               차단율 {autoBlockRate}%
             </span>
           </div>
 
-          <div className="relative z-10">
+          <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight">
+              <span className="text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
                 {pendingReviewsCount}
               </span>
-              <span className="text-xs font-semibold text-fuchsia-200 font-sans">건 승인 대기</span>
+              <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500 font-sans">건 승인 대기</span>
             </div>
-            <p className="text-xs text-fuchsia-100/90 mt-1 font-sans">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 font-sans">
               {pendingReviewsCount > 0 ? 'CISO/보안 심사 승인 대기 중' : '모든 PR 보안 통과 완료'}
             </p>
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-[11px] relative z-10">
-          <span className="text-fuchsia-200 font-mono text-[10px]">Zero-Tolerance 가동</span>
-          <span className="text-white font-mono font-semibold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
-            심사 <ArrowUpRight className="w-3 h-3" />
+        <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-[11px]">
+          <span className="text-zinc-400 dark:text-zinc-500 font-mono text-[10px]">Zero-Tolerance 가동</span>
+          <span className="text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white font-medium flex items-center gap-0.5 transition-colors">
+            심사하기 <ArrowUpRight className="w-3 h-3" />
           </span>
         </div>
       </div>
 
-      {/* 4. Warm Sunset Amber & Peach Gradient Card (Card 4 in reference) */}
+      {/* 4. Remediation Speed (MTTR) & High/Critical Findings Card (Vercel Geist Card) */}
       <div
         onClick={() => onNavigate('findings', { severity: 'HIGH_CRITICAL' })}
-        className="relative group p-5 rounded-3xl cursor-pointer transition-all duration-300 overflow-hidden bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/35 flex flex-col justify-between"
+        className="group p-5 rounded-xl cursor-pointer transition-colors border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] hover:border-zinc-300 dark:hover:border-white/[0.16] flex flex-col justify-between"
       >
-        <div className="absolute -top-12 -right-12 w-32 h-32 bg-white/15 rounded-full blur-2xl pointer-events-none" />
-
         <div>
-          <div className="flex items-center justify-between mb-4 relative z-10">
+          <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-slate-950/15 border border-slate-950/20 text-slate-950 flex items-center justify-center font-bold text-xs backdrop-blur-md">
-                <Zap className="w-4 h-4 text-slate-950" />
+              <div className="w-7 h-7 rounded-md bg-zinc-100 dark:bg-white/[0.06] border border-zinc-200/80 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                <Zap className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-950 block">평균 해결(MTTR)</span>
-                <span className="text-[10px] text-amber-950/70 font-mono font-semibold">REMEDIATION SPEED</span>
+                <span className="text-xs font-medium text-zinc-900 dark:text-zinc-100 block">평균 해결(MTTR)</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">REMEDIATION</span>
               </div>
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-950/15 text-slate-950 font-bold backdrop-blur-md border border-slate-950/20">
-              -82% 달성
+            <span
+              className={cn(
+                'text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-md font-medium border',
+                unresolvedHighCriticalCount > 0
+                  ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/25'
+                  : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25'
+              )}
+            >
+              {unresolvedHighCriticalCount > 0 ? `고위험 ${unresolvedHighCriticalCount}건` : '무결점 유지'}
             </span>
           </div>
 
-          <div className="relative z-10">
+          <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl sm:text-4xl font-black text-slate-950 font-mono tracking-tight">
+              <span className="text-3xl font-semibold text-zinc-950 dark:text-zinc-50 font-mono tabular-nums tracking-tight">
                 {mttrHours}
               </span>
-              <span className="text-xs font-bold text-slate-950/80 font-sans">시간 (목표 24h)</span>
+              <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500 font-sans">시간 (목표 24h)</span>
             </div>
-            <p className="text-xs text-slate-950/80 mt-1 font-sans">
-              고위험 결함 {unresolvedHighCriticalCount}건 · SLA 기한 초과 {overdueCount}건
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 font-sans">
+              고위험 결함 <strong className={cn('font-mono', unresolvedHighCriticalCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-800 dark:text-zinc-200')}>{unresolvedHighCriticalCount}건</strong> · SLA 초과 <strong className={cn('font-mono', overdueCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-800 dark:text-zinc-200')}>{overdueCount}건</strong>
             </p>
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-950/15 flex items-center justify-between text-[11px] relative z-10">
-          <span className="text-amber-950/70 font-mono text-[10px]">SLA 준수율 100%</span>
-          <span className="text-slate-950 font-mono font-bold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+        <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-[11px]">
+          <span className="text-zinc-400 dark:text-zinc-500 font-mono text-[10px]">SLA 목표 24시간 이내</span>
+          <span className="text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white font-medium flex items-center gap-0.5 transition-colors">
             조치 큐 <ArrowUpRight className="w-3 h-3" />
           </span>
         </div>

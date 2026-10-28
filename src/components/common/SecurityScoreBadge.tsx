@@ -22,14 +22,14 @@ export const SecurityScoreBadge: React.FC<SecurityScoreBadgeProps> = ({
     <Tooltip>
       <TooltipTrigger asChild>
         <div
-          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border font-mono cursor-pointer transition-all hover:scale-105 shadow-xs ${gradeColor.bg} ${gradeColor.border}`}
+          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border font-mono tabular-nums cursor-pointer transition-colors ${gradeColor.bg} ${gradeColor.border}`}
         >
           <span
-            className={`font-black rounded px-1.5 py-0.2 text-white text-[11px] leading-tight ${
+            className={`font-bold rounded-xs px-1.5 py-0.2 text-white text-[10px] leading-tight ${
               grade === 'A+' || grade === 'A'
                 ? 'bg-emerald-600'
                 : grade === 'B'
-                ? 'bg-indigo-600'
+                ? 'bg-sky-600'
                 : grade === 'C'
                 ? 'bg-amber-600'
                 : grade === 'D'
@@ -39,11 +39,11 @@ export const SecurityScoreBadge: React.FC<SecurityScoreBadgeProps> = ({
           >
             {grade}
           </span>
-          <span className={`font-bold ${gradeColor.text} text-xs`}>
+          <span className={`font-semibold ${gradeColor.text} text-xs`}>
             {score}점
           </span>
           {showLabel && (
-            <span className="text-[10px] text-slate-500 font-sans hidden sm:inline">
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-sans hidden sm:inline">
               ({gradeLabel})
             </span>
           )}

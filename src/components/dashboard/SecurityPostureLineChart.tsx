@@ -52,38 +52,38 @@ export const SecurityPostureLineChart: React.FC<SecurityPostureLineChartProps> =
   const areaD = `${pathD} L ${coords[coords.length - 1].x} ${height - paddingY} L ${coords[0].x} ${height - paddingY} Z`;
 
   return (
-    <div className="p-5 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] bg-white/95 dark:bg-[#121620]/90 backdrop-blur-xl shadow-sm dark:shadow-2xl relative overflow-hidden flex flex-col justify-between h-full">
+    <div className="p-5 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] relative overflow-hidden flex flex-col justify-between h-full">
       <div>
-        {/* Header matching reference image (Mim feature saving + pill button) */}
-        <div className="flex items-center justify-between pb-2.5 border-b border-slate-200/80 dark:border-white/[0.06]">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-200/80 dark:border-white/[0.08]">
           <div>
-            <div className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">
+            <div className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-medium">
               DEPLOY GATE VELOCITY
             </div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5 mt-0.5">
-              <TrendingUp className="w-4 h-4 text-amber-500" />
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 mt-0.5">
+              <TrendingUp className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
               게이트 통과율 &amp; 패치 속도 개선
             </h3>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold font-mono px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1 shadow-2xs">
+            <span className="text-[11px] font-medium font-mono tabular-nums px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 flex items-center gap-1">
               +50.0% <TrendingUp className="w-3 h-3" />
             </span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between py-1.5 text-xs text-slate-500 dark:text-slate-400 font-sans">
+        <div className="flex items-center justify-between py-2 text-xs text-zinc-500 dark:text-zinc-400 font-sans">
           <span>10주 연속 무결점 패치 트렌드</span>
-          <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono text-xs">현재 98.4% (최고치)</span>
+          <span className="text-emerald-600 dark:text-emerald-400 font-semibold font-mono tabular-nums text-xs">현재 98.4%</span>
         </div>
 
-        {/* Full-width Glowing Neon Gold Line SVG Chart matching reference */}
+        {/* Crisp Vercel Geist SVG Line Chart */}
         <div className="relative w-full h-30 sm:h-32 pt-1">
           {/* Y-axis guide lines */}
-          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20 dark:opacity-15 px-1">
-            <div className="border-b border-dashed border-slate-300 dark:border-slate-600 w-full" />
-            <div className="border-b border-dashed border-slate-300 dark:border-slate-600 w-full" />
-            <div className="border-b border-dashed border-slate-300 dark:border-slate-700 w-full" />
+          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none px-1">
+            <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
+            <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
+            <div className="border-b border-dashed border-zinc-200 dark:border-white/[0.06] w-full" />
           </div>
 
           <svg
@@ -92,45 +92,27 @@ export const SecurityPostureLineChart: React.FC<SecurityPostureLineChartProps> =
             className="w-full h-full overflow-visible"
           >
             <defs>
-              {/* Neon Glow Filter */}
-              <filter id="neonGoldGlowRef" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-
-              {/* Area Gradient */}
-              <linearGradient id="goldAreaGradientRef" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.28" />
-                <stop offset="60%" stopColor="#d97706" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#b45309" stopOpacity="0.0" />
-              </linearGradient>
-
-              {/* Line Gradient */}
-              <linearGradient id="goldLineGradientRef" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#f59e0b" />
-                <stop offset="50%" stopColor="#fbbf24" />
-                <stop offset="100%" stopColor="#f59e0b" />
+              {/* Subtle Area Gradient */}
+              <linearGradient id="geistEmeraldArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.16" />
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
             {/* Gradient Area Fill */}
-            <path d={areaD} fill="url(#goldAreaGradientRef)" />
+            <path d={areaD} fill="url(#geistEmeraldArea)" />
 
-            {/* Glowing Stroke Line */}
+            {/* Crisp 2px Stroke Line */}
             <path
               d={pathD}
               fill="none"
-              stroke="url(#goldLineGradientRef)"
-              strokeWidth="2.5"
+              stroke="#10b981"
+              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              filter="url(#neonGoldGlowRef)"
             />
 
-            {/* Glowing Points */}
+            {/* Data Points */}
             {coords.map((c, i) => {
               const isHovered = hoveredPoint === i;
               const isLast = i === coords.length - 1;
@@ -142,28 +124,14 @@ export const SecurityPostureLineChart: React.FC<SecurityPostureLineChartProps> =
                   onMouseLeave={() => setHoveredPoint(null)}
                   className="cursor-pointer"
                 >
-                  {/* Outer Pulsing Ring */}
-                  {(isLast || isHovered) && (
-                    <circle
-                      cx={c.x}
-                      cy={c.y}
-                      r="6.5"
-                      fill="none"
-                      stroke="#f59e0b"
-                      strokeWidth="1.5"
-                      className="animate-ping opacity-75"
-                    />
-                  )}
-
-                  {/* Core Node */}
                   <circle
                     cx={c.x}
                     cy={c.y}
-                    r={isHovered || isLast ? '4.5' : '3'}
-                    fill={isHovered || isLast ? '#ffffff' : '#f59e0b'}
-                    stroke="#d97706"
+                    r={isHovered || isLast ? '4' : '2.5'}
+                    fill={isHovered || isLast ? '#10b981' : '#ffffff'}
+                    stroke="#10b981"
                     strokeWidth="2"
-                    className="transition-all duration-200 shadow-sm"
+                    className="transition-all duration-150"
                   />
                 </g>
               );
@@ -177,15 +145,15 @@ export const SecurityPostureLineChart: React.FC<SecurityPostureLineChartProps> =
                 left: `${(coords[hoveredPoint].x / width) * 100}%`,
                 top: `${(coords[hoveredPoint].y / height) * 60}%`,
               }}
-              className="absolute -translate-x-1/2 -translate-y-8 z-30 px-2 py-0.5 rounded-lg bg-slate-900 border border-amber-500/40 text-[10px] font-mono text-white shadow-xl pointer-events-none whitespace-nowrap"
+              className="absolute -translate-x-1/2 -translate-y-8 z-30 px-2 py-0.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-[10px] font-mono tabular-nums text-white dark:text-zinc-900 shadow-md pointer-events-none whitespace-nowrap"
             >
-              <span className="font-bold text-amber-300">{points[hoveredPoint].label}:</span>{' '}
+              <span className="font-semibold">{points[hoveredPoint].label}:</span>{' '}
               {points[hoveredPoint].passRate}% 통과율
             </div>
           )}
 
           {/* X-axis labels */}
-          <div className="flex justify-between px-1 text-[9px] font-mono text-slate-400 dark:text-slate-500 mt-1">
+          <div className="flex justify-between px-1 text-[9px] font-mono tabular-nums text-zinc-400 dark:text-zinc-500 mt-1">
             {points.map((p) => (
               <span key={p.label}>{p.label}</span>
             ))}
@@ -194,16 +162,16 @@ export const SecurityPostureLineChart: React.FC<SecurityPostureLineChartProps> =
       </div>
 
       {/* Footer */}
-      <div className="pt-2.5 border-t border-slate-100 dark:border-white/[0.06] mt-1 flex items-center justify-between text-xs">
-        <span className="text-[11px] text-slate-500 dark:text-slate-400">
-          프로덕션 배포 통과율 98.4% 돌파
+      <div className="pt-2.5 border-t border-zinc-100 dark:border-white/[0.06] mt-1 flex items-center justify-between text-xs">
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+          프로덕션 배포 통과율 98.4% 달성
         </span>
         <button
           onClick={() => onNavigate('reviews')}
-          className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-mono text-[11px] font-bold flex items-center gap-1 group"
+          className="text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white font-medium text-[11px] flex items-center gap-1 group"
         >
           <span>심사 게이트</span>
-          <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>
     </div>

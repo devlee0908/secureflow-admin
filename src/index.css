@@ -4,67 +4,67 @@
 
 @layer base {
   :root {
-    /* 2026 Modern Clean Light Theme */
-    --background: 210 20% 98%;        /* #f8fafc slate-50 */
-    --foreground: 222.2 47.4% 11.2%;   /* #0f172a slate-900 */
+    /* Vercel Geist Stark Monochrome Light Theme */
+    --background: 0 0% 98%;            /* #fafafa Geist Background */
+    --foreground: 0 0% 9%;             /* #171717 Geist High-Contrast Text */
 
-    --card: 0 0% 100%;                /* #ffffff */
-    --card-foreground: 222.2 47.4% 11.2%;
+    --card: 0 0% 100%;                 /* #ffffff Crisp Surface */
+    --card-foreground: 0 0% 9%;
 
-    --popover: 0 0% 100%;             /* #ffffff */
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 238.7 82% 58%;         /* #4f46e5 indigo-600 */
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 9%;                /* #171717 Geist Primary Action */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 214.3 31.8% 91.4%;   /* #e2e8f0 slate-200 */
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 95%;             /* #f2f2f2 */
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 210 40% 96.1%;           /* #f1f5f9 slate-100 */
-    --muted-foreground: 215.4 16.3% 46.9%; /* #64748b slate-500 */
+    --muted: 0 0% 96%;                 /* #f5f5f5 */
+    --muted-foreground: 0 0% 45%;      /* #737373 Geist Secondary Text */
 
-    --accent: 238.7 77.2% 96%;        /* #eef2ff indigo-50 */
-    --accent-foreground: 238.7 77.2% 40%;
+    --accent: 0 0% 95%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 88%;        /* #e2e8f0 */
-    --input: 214.3 31.8% 88%;
-    --ring: 238.7 82% 58%;
+    --border: 0 0% 90%;                /* #e5e5e5 1px Hairline */
+    --input: 0 0% 90%;
+    --ring: 0 0% 9%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;                  /* 8px Geist Precision Radius */
   }
 
   .dark {
-    /* 2026 Deep Obsidian Dark Theme */
-    --background: 224 33% 4.3%;        /* #07090e */
-    --foreground: 210 40% 98%;         /* #f8fafc */
+    /* Vercel Geist Pure Carbon Dark Theme */
+    --background: 0 0% 3.5%;           /* #09090b Geist Carbon Black */
+    --foreground: 0 0% 93%;            /* #ededed Geist Primary Text */
 
-    --card: 222 35% 7.5%;              /* #0c1017 */
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 6%;                   /* #0f0f11 Geist Elevated Surface */
+    --card-foreground: 0 0% 93%;
 
-    --popover: 222 35% 8.5%;           /* #0e131d */
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 7%;                /* #121214 */
+    --popover-foreground: 0 0% 93%;
 
-    --primary: 238.7 82% 64%;          /* #6366f1 indigo-500 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 96%;               /* #f5f5f5 Geist High-Contrast CTA */
+    --primary-foreground: 0 0% 6%;
 
-    --secondary: 222 25% 14%;          /* #1a2233 */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 11%;             /* #1c1c1f */
+    --secondary-foreground: 0 0% 93%;
 
-    --muted: 222 25% 12%;              /* #141b29 */
-    --muted-foreground: 215 18% 60%;   /* #8b9bb4 */
+    --muted: 0 0% 9.5%;                /* #18181b */
+    --muted-foreground: 0 0% 56%;      /* #8f8f96 Geist Muted Text */
 
-    --accent: 238.7 60% 18%;
-    --accent-foreground: 238.7 82% 75%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 93%;
 
-    --destructive: 345 80% 55%;
+    --destructive: 358 75% 59%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 25% 14%;             /* border-white/[0.08] */
-    --input: 222 25% 14%;
-    --ring: 238.7 82% 64%;
+    --border: 0 0% 13.5%;              /* #222225 Geist 1px Hairline */
+    --input: 0 0% 13.5%;
+    --ring: 0 0% 80%;
   }
 }
 
