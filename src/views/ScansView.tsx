@@ -75,7 +75,14 @@ import { exportToCsv } from '@/lib/exportCsv';
 import { SbomInspectorModal } from '@/components/common/SbomInspectorModal';
 import { toast } from 'sonner';
 
-export const ScansView: React.FC = () => {
+export interface ScansViewProps {
+  initialFilter?: {
+    scanId?: string;
+    search?: string;
+  };
+}
+
+export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
   const {
     scans,
     projects,
@@ -138,6 +145,19 @@ export const ScansView: React.FC = () => {
   ]);
 
   // Keep detailScan updated with live changes in context (e.g. status transition from running to done)
+  useEffect(() => {
+    if (initialFilter?.search !== undefined) {
+      setSearchQuery(initialFilter.search);
+    }
+    if (initialFilter?.scanId) {
+      const target = scans.find((s) => s.id === initialFilter.scanId);
+      if (target) {
+        setDetailScan(target);
+        setIsDetailOpen(true);
+      }
+    }
+  }, [initialFilter, scans]);
+
   useEffect(() => {
     if (detailScan) {
       const updated = scans.find((s) => s.id === detailScan.id);

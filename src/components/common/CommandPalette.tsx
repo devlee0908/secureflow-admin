@@ -118,7 +118,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden shadow-2xl border-slate-200">
+      <DialogContent className="max-w-2xl p-0 overflow-hidden shadow-2xl border-slate-200 dark:border-white/[0.1] bg-white dark:bg-[#0c0f16] text-slate-900 dark:text-slate-100">
         <DialogHeader className="sr-only">
           <DialogTitle>빠른 통합 검색 (Command Palette)</DialogTitle>
           <DialogDescription>
@@ -127,13 +127,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </DialogHeader>
 
         {/* Search input header */}
-        <div className="flex items-center px-4 border-b border-slate-200 bg-white">
+        <div className="flex items-center px-4 border-b border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0c0f16]">
           <Search className="w-4 h-4 text-slate-400 shrink-0 mr-3" />
           <input
             placeholder="프로젝트, 취약점, 점검 ID 또는 명령 검색... (예: 결제, JWT, SCN)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full h-12 text-sm bg-transparent outline-none placeholder:text-slate-400"
+            className="w-full h-12 text-sm bg-transparent text-slate-900 dark:text-slate-100 outline-none placeholder:text-slate-400"
             autoFocus
           />
           <Badge variant="outline" className="text-[10px] text-slate-400 font-mono shrink-0">
@@ -142,7 +142,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </div>
 
         {/* Search Results / Action List */}
-        <div className="max-h-[60vh] overflow-y-auto p-3 space-y-4 text-xs divide-y divide-slate-100">
+        <div className="max-h-[60vh] overflow-y-auto p-3 space-y-4 text-xs divide-y divide-slate-100 dark:divide-white/[0.06]">
           {/* Quick Navigations */}
           {!lowerQuery && (
             <div className="pt-1">
@@ -186,8 +186,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 {matchedProjects.map((p) => (
                   <div
                     key={p.id}
-                    onClick={() => handleSelectMenu('projects')}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-indigo-50/60 text-slate-700 cursor-pointer transition-colors"
+                    onClick={() => handleSelectMenu('projects', { projectId: p.id })}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-indigo-50/60 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-200 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-2.5 truncate">
                       <FolderGit2 className="w-4 h-4 text-indigo-500 shrink-0" />
@@ -252,8 +252,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 {matchedScans.map((s) => (
                   <div
                     key={s.id}
-                    onClick={() => handleSelectMenu('scans')}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 text-slate-700 cursor-pointer"
+                    onClick={() => handleSelectMenu('scans', { scanId: s.id })}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.06] text-slate-700 dark:text-slate-200 cursor-pointer"
                   >
                     <div className="flex items-center gap-2 font-mono">
                       <Scan className="w-3.5 h-3.5 text-indigo-500" />
@@ -303,9 +303,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   setCurrentUserRole('group_admin');
                   onOpenChange(false);
                 }}
-                className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 text-left"
+                className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-white/[0.08] hover:bg-slate-100 dark:hover:bg-white/[0.06] text-slate-700 dark:text-slate-200 text-left"
               >
-                <UserCheck className="w-3.5 h-3.5 text-indigo-600" />
+                <UserCheck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                 <span>그룹 보안관리자(CISO)로 권한 전환</span>
               </button>
             </div>
@@ -313,7 +313,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </div>
 
         {/* Footer shortcuts */}
-        <div className="p-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 px-4">
+        <div className="p-2.5 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400 px-4">
           <span>단축키: <strong>⌘ + K</strong> 또는 <strong>Ctrl + K</strong></span>
           <span>선택 시 해당 화면으로 즉시 이동합니다</span>
         </div>

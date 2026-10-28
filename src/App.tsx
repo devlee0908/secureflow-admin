@@ -131,9 +131,14 @@ const AppContent: React.FC = () => {
               <DashboardView onNavigate={handleNavigate} />
             )}
             {activeMenu === 'projects' && (
-              <ProjectsView onNavigate={handleNavigate} />
+              <ProjectsView
+                onNavigate={handleNavigate}
+                initialFilter={navigationFilter}
+              />
             )}
-            {activeMenu === 'scans' && <ScansView />}
+            {activeMenu === 'scans' && (
+              <ScansView initialFilter={navigationFilter} />
+            )}
             {activeMenu === 'findings' && (
               <FindingsView initialFilter={navigationFilter} />
             )}

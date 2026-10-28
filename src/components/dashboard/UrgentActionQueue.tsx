@@ -115,7 +115,15 @@ export const UrgentActionQueue: React.FC<UrgentActionQueueProps> = ({
 
         <div className="pt-3.5 border-t border-slate-200/80 dark:border-white/[0.06] mt-4 flex items-center justify-between text-[11px] font-mono text-slate-400">
           <span>치명적 결함 조치 시 자동 재검증</span>
-          <span className="text-amber-600 dark:text-amber-400 font-semibold">SLA 초과 0건 유지 중</span>
+          {overdueFindings.length > 0 ? (
+            <span className="text-rose-600 dark:text-rose-400 font-semibold">
+              SLA 초과 {overdueFindings.length}건 조치 필요
+            </span>
+          ) : (
+            <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+              SLA 초과 0건 유지 중
+            </span>
+          )}
         </div>
       </div>
 

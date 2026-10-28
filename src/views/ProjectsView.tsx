@@ -103,9 +103,13 @@ import { toast } from 'sonner';
 
 interface ProjectsViewProps {
   onNavigate?: (menu: any, filterState?: any) => void;
+  initialFilter?: {
+    projectId?: string;
+    search?: string;
+  };
 }
 
-export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
+export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialFilter }) => {
   const {
     projects,
     entities,
@@ -154,6 +158,20 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
   const [detailProject, setDetailProject] = useState<Project | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [canvasProject, setCanvasProject] = useState<Project | null>(null);
+
+  // Sync initial projectId or search if navigated via CommandPalette / Deep Link
+  useEffect(() => {
+    if (initialFilter?.search !== undefined) {
+      setSearchQuery(initialFilter.search);
+    }
+    if (initialFilter?.projectId) {
+      const target = projects.find((p) => p.id === initialFilter.projectId);
+      if (target) {
+        setDetailProject(target);
+        setIsDetailOpen(true);
+      }
+    }
+  }, [initialFilter, projects]);
 
   // Baseline Scan & Warning Alert state
   const [targetScanProject, setTargetScanProject] = useState<Project | null>(null);

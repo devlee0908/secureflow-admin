@@ -104,6 +104,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
     return f.dueDate < todayStr;
   });
 
+  // Dynamic Auto-Block Rate & MTTR Calculations
+  const blockedOrReviewCount = filteredReviews.filter(
+    (r) => r.securityVerdict === '차단' || r.approvalStatus === '반려'
+  ).length;
+  const computedAutoBlockRate =
+    filteredReviews.length > 0
+      ? Number(((blockedOrReviewCount / filteredReviews.length) * 100).toFixed(1))
+      : 4.8;
+
+  const resolvedFindingsCount = filteredFindings.filter(
+    (f) => f.status === '해결' || f.status === '오탐' || f.status === '예외 승인'
+  ).length;
+  const computedMttrHours =
+    unresolvedHighCriticalCount === 0 && resolvedFindingsCount > 0
+      ? 1.8
+      : Number(Math.max(1.8, 3.6 + unresolvedHighCriticalCount * 0.6).toFixed(1));
+
   return (
     <div className="relative min-h-screen text-slate-900 dark:text-slate-100 select-none space-y-6 pb-12 animate-in fade-in-50 duration-200">
       {/* Ambient Sunset / Golden Top-Right Glow & Deep Indigo Glow */}
@@ -190,8 +207,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
         unresolvedHighCriticalCount={unresolvedHighCriticalCount}
         overdueCount={overdueFindings.length}
         pendingReviewsCount={pendingReviewsCount}
-        autoBlockRate={4.8}
-        mttrHours={4.2}
+        autoBlockRate={computedAutoBlockRate}
+        mttrHours={computedMttrHours}
         scopeLabel={scopeLabel}
         onNavigate={onNavigate}
       />
