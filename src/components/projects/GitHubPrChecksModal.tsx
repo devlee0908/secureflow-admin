@@ -822,39 +822,39 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[10005] flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200 select-none">
-      <div className="relative w-full max-w-4xl bg-white dark:bg-[#0d1117] border border-slate-300 dark:border-white/[0.12] rounded-2xl shadow-2xl overflow-hidden flex flex-col text-slate-800 dark:text-slate-100 max-h-[92vh]">
+    <div className="fixed inset-0 z-[10005] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 select-none">
+      <div className="relative w-full max-w-4xl bg-white dark:bg-[#0f0f11] border border-zinc-300 dark:border-white/[0.1] rounded-xl shadow-2xl overflow-hidden flex flex-col text-zinc-900 dark:text-zinc-100 max-h-[92vh]">
         {/* GitHub Top Nav Bar */}
-        <div className="px-5 py-3 bg-slate-100 dark:bg-[#161b22] border-b border-slate-200 dark:border-white/[0.08] flex items-center justify-between shrink-0">
+        <div className="px-5 py-3 bg-zinc-100 dark:bg-[#141417] border-b border-zinc-200 dark:border-white/[0.08] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+            <div className="w-6 h-6 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center font-bold text-xs">
               <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">
                 <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
               </svg>
             </div>
-            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono">
+            <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 font-mono">
               {projectName} / Pull Requests / #{prNumber}
             </span>
-            <Badge variant="outline" className="text-[10px] font-mono border-indigo-500/30 text-indigo-500 dark:text-indigo-400 bg-indigo-500/10">
+            <Badge variant="outline" className="text-[10px] font-mono border-zinc-300 dark:border-white/[0.15] text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-white/[0.06]">
               보안 점검 에러 PR 뷰
             </Badge>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/[0.08] transition-colors"
+            className="p-1 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-white/[0.08] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Simulator Informative Callout Banner */}
-        <div className="px-5 py-2.5 bg-indigo-50/90 dark:bg-indigo-950/40 border-b border-indigo-200/60 dark:border-indigo-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div className="px-5 py-2.5 bg-zinc-50 dark:bg-[#09090b] border-b border-zinc-200 dark:border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white font-bold text-[10px] tracking-wide shrink-0 shadow-2xs">
+            <span className="px-2 py-0.5 rounded bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-semibold text-[10px] tracking-wide shrink-0 font-mono">
               보안 에러 PR
             </span>
-            <span className="text-slate-700 dark:text-slate-300">
+            <span className="text-zinc-700 dark:text-zinc-300">
               최초 전체 소스코드 점검에서 탐지된 <strong>총 {issuesList.length}건의 보안 결함 에러 내역 및 조치 코드</strong>가 담긴 공식 PR 화면입니다.
             </span>
           </div>
@@ -866,7 +866,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               className={cn(
                 'h-7 text-xs font-semibold gap-1.5 transition-all',
                 activeTab === 'publish'
-                  ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-2xs'
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                   : 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30'
               )}
             >
@@ -877,7 +877,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               href={`https://github.com/${repoFullName}/pulls`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 hover:underline"
             >
               <span>GitHub 저장소 이동</span>
               <ExternalLink className="w-3 h-3" />
@@ -886,32 +886,32 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
         </div>
 
         {/* PR Title & Status Ribbon */}
-        <div className="p-5 border-b border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0d1117] shrink-0">
+        <div className="p-5 border-b border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11] shrink-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                <h2 className="text-lg sm:text-xl font-semibold text-zinc-950 dark:text-zinc-100 tracking-tight">
                   {displayTitle}
                 </h2>
-                <span className="text-slate-400 text-lg font-mono">#{prNumber}</span>
+                <span className="text-zinc-400 text-lg font-mono">#{prNumber}</span>
               </div>
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-slate-600 dark:text-slate-400">
-                <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs">
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-zinc-600 dark:text-zinc-400">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-semibold text-[11px] flex items-center gap-1">
                   <GitPullRequest className="w-3 h-3" /> Open
                 </span>
                 {rejectionInfo && (
-                  <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs animate-pulse">
+                  <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white font-semibold text-[11px] flex items-center gap-1">
                     <XCircle className="w-3 h-3" /> Changes requested (반려됨)
                   </span>
                 )}
-                <span className="font-semibold text-slate-900 dark:text-white">{author}</span>
-                <span className="text-slate-400">({authorRole})</span>
-                <span className="text-slate-400">wants to merge into</span>
-                <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-white/[0.06] font-mono text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.1]">
+                <span className="font-semibold text-zinc-900 dark:text-zinc-100">{author}</span>
+                <span className="text-zinc-400">({authorRole})</span>
+                <span className="text-zinc-400">wants to merge into</span>
+                <span className="px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-white/[0.06] font-mono text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/[0.1]">
                   {targetBranch}
                 </span>
-                <span className="text-slate-400">from</span>
-                <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-white/[0.06] font-mono text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.1]">
+                <span className="text-zinc-400">from</span>
+                <span className="px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-white/[0.06] font-mono text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/[0.1]">
                   {sourceBranch}
                 </span>
               </div>
@@ -924,10 +924,10 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                 onClick={handlePushFix}
                 disabled={isFixing || currentStatus === 'passed'}
                 className={cn(
-                  'h-8 text-xs font-semibold gap-1.5 shadow-xs transition-all',
+                  'h-8 text-xs font-semibold gap-1.5 transition-all',
                   currentStatus === 'passed'
                     ? 'bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 cursor-default'
-                    : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                 )}
               >
                 {isFixing ? (
@@ -951,21 +951,21 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
           {/* Delta Baseline Debt Mode Notice Banner & SLA Burndown Progress */}
           {isDeltaBaselineMode && (
             <div className="mt-3.5 space-y-2.5">
-              <div className="p-3 rounded-xl bg-gradient-to-r from-sky-50 to-indigo-50/50 dark:from-sky-950/40 dark:to-indigo-950/30 border border-sky-200 dark:border-sky-800/60 text-xs text-sky-900 dark:text-sky-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-2xs">
+              <div className="p-3 rounded-lg bg-zinc-50 dark:bg-[#141417] border border-zinc-200 dark:border-white/[0.08] text-xs text-zinc-700 dark:text-zinc-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-4 h-4" />
+                  <div className="w-6 h-6 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="font-bold text-sky-950 dark:text-sky-100">
+                    <span className="font-semibold text-zinc-950 dark:text-zinc-100">
                       전체 점검 결함 격리 정책(Delta Gate) 적용 중:
                     </span>
-                    <span className="text-sky-800/90 dark:text-sky-300/90 ml-1">
+                    <span className="text-zinc-600 dark:text-zinc-400 ml-1">
                       신규 치명적 SQL 인젝션 결함은 머지를 차단하며, 기존 레거시 점검 부채({baselineDebtCount}건)는 조치 기한 내 관리를 권장합니다.
                     </span>
                   </div>
                 </div>
-                <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-300 dark:border-sky-700 self-start sm:self-auto">
+                <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.08] text-zinc-700 dark:text-zinc-300 font-semibold border border-zinc-300 dark:border-white/[0.12] self-start sm:self-auto">
                   Delta Gate Active
                 </span>
               </div>
@@ -1059,50 +1059,50 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
           {activeTab === 'conversation' && (
             <div className="space-y-4">
               {/* 1. Author initial PR comment */}
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#161b22] shadow-sm">
-                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-white/[0.06] text-xs">
+              <div className="p-4 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417]">
+                <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100 dark:border-white/[0.06] text-xs">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-[11px]">
+                    <div className="w-6 h-6 rounded-full bg-zinc-800 border border-white/[0.12] text-zinc-100 font-semibold flex items-center justify-center text-[11px]">
                       {author[0]}
                     </div>
-                    <span className="font-bold text-slate-900 dark:text-white">{author}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">({authorRole}) opened this PR</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">{author}</span>
+                    <span className="text-[10px] text-zinc-400 font-mono">({authorRole}) opened this PR</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/[0.04] text-[10px] font-mono text-slate-400">
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.06] text-[10px] font-mono text-zinc-400">
                     Author
                   </span>
                 </div>
-                <div className="pt-3 text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
-                  <p className="font-semibold text-slate-900 dark:text-white">
-                    📢 소스코드 전체 점검 취약점 조치 제안 및 보안 리포트 PR입니다.
+                <div className="pt-3 text-xs text-zinc-700 dark:text-zinc-300 space-y-1.5">
+                  <p className="font-semibold text-zinc-950 dark:text-zinc-100">
+                    소스코드 전체 점검 취약점 조치 제안 및 보안 리포트 PR입니다.
                   </p>
-                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
                     최초 연동 후 전체 소스코드 풀 스캔(Full Scan) 결과, 총 {issuesList.length}건의 취약점 결함이 탐지되었습니다.
                     해당 결함들에 대한 상세 발생 위치, 위험 코드, 그리고 권장 조치 코드를 아래 보안 봇 코멘트와 Files Changed 탭에서 확인해 주십시오.
                   </p>
-                  <p className="text-slate-500 text-[11px] font-mono">Target Commit: @{commitId} ({sourceBranch})</p>
+                  <p className="text-zinc-500 text-[11px] font-mono">Target Commit: @{commitId} ({sourceBranch})</p>
                 </div>
               </div>
 
               {/* 2. Automated SecureFlow Bot Security Review Comment */}
-              <div className="p-4 rounded-xl border border-rose-300 dark:border-rose-500/40 bg-white dark:bg-[#161b22] shadow-sm relative overflow-hidden">
+              <div className="p-4 rounded-xl border border-rose-300 dark:border-rose-500/40 bg-white dark:bg-[#141417] relative overflow-hidden">
                 <div className="absolute top-0 left-0 bottom-0 w-1 bg-rose-500" />
 
-                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-white/[0.06] text-xs">
+                <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100 dark:border-white/[0.06] text-xs">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                    <div className="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-semibold">
                       SF
                     </div>
-                    <span className="font-bold text-rose-600 dark:text-rose-400 font-mono">
+                    <span className="font-semibold text-rose-600 dark:text-rose-400 font-mono">
                       secureflow-bot
                     </span>
-                    <span className="px-1.5 py-0.2 rounded bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 text-[9.5px] font-bold border border-indigo-500/20">
+                    <span className="px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-white/[0.08] text-zinc-700 dark:text-zinc-300 text-[9.5px] font-semibold border border-zinc-200 dark:border-white/[0.12] font-mono">
                       BOT
                     </span>
-                    <span className="text-[10px] text-slate-400 font-mono">commented just now</span>
+                    <span className="text-[10px] text-zinc-400 font-mono">commented just now</span>
                   </div>
 
-                  <span className="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-[10px] font-bold font-mono">
+                  <span className="px-2 py-0.5 rounded bg-rose-500/15 text-rose-600 dark:text-rose-400 text-[10px] font-semibold font-mono border border-rose-500/30">
                     {currentStatus === 'passed' ? 'RESOLVED' : 'BLOCKING MERGE'}
                   </span>
                 </div>
@@ -1118,7 +1118,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                   ) : (
                     <>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 text-xs font-bold">
+                        <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 text-xs font-semibold">
                           <ShieldAlert className="w-4 h-4 shrink-0" />
                           <span>보안 정책 위반 탐지 — main 브랜치 머지가 차단되었습니다 (총 {issuesList.length}건 결함 탐지)</span>
                         </div>
@@ -1129,10 +1129,10 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                         {issuesList.map((issue, idx) => (
                           <div
                             key={issue.id || idx}
-                            className="p-3.5 rounded-xl bg-slate-900 text-slate-100 text-xs font-mono space-y-2 border border-slate-800 shadow-sm"
+                            className="p-3.5 rounded-xl bg-[#09090b] text-zinc-100 text-xs font-mono space-y-2 border border-white/[0.08]"
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-amber-400 font-bold flex items-center gap-1.5">
+                              <span className="text-amber-400 font-semibold flex items-center gap-1.5">
                                 <span className="w-4 h-4 rounded bg-amber-500/20 text-amber-300 text-[10px] flex items-center justify-center">
                                   #{idx + 1}
                                 </span>
@@ -1140,46 +1140,46 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                               </span>
                               <span
                                 className={cn(
-                                  'font-bold text-[10px] px-2 py-0.5 rounded border',
+                                  'font-semibold text-[10px] px-2 py-0.5 rounded border',
                                   issue.severity === '치명적'
-                                    ? 'bg-rose-500/20 border-rose-500/40 text-rose-400'
-                                    : 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                                    ? 'bg-rose-500/15 border-rose-500/40 text-rose-400'
+                                    : 'bg-amber-500/15 border-amber-500/40 text-amber-300'
                                 )}
                               >
                                 {issue.severity} ({issue.severity === '치명적' ? 'Critical' : 'Medium'})
                               </span>
                             </div>
 
-                            <div className="text-slate-400 text-[11px] flex items-center gap-2">
+                            <div className="text-zinc-400 text-[11px] flex items-center gap-2">
                               <span>위치:</span>
-                              <span className="text-sky-300 underline font-semibold">{issue.filePath}</span>
-                              <span className="text-slate-500">({issue.lineNumber})</span>
+                              <span className="text-zinc-100 underline font-semibold">{issue.filePath}</span>
+                              <span className="text-zinc-500">({issue.lineNumber})</span>
                             </div>
 
                             {/* Vulnerable Bad Code */}
-                            <div className="p-2.5 rounded bg-black/60 border border-rose-500/30 text-rose-300 text-[11px] overflow-x-auto space-y-1">
-                              <div className="text-[10px] text-rose-400/80 font-bold uppercase tracking-wider">
-                                ❌ 취약한 소스코드 (Vulnerable Code):
+                            <div className="p-2.5 rounded bg-rose-950/20 border border-rose-500/30 text-rose-300 text-[11px] overflow-x-auto space-y-1">
+                              <div className="text-[10px] text-rose-400/90 font-semibold uppercase tracking-wider">
+                                취약한 소스코드 (Vulnerable Code):
                               </div>
                               <code>{issue.badCode}</code>
                             </div>
 
                             {/* Remediation Guide & Good Code */}
-                            <div className="p-2.5 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] overflow-x-auto space-y-1">
-                              <div className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-wider flex items-center gap-1">
+                            <div className="p-2.5 rounded bg-emerald-950/20 border border-emerald-500/30 text-emerald-300 text-[11px] overflow-x-auto space-y-1">
+                              <div className="text-[10px] text-emerald-400/90 font-semibold uppercase tracking-wider flex items-center gap-1">
                                 <Sparkles className="w-3 h-3" />
-                                ✅ 권장 조치 코드 (Remediation Patch):
+                                권장 조치 코드 (Remediation Patch):
                               </div>
-                              <p className="text-slate-300 text-[11px] font-sans leading-relaxed">
+                              <p className="text-zinc-300 text-[11px] font-sans leading-relaxed">
                                 {issue.guide}
                               </p>
                               <code>{issue.goodCode}</code>
                             </div>
 
                             {/* Exploit PoC Simulator & AI Threat Analysis Button */}
-                            <div className="pt-2 flex items-center justify-between border-t border-slate-800">
-                              <span className="text-[10.5px] text-slate-400 font-sans">
-                                🔍 공격자 악용 시나리오 및 런타임 방어 원리 분석
+                            <div className="pt-2 flex items-center justify-between border-t border-white/[0.08]">
+                              <span className="text-[10.5px] text-zinc-400 font-sans">
+                                공격자 악용 시나리오 및 런타임 방어 원리 분석
                               </span>
                               <Button
                                 size="sm"
@@ -1188,10 +1188,10 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                                   setExploitTargetIssue(issue);
                                   setIsExploitModalOpen(true);
                                 }}
-                                className="h-6 px-2.5 text-[10.5px] font-bold text-indigo-300 border-indigo-500/40 bg-indigo-950/40 hover:bg-indigo-900/60 gap-1.5 shadow-2xs"
+                                className="h-6 px-2.5 text-[10.5px] font-semibold text-zinc-200 border-white/[0.15] bg-[#141417] hover:bg-zinc-800 gap-1.5"
                               >
-                                <Sparkles className="w-3 h-3 text-indigo-400" />
-                                <span>⚡ AI 공격 PoC 시뮬레이터</span>
+                                <Sparkles className="w-3 h-3 text-emerald-400" />
+                                <span>공격 PoC 시뮬레이터</span>
                               </Button>
                             </div>
                           </div>

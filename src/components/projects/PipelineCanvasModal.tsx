@@ -1710,30 +1710,30 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex flex-col bg-slate-950 text-slate-100 select-none overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-[#09090b] text-zinc-100 select-none overflow-hidden">
       {/* 1. TOP CONTROL & BREADCRUMB BAR */}
-      <header className="h-16 min-h-[64px] border-b border-slate-800 bg-slate-900/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between z-30 shrink-0 shadow-lg gap-2 overflow-x-auto scrollbar-none">
+      <header className="h-14 min-h-[56px] border-b border-white/[0.08] bg-[#0f0f11] px-4 sm:px-6 flex items-center justify-between z-30 shrink-0 gap-2 overflow-x-auto scrollbar-none">
         {/* Left: Close, Breadcrumbs, & Run Selector */}
         <div className="flex items-center gap-3 min-w-0">
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-8 px-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-700/60 shrink-0"
+            className="h-8 px-2.5 text-xs text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.06] border border-white/[0.08] shrink-0"
             title="프로젝트 목록으로 돌아가기 (ESC)"
           >
             <X className="w-4 h-4 mr-1" />
             닫기
           </Button>
 
-          <div className="h-4 w-px bg-slate-800 hidden sm:block shrink-0" />
+          <div className="h-4 w-px bg-white/[0.08] hidden sm:block shrink-0" />
 
           {/* Project Breadcrumb & Project Quick Switcher */}
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="font-mono text-xs font-bold text-slate-400 hidden sm:inline">
+            <span className="font-mono text-xs font-medium text-zinc-400 hidden sm:inline">
               {project.entityName}
             </span>
-            <span className="text-slate-600 hidden sm:inline">/</span>
+            <span className="text-zinc-600 hidden sm:inline">/</span>
 
             <Select
               value={project.id}
@@ -1745,21 +1745,21 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
               }}
             >
               <SelectTrigger
-                className="h-8 bg-slate-800/90 hover:bg-slate-750 border-slate-700 text-xs font-bold text-white max-w-[180px] sm:max-w-[240px]"
+                className="h-8 bg-[#141417] hover:bg-zinc-800 border-white/[0.1] text-xs font-semibold text-zinc-100 max-w-[180px] sm:max-w-[240px]"
                 title="다른 프로젝트 파이프라인으로 전환"
               >
                 <span className="truncate">{project.name}</span>
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-slate-800 text-slate-100 max-w-md z-[9999]">
+              <SelectContent className="bg-[#141417] border-white/[0.1] text-zinc-100 max-w-md z-[9999]">
                 <SelectGroup>
-                  <SelectLabel className="text-[11px] font-bold text-indigo-400 px-2 py-1">
-                    📁 전체 프로젝트 전환 (빠른 이동)
+                  <SelectLabel className="text-[11px] font-semibold text-zinc-400 px-2 py-1 font-mono uppercase tracking-wider">
+                    전체 프로젝트 전환 (빠른 이동)
                   </SelectLabel>
                   {projects.map((p) => (
                     <SelectItem key={p.id} value={p.id} className="text-xs">
                       <div className="flex items-center justify-between w-full gap-2">
-                        <span className="font-semibold text-white truncate">{p.name}</span>
-                        <span className="text-slate-400 text-[10px] font-mono shrink-0">
+                        <span className="font-semibold text-zinc-100 truncate">{p.name}</span>
+                        <span className="text-zinc-400 text-[10px] font-mono shrink-0">
                           ({p.id} · {p.owner})
                         </span>
                       </div>
@@ -1775,46 +1775,46 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
             <SecurityScoreBadge scoreInfo={projectScore} showLabel />
           </div>
 
-          <div className="h-4 w-px bg-slate-800 hidden md:block shrink-0" />
+          <div className="h-4 w-px bg-white/[0.08] hidden md:block shrink-0" />
 
           {/* MULTI-BRANCH & MULTI-USER RUN SELECTOR */}
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] text-slate-400 font-medium hidden xl:inline">
+            <span className="text-[11px] text-zinc-400 font-medium hidden xl:inline">
               이벤트/브랜치 선택:
             </span>
             <Select value={selectedRunId} onValueChange={(val) => setSelectedRunId(val)}>
-              <SelectTrigger className="h-8 bg-slate-800/90 hover:bg-slate-750 border-slate-700 text-xs font-mono text-slate-200 w-[270px] sm:w-[380px]">
+              <SelectTrigger className="h-8 bg-[#141417] hover:bg-zinc-800 border-white/[0.1] text-xs font-mono text-zinc-200 w-[270px] sm:w-[380px]">
                 <div className="flex items-center gap-1.5 truncate">
-                  <span className="font-bold text-indigo-400 shrink-0">
-                    👤 {activeRun.author}
+                  <span className="font-semibold text-zinc-100 shrink-0">
+                    {activeRun.author}
                   </span>
-                  <span className="text-slate-500 shrink-0">/</span>
-                  <span className="font-mono text-slate-200 truncate">
-                    {activeRun.trigger === 'PR/MR' ? `🔀 PR #${activeRun.prNumber}` : '⚡ Push'} · {activeRun.branch}
+                  <span className="text-zinc-500 shrink-0">/</span>
+                  <span className="font-mono text-zinc-300 truncate">
+                    {activeRun.trigger === 'PR/MR' ? `PR #${activeRun.prNumber}` : 'Push'} · {activeRun.branch}
                   </span>
                 </div>
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-slate-800 text-slate-100 max-w-lg z-[9999] max-h-[480px]">
+              <SelectContent className="bg-[#141417] border-white/[0.1] text-zinc-100 max-w-lg z-[9999] max-h-[480px]">
                 {visibleDevelopers.map((dev, idx) => (
                   <React.Fragment key={dev.author}>
-                    {idx > 0 && <SelectSeparator className="bg-slate-800 my-1" />}
+                    {idx > 0 && <SelectSeparator className="bg-white/[0.08] my-1" />}
                     <SelectGroup>
-                      <SelectLabel className="text-[11px] font-bold text-slate-200 flex items-center justify-between px-2.5 py-1.5 bg-slate-800/90 rounded border border-slate-700/80 my-1 sticky top-0 backdrop-blur z-10">
+                      <SelectLabel className="text-[11px] font-semibold text-zinc-200 flex items-center justify-between px-2.5 py-1.5 bg-[#09090b] rounded border border-white/[0.08] my-1 sticky top-0 backdrop-blur z-10">
                         <div className="flex items-center gap-1.5 min-w-0 truncate">
                           <span
                             className={cn(
                               'w-2 h-2 rounded-full shrink-0',
                               dev.isOwner
-                                ? 'bg-indigo-500 shadow-[0_0_6px_#6366f1]'
-                                : 'bg-emerald-500 shadow-[0_0_6px_#10b981]'
+                                ? 'bg-zinc-100'
+                                : 'bg-emerald-500'
                             )}
                           />
-                          <span className="text-white font-bold truncate">👤 {dev.author}</span>
-                          <span className="text-[10px] text-slate-400 font-normal shrink-0">
+                          <span className="text-zinc-100 font-semibold truncate">{dev.author}</span>
+                          <span className="text-[10px] text-zinc-400 font-normal shrink-0">
                             ({dev.authorRole} · {dev.department})
                           </span>
                         </div>
-                        <span className="text-[10px] text-indigo-300 font-mono bg-indigo-950 border border-indigo-800/80 px-1.5 py-0.2 rounded shrink-0 ml-2">
+                        <span className="text-[10px] text-zinc-300 font-mono bg-zinc-900 border border-white/[0.1] px-1.5 py-0.2 rounded shrink-0 ml-2">
                           {dev.runs.length}개 브랜치
                         </span>
                       </SelectLabel>
@@ -1822,42 +1822,42 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                         <SelectItem key={r.id} value={r.id} className="text-xs py-1.5 cursor-pointer">
                           <div className="flex items-center justify-between w-full gap-2">
                             <div className="flex items-center gap-1.5 truncate">
-                              <span className="font-mono text-slate-300 shrink-0">
-                                {r.trigger === 'PR/MR' ? `🔀 PR #${r.prNumber}` : '⚡ Push'}
+                              <span className="font-mono text-zinc-400 shrink-0">
+                                {r.trigger === 'PR/MR' ? `PR #${r.prNumber}` : 'Push'}
                               </span>
-                              <span className="text-slate-600 shrink-0">·</span>
-                              <span className="font-mono font-medium text-white truncate max-w-[170px] sm:max-w-[210px]">
+                              <span className="text-zinc-600 shrink-0">·</span>
+                              <span className="font-mono font-medium text-zinc-100 truncate max-w-[170px] sm:max-w-[210px]">
                                 {r.branch}
                               </span>
                             </div>
                             <div className="shrink-0 flex items-center">
                               {r.deployStatus === 'deployed' && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800/80">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
                                   배포완료
                                 </span>
                               )}
                               {r.reviewStatus === 'pending_review' && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-950 text-amber-300 border border-amber-800/80">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">
                                   심사대기
                                 </span>
                               )}
                               {r.reviewStatus === 'rejected' && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-300 border border-rose-800/80">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-300 border border-rose-500/30">
                                   심사반려
                                 </span>
                               )}
                               {r.gateStatus === 'blocked' && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-300 border border-rose-800/80">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-300 border border-rose-500/30">
                                   정책차단
                                 </span>
                               )}
                               {r.scanStatus === 'running' && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800/80 animate-pulse">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-white/[0.08] text-zinc-200 border border-white/[0.15]">
                                   점검중
                                 </span>
                               )}
                               {r.currentStage === 1 && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-zinc-900 text-zinc-400 border border-white/[0.08]">
                                   대기(진행전)
                                 </span>
                               )}
@@ -1874,10 +1874,10 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
         </div>
 
         {/* Right: Color Legend, Actions, Inspector Toggle */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           {/* Real-world Operational Scenario Preset Selector */}
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-[11px] text-slate-400 font-medium hidden 2xl:inline">
+            <span className="text-[11px] text-zinc-400 font-medium hidden 2xl:inline">
               운영 시나리오:
             </span>
             <Select
@@ -1885,43 +1885,43 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
               onValueChange={(val: any) => setSelectedScenario(val)}
               disabled={simulationStage !== null}
             >
-              <SelectTrigger className="h-8 bg-slate-800/90 hover:bg-slate-750 border-slate-700 text-xs text-slate-200 w-[170px] sm:w-[225px]">
+              <SelectTrigger className="h-8 bg-[#141417] hover:bg-zinc-800 border-white/[0.1] text-xs text-zinc-200 w-[170px] sm:w-[225px]">
                 <div className="flex items-center gap-1.5 truncate">
-                  {selectedScenario === 'clean_pass' && <span className="text-emerald-400 truncate">🟢 정상 통과 & 배포</span>}
-                  {selectedScenario === 'hard_block' && <span className="text-rose-400 truncate">🔴 치명적 결함 차단</span>}
-                  {selectedScenario === 'emergency_override' && <span className="text-fuchsia-400 truncate">🚨 CISO 긴급 우회 배포</span>}
-                  {selectedScenario === 'scanner_timeout' && <span className="text-amber-400 truncate">💥 스캐너 장애 & 재시도</span>}
-                  {selectedScenario === 'review_rejected' && <span className="text-rose-400 truncate">🚫 심사위원 반려</span>}
-                  {selectedScenario === 'canary_rollback' && <span className="text-cyan-400 truncate">🔄 카나리 롤백</span>}
-                  {selectedScenario === 'secret_leak' && <span className="text-rose-400 truncate">🔑 시크릿 키 유출 차단</span>}
-                  {selectedScenario === 'iac_misconfig' && <span className="text-amber-400 truncate">📜 IaC 클라우드 취약점</span>}
+                  {selectedScenario === 'clean_pass' && <span className="text-emerald-400 truncate">정상 통과 & 배포</span>}
+                  {selectedScenario === 'hard_block' && <span className="text-rose-400 truncate">치명적 결함 차단</span>}
+                  {selectedScenario === 'emergency_override' && <span className="text-amber-400 truncate">CISO 긴급 우회 배포</span>}
+                  {selectedScenario === 'scanner_timeout' && <span className="text-amber-400 truncate">스캐너 장애 & 재시도</span>}
+                  {selectedScenario === 'review_rejected' && <span className="text-rose-400 truncate">심사위원 반려</span>}
+                  {selectedScenario === 'canary_rollback' && <span className="text-zinc-200 truncate">카나리 롤백</span>}
+                  {selectedScenario === 'secret_leak' && <span className="text-rose-400 truncate">시크릿 키 유출 차단</span>}
+                  {selectedScenario === 'iac_misconfig' && <span className="text-amber-400 truncate">IaC 클라우드 취약점</span>}
                 </div>
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-slate-800 text-slate-100 z-[9999] min-w-[280px]">
-                <SelectItem value="clean_pass">🟢 정상 통과 & 무중단 배포 (Clean Pass)</SelectItem>
-                <SelectItem value="hard_block">🔴 치명적 결함 정책 차단 (Hard Block)</SelectItem>
-                <SelectItem value="emergency_override">🚨 CISO 긴급 보안 예외 배포 (Override)</SelectItem>
-                <SelectItem value="scanner_timeout">💥 스캐너 타임아웃 & 단독 재시도 (Timeout)</SelectItem>
-                <SelectItem value="review_rejected">🚫 배포 심사위원 반려 (Review Reject)</SelectItem>
-                <SelectItem value="canary_rollback">🔄 카나리 이상 감지 & 자동 롤백 (Rollback)</SelectItem>
-                <SelectItem value="secret_leak">🔑 API 시크릿 키 유출 차단 (Secret Leak)</SelectItem>
-                <SelectItem value="iac_misconfig">📜 Terraform S3 공개 설정 오류 차단 (IaC Checkov)</SelectItem>
+              <SelectContent className="bg-[#141417] border-white/[0.1] text-zinc-100 z-[9999] min-w-[280px]">
+                <SelectItem value="clean_pass">정상 통과 & 무중단 배포 (Clean Pass)</SelectItem>
+                <SelectItem value="hard_block">치명적 결함 정책 차단 (Hard Block)</SelectItem>
+                <SelectItem value="emergency_override">CISO 긴급 보안 예외 배포 (Override)</SelectItem>
+                <SelectItem value="scanner_timeout">스캐너 타임아웃 & 단독 재시도 (Timeout)</SelectItem>
+                <SelectItem value="review_rejected">배포 심사위원 반려 (Review Reject)</SelectItem>
+                <SelectItem value="canary_rollback">카나리 이상 감지 & 자동 롤백 (Rollback)</SelectItem>
+                <SelectItem value="secret_leak">API 시크릿 키 유출 차단 (Secret Leak)</SelectItem>
+                <SelectItem value="iac_misconfig">Terraform S3 공개 설정 오류 차단 (IaC Checkov)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* View Mode Toggle: Standard 5-Stage vs Branch Lifecycle */}
-          <div className="flex items-center rounded-lg bg-slate-800/90 p-0.5 border border-slate-700 shrink-0">
+          <div className="flex items-center rounded-md bg-[#141417] p-0.5 border border-white/[0.1] shrink-0">
             <button
               onClick={() => {
                 setCanvasViewMode('standard');
                 setTimeout(() => fitView('standard'), 30);
               }}
               className={cn(
-                'px-2 py-1 rounded text-xs font-semibold flex items-center gap-1.5 transition-all',
+                'px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 transition-all',
                 canvasViewMode === 'standard'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-zinc-100 text-zinc-950'
+                  : 'text-zinc-400 hover:text-zinc-200'
               )}
               title="단일 런 5단계 표준 파이프라인"
             >
@@ -1934,14 +1934,14 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 setTimeout(() => fitView('lifecycle'), 30);
               }}
               className={cn(
-                'px-2 py-1 rounded text-xs font-semibold flex items-center gap-1.5 transition-all',
+                'px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 transition-all',
                 canvasViewMode === 'lifecycle'
-                  ? 'bg-emerald-600 text-white shadow-sm font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-zinc-100 text-zinc-950'
+                  : 'text-zinc-400 hover:text-zinc-200'
               )}
-              title="Feature(오류) ➔ Fix(조치) ➔ Main(재점검 & 배포) 브랜치 라이프사이클"
+              title="Feature(오류) -> Fix(조치) -> Main(재점검 & 배포) 브랜치 라이프사이클"
             >
-              <GitFork className="w-3 h-3 text-emerald-300" />
+              <GitFork className="w-3 h-3" />
               <span className="hidden xl:inline">브랜치 라이프사이클</span>
             </button>
           </div>
@@ -1951,13 +1951,13 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
             variant="outline"
             size="sm"
             onClick={() => setIsPrChecksModalOpen(true)}
-            className="h-8 text-xs gap-1.5 border-indigo-700/80 bg-indigo-950/40 hover:bg-indigo-900/60 text-indigo-300 font-medium"
-            title="오류 발생 시 담당자 전달 ➔ 조치 ➔ 푸시 ➔ 플랫폼 반영 워크플로우 안내"
+            className="h-8 text-xs gap-1.5 border-white/[0.1] bg-[#141417] hover:bg-zinc-800 text-zinc-200 font-medium"
+            title="오류 발생 시 담당자 전달 -> 조치 -> 푸시 -> 플랫폼 반영 워크플로우 안내"
           >
-            <Bell className="w-3.5 h-3.5 text-indigo-400" />
+            <Bell className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden xl:inline">담당자 전달 & 조치 현황</span>
             <span className="xl:hidden">통보 현황</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold border border-rose-500/40">
+            <span className="px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 text-[10px] font-mono font-semibold border border-rose-500/30">
               {activeRun.critCount > 0 ? '차단 1' : '정상'}
             </span>
           </Button>
@@ -1967,13 +1967,13 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
             variant="outline"
             size="sm"
             onClick={() => setIsPrChecksModalOpen(true)}
-            className="h-8 text-xs gap-1.5 border-emerald-700/80 bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 font-medium"
+            className="h-8 text-xs gap-1.5 border-white/[0.1] bg-[#141417] hover:bg-zinc-800 text-zinc-200 font-medium"
             title="GitHub / GitLab PR 화면 시뮬레이션: SecureFlow Bot 리뷰 코멘트 및 보안 Checks 통과/차단 인터페이스"
           >
             <GitPullRequest className="w-3.5 h-3.5 text-emerald-400" />
             <span className="hidden xl:inline">GitHub PR Checks 뷰</span>
             <span className="xl:hidden">PR Checks</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-300 text-[10px] font-mono">
+            <span className="px-1.5 py-0.2 rounded bg-zinc-900 text-zinc-300 text-[10px] font-mono border border-white/[0.08]">
               #{activeRun.prNumber || 142}
             </span>
           </Button>
@@ -1983,19 +1983,19 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
               size="sm"
               onClick={handlePlayLifecycle}
               disabled={lifecycleStep !== null}
-              className="font-semibold text-xs h-8 shadow-md gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40"
+              className="font-semibold text-xs h-8 gap-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-950"
             >
               {lifecycleStep !== null ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-200" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-zinc-700" />
                   <span>
                     {lifecycleStep === 1 && '1/7: Feature 보안점검...'}
-                    {lifecycleStep === 2 && '2/7: 🛑 정책 게이트 차단!'}
-                    {lifecycleStep === 3 && '3/7: 🌿 fix/ 브랜치 분기...'}
-                    {lifecycleStep === 4 && '4/7: ⚡ fix/ 0건 클린 통과!'}
-                    {lifecycleStep === 5 && '5/7: 🔀 main 머지 승인...'}
-                    {lifecycleStep === 6 && '6/7: 🛡️ main 무결점 재점검!'}
-                    {lifecycleStep === 7 && '7/7: 🚀 운영 배포 완료!'}
+                    {lifecycleStep === 2 && '2/7: 정책 게이트 차단'}
+                    {lifecycleStep === 3 && '3/7: fix/ 브랜치 분기...'}
+                    {lifecycleStep === 4 && '4/7: fix/ 0건 클린 통과'}
+                    {lifecycleStep === 5 && '5/7: main 머지 승인...'}
+                    {lifecycleStep === 6 && '6/7: main 무결점 재점검'}
+                    {lifecycleStep === 7 && '7/7: 운영 배포 완료'}
                   </span>
                 </>
               ) : (
@@ -2010,15 +2010,11 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
               size="sm"
               onClick={handleRunSimulation}
               disabled={simulationStage !== null}
-              className={`font-semibold text-xs h-8 shadow-md gap-1.5 border transition-all ${
-                simulationStage !== null
-                  ? 'bg-indigo-700/80 border-indigo-400/50 text-indigo-100 cursor-wait'
-                  : 'bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-400/40'
-              }`}
+              className="font-semibold text-xs h-8 gap-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-950 transition-all"
             >
               {simulationStage !== null ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-300" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-zinc-700" />
                   <span>
                     {simulationStage === 1 && '1단계: Git Webhook 처리 중...'}
                     {simulationStage === 2 && `2단계: ${activeScannerTool ? activeScannerTool.toUpperCase() : '스캐너'} 실시간 분석 중...`}
@@ -2038,10 +2034,10 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
             variant="outline"
             size="sm"
             onClick={() => setIsInspectorOpen(!isInspectorOpen)}
-            className={`h-8 text-xs gap-1.5 border-slate-700 ${
+            className={`h-8 text-xs gap-1.5 ${
               isInspectorOpen
-                ? 'bg-slate-800 text-indigo-400 border-indigo-500/50'
-                : 'bg-slate-900 text-slate-300 hover:bg-slate-800'
+                ? 'bg-zinc-100 text-zinc-950 border-zinc-100 font-semibold'
+                : 'bg-[#141417] text-zinc-300 border-white/[0.1] hover:bg-zinc-800'
             }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -2056,7 +2052,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 onClose();
                 onOpenSheet();
               }}
-              className="h-8 text-xs text-slate-400 hover:text-white hidden sm:inline-flex"
+              className="h-8 text-xs text-zinc-400 hover:text-zinc-100 hidden sm:inline-flex"
             >
               기본 Sheet
             </Button>
@@ -2065,10 +2061,10 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       </header>
 
       {/* 2. DEVELOPER QUICK-FILTER & NAME-BASED NAVIGATION BAR (보기 기준) */}
-      <div className="h-10 border-b border-slate-800/80 bg-slate-900/60 backdrop-blur px-4 sm:px-6 flex items-center justify-between text-xs shrink-0 z-20 gap-3 overflow-hidden">
+      <div className="h-10 border-b border-white/[0.08] bg-[#09090b] px-4 sm:px-6 flex items-center justify-between text-xs shrink-0 z-20 gap-3 overflow-hidden">
         <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none min-w-0">
-          <span className="text-[11px] font-semibold text-slate-400 shrink-0 flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-indigo-400" />
+          <span className="text-[11px] font-semibold text-zinc-400 shrink-0 flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-zinc-400" />
             보기 기준:
           </span>
 
@@ -2080,21 +2076,21 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
               setTimeout(() => fitView(canvasViewMode), 50);
             }}
             className={cn(
-              'h-7 px-2.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 border',
+              'h-7 px-2.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 border',
               selectedDeveloperFilter === 'all'
-                ? 'bg-indigo-600/30 text-white border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.25)] font-semibold'
-                : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 border-slate-800 hover:border-slate-700'
+                ? 'bg-zinc-100 text-zinc-950 border-zinc-100 font-semibold'
+                : 'bg-[#141417] text-zinc-400 hover:text-zinc-200 border-white/[0.08] hover:border-white/[0.15]'
             )}
             title="프로젝트 전체 작업자 및 전체 브랜치 보기"
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-400" />
+            <Layers className="w-3.5 h-3.5" />
             <span>전체보기</span>
             <span
               className={cn(
                 'text-[10px] px-1.5 py-0.2 rounded font-mono',
                 selectedDeveloperFilter === 'all'
-                  ? 'bg-indigo-500/40 text-indigo-200 font-bold'
-                  : 'bg-slate-800 text-slate-400'
+                  ? 'bg-zinc-950/15 text-zinc-950 font-semibold'
+                  : 'bg-zinc-800 text-zinc-400'
               )}
             >
               {runs.length}
@@ -2109,26 +2105,26 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 <DropdownMenuTrigger asChild>
                   <button
                     className={cn(
-                      'group h-7 px-2.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 border outline-none',
+                      'group h-7 px-2.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 border outline-none',
                       isCurrentDev
-                        ? 'bg-indigo-600/30 text-white border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.25)] font-semibold'
-                        : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 border-slate-800 hover:border-slate-700'
+                        ? 'bg-zinc-100 text-zinc-950 border-zinc-100 font-semibold'
+                        : 'bg-[#141417] text-zinc-400 hover:text-zinc-200 border-white/[0.08] hover:border-white/[0.15]'
                     )}
                     title={`클릭하여 ${dev.author}의 PR 및 브랜치 목록 열기`}
                   >
                     <span
                       className={cn(
                         'w-1.5 h-1.5 rounded-full',
-                        dev.isOwner ? 'bg-indigo-400' : 'bg-emerald-400'
+                        isCurrentDev ? 'bg-zinc-950' : dev.isOwner ? 'bg-zinc-200' : 'bg-emerald-400'
                       )}
                     />
-                    <span>👤 {dev.author}</span>
+                    <span>{dev.author}</span>
                     <span
                       className={cn(
                         'text-[10px] px-1 py-0.2 rounded font-mono',
                         isCurrentDev
-                          ? 'bg-indigo-500/40 text-indigo-200'
-                          : 'bg-slate-800 text-slate-400'
+                          ? 'bg-zinc-950/15 text-zinc-950'
+                          : 'bg-zinc-800 text-zinc-400'
                       )}
                     >
                       {isCurrentDev && selectedRunFilter !== 'all'
@@ -2136,29 +2132,34 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                         : dev.runs.length}
                     </span>
                     {dev.isOwner && (
-                      <span className="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/40">
+                      <span className={cn(
+                        'text-[9px] px-1 py-0.2 rounded font-semibold border',
+                        isCurrentDev
+                          ? 'bg-zinc-950/10 text-zinc-950 border-zinc-950/20'
+                          : 'bg-white/[0.06] text-zinc-300 border-white/[0.12]'
+                      )}>
                         담당자
                       </span>
                     )}
-                    <ChevronDown className="w-3 h-3 text-slate-500 group-hover:text-slate-300 transition-transform duration-150" />
+                    <ChevronDown className="w-3 h-3 opacity-60 transition-transform duration-150" />
                   </button>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent
                   align="start"
                   sideOffset={6}
-                  className="w-80 bg-slate-900/98 backdrop-blur-md border border-slate-800 p-1.5 shadow-2xl text-slate-200 z-[9999]"
+                  className="w-80 bg-[#141417] border border-white/[0.1] p-1.5 shadow-2xl text-zinc-200 z-[9999]"
                 >
                   {/* 작업자 헤더 정보 */}
-                  <div className="px-2 py-1.5 flex items-center justify-between border-b border-slate-800/80 mb-1">
+                  <div className="px-2 py-1.5 flex items-center justify-between border-b border-white/[0.08] mb-1">
                     <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="font-bold text-white text-xs">👤 {dev.author}</span>
-                      <span className="text-[10px] text-slate-400 truncate">
+                      <span className="font-semibold text-zinc-100 text-xs">{dev.author}</span>
+                      <span className="text-[10px] text-zinc-400 truncate">
                         ({dev.authorRole} · {dev.department})
                       </span>
                     </div>
                     {dev.isOwner && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/40 shrink-0">
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/[0.08] text-zinc-200 font-semibold border border-white/[0.12] shrink-0">
                         메인 담당자
                       </span>
                     )}
@@ -2175,29 +2176,29 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                       setTimeout(() => fitView(canvasViewMode), 50);
                     }}
                     className={cn(
-                      'flex items-center justify-between py-2 px-2.5 rounded-lg text-xs font-semibold cursor-pointer mb-1',
+                      'flex items-center justify-between py-2 px-2.5 rounded-md text-xs font-semibold cursor-pointer mb-1',
                       isCurrentDev && selectedRunFilter === 'all'
-                        ? 'bg-indigo-600/30 text-indigo-200 border border-indigo-500/40'
-                        : 'hover:bg-slate-800/80 text-slate-200'
+                        ? 'bg-white/[0.1] text-zinc-100 border border-white/[0.15]'
+                        : 'hover:bg-white/[0.06] text-zinc-300'
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                      <Layers className="w-3.5 h-3.5 text-zinc-400" />
                       <span>전체보기</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-400 font-mono">
                         {dev.runs.length}개 트랙 전체
                       </span>
                     </div>
                     {isCurrentDev && selectedRunFilter === 'all' && (
-                      <Check className="w-3.5 h-3.5 text-indigo-400" />
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
                     )}
                   </DropdownMenuItem>
 
-                  <DropdownMenuSeparator className="bg-slate-800/80 my-1" />
+                  <DropdownMenuSeparator className="bg-white/[0.08] my-1" />
 
-                  <DropdownMenuLabel className="px-2 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                  <DropdownMenuLabel className="px-2 py-1 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center justify-between font-mono">
                     <span>개별 PR / 브랜치 선택</span>
-                    <span className="text-[9px] text-slate-500 font-normal">단일 트랙 보기</span>
+                    <span className="text-[9px] text-zinc-500 font-normal">단일 트랙 보기</span>
                   </DropdownMenuLabel>
 
                   {/* 2. 하단: 개별 PR / 브랜치 목록 */}
@@ -2214,35 +2215,35 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                             setTimeout(() => fitView(canvasViewMode), 50);
                           }}
                           className={cn(
-                            'flex flex-col items-start gap-1 p-2 rounded-lg cursor-pointer transition-colors border',
+                            'flex flex-col items-start gap-1 p-2 rounded-md cursor-pointer transition-colors border',
                             isSelectedRun
-                              ? 'bg-indigo-600/25 text-white border-indigo-500/50 shadow-sm'
-                              : 'border-transparent hover:bg-slate-800/70 text-slate-300'
+                              ? 'bg-white/[0.08] text-zinc-100 border-white/[0.15]'
+                              : 'border-transparent hover:bg-white/[0.04] text-zinc-300'
                           )}
                         >
                           <div className="w-full flex items-center justify-between gap-2">
                             <div className="flex items-center gap-1.5 min-w-0">
                               {r.trigger === 'PR/MR' ? (
-                                <span className="flex items-center gap-1 text-[10px] font-bold text-indigo-300 bg-indigo-500/15 px-1.5 py-0.5 rounded border border-indigo-500/30 shrink-0">
-                                  <GitPullRequest className="w-3 h-3 text-indigo-400" />
+                                <span className="flex items-center gap-1 text-[10px] font-semibold text-zinc-200 bg-white/[0.08] px-1.5 py-0.5 rounded border border-white/[0.12] shrink-0 font-mono">
+                                  <GitPullRequest className="w-3 h-3 text-emerald-400" />
                                   PR #{r.prNumber}
                                 </span>
                               ) : (
-                                <span className="flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 shrink-0">
+                                <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30 shrink-0 font-mono">
                                   <GitCommit className="w-3 h-3 text-amber-400" />
                                   Push
                                 </span>
                               )}
-                              <span className="font-mono text-xs font-semibold text-slate-200 truncate">
+                              <span className="font-mono text-xs font-semibold text-zinc-100 truncate">
                                 {r.branch}
                               </span>
                             </div>
                             {isSelectedRun && (
-                              <Check className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                              <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                             )}
                           </div>
 
-                          <div className="w-full flex items-center justify-between gap-2 text-[10px] text-slate-400 pl-0.5">
+                          <div className="w-full flex items-center justify-between gap-2 text-[10px] text-zinc-400 pl-0.5">
                             <span className="truncate max-w-[190px]" title={r.commitMessage}>
                               {r.commitMessage}
                             </span>
@@ -2250,12 +2251,12 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                               className={cn(
                                 'px-1.5 py-0.2 rounded font-mono font-medium shrink-0 text-[9px]',
                                 r.currentStage === 5 && r.deployStatus === 'deployed'
-                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
                                   : r.gateStatus === 'blocked'
-                                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                  ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
                                   : r.reviewStatus === 'rejected'
-                                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                                  : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                                  ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+                                  : 'bg-white/[0.08] text-zinc-300 border border-white/[0.12]'
                               )}
                             >
                               {r.currentStage === 5 && r.deployStatus === 'deployed'
@@ -2277,28 +2278,28 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           })}
         </div>
 
-        <div className="hidden lg:flex items-center gap-2 shrink-0 text-[11px] text-slate-400 font-mono">
+        <div className="hidden lg:flex items-center gap-2 shrink-0 text-[11px] text-zinc-400 font-mono">
           {selectedDeveloperFilter === 'all' ? (
             <>
               <span>보기 모드:</span>
-              <span className="text-white font-bold">전체 브랜치 ({runs.length}개)</span>
-              <span className="text-slate-600">|</span>
-              <span className="text-indigo-300">작업자 {developers.length}명</span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-400">선택 런: {activeRun.author} ({activeRun.branch})</span>
+              <span className="text-zinc-100 font-semibold">전체 브랜치 ({runs.length}개)</span>
+              <span className="text-zinc-700">|</span>
+              <span className="text-zinc-300">작업자 {developers.length}명</span>
+              <span className="text-zinc-700">|</span>
+              <span className="text-zinc-400">선택 런: {activeRun.author} ({activeRun.branch})</span>
             </>
           ) : (
             <>
               <span>현재 작업자:</span>
-              <span className="text-white font-bold">👤 {activeRun.author}</span>
-              <span className="text-slate-600">|</span>
-              <span className="text-indigo-300">
+              <span className="text-zinc-100 font-semibold">{activeRun.author}</span>
+              <span className="text-zinc-700">|</span>
+              <span className="text-zinc-300">
                 {selectedRunFilter === 'all'
                   ? `전체 ${visibleRuns.length}개 트랙`
                   : `단일 트랙 (${activeRun.branch})`}
               </span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-400">{activeRun.department}</span>
+              <span className="text-zinc-700">|</span>
+              <span className="text-zinc-400">{activeRun.department}</span>
             </>
           )}
         </div>
@@ -2313,9 +2314,9 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onWheel={handleWheel}
-          className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing bg-slate-950"
+          className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing bg-[#09090b]"
           style={{
-            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.12) 1.2px, transparent 1.2px)`,
+            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
             backgroundSize: '24px 24px',
             backgroundPosition: `${pan.x}px ${pan.y}px`,
           }}
@@ -2371,7 +2372,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           <div
             onMouseDown={(e) => e.stopPropagation()}
             className={cn(
-              "absolute left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 bg-slate-900/95 border border-slate-700/80 px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-md text-xs transition-all duration-300 ease-in-out select-none",
+              "absolute left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 bg-[#141417]/95 border border-white/[0.12] px-3.5 py-1.5 rounded-lg shadow-2xl backdrop-blur-md text-xs transition-all duration-300 ease-in-out select-none",
               isTerminalOpen
                 ? isTerminalExpanded
                   ? "bottom-[calc(75%+14px)]"
@@ -2381,72 +2382,72 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           >
             <button
               onClick={handleZoomOut}
-              className="p-1.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white"
+              className="p-1.5 rounded-md hover:bg-white/[0.06] text-zinc-300 hover:text-zinc-100"
               title="축소 (Zoom Out)"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
-            <span className="font-mono text-[11px] text-slate-400 w-12 text-center">
+            <span className="font-mono text-[11px] text-zinc-400 w-12 text-center">
               {Math.round(zoom * 100)}%
             </span>
             <button
               onClick={handleZoomIn}
-              className="p-1.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white"
+              className="p-1.5 rounded-md hover:bg-white/[0.06] text-zinc-300 hover:text-zinc-100"
               title="확대 (Zoom In)"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
 
-            <div className="h-4 w-px bg-slate-700 mx-1" />
+            <div className="h-4 w-px bg-white/[0.1] mx-1" />
 
             <button
               onClick={handleFitScreen}
-              className="px-2.5 py-1 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white text-[11px] font-semibold"
+              className="px-2.5 py-1 rounded-md hover:bg-white/[0.06] text-zinc-300 hover:text-zinc-100 text-[11px] font-semibold"
             >
               화면 맞춤
             </button>
             <button
               onClick={handleResetZoom}
-              className="px-2.5 py-1 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white text-[11px]"
+              className="px-2.5 py-1 rounded-md hover:bg-white/[0.06] text-zinc-300 hover:text-zinc-100 text-[11px] font-mono"
             >
               100%
             </button>
 
-            <div className="h-4 w-px bg-slate-700 mx-1" />
+            <div className="h-4 w-px bg-white/[0.1] mx-1" />
 
-            <div className="text-[11px] text-slate-400 px-2 font-mono flex items-center gap-1.5">
+            <div className="text-[11px] text-zinc-400 px-2 font-mono flex items-center gap-1.5">
               <span
                 className={cn(
-                  'w-2 h-2 rounded-full animate-pulse',
-                  canvasViewMode === 'lifecycle' ? 'bg-emerald-400' : 'bg-indigo-400'
+                  'w-1.5 h-1.5 rounded-full',
+                  canvasViewMode === 'lifecycle' ? 'bg-emerald-400' : 'bg-zinc-200'
                 )}
               />
               {canvasViewMode === 'lifecycle' ? (
                 <span>
                   라이프사이클:{' '}
-                  <strong className="text-white">
+                  <strong className="text-zinc-100">
                     {lifecycleStep ? `${lifecycleStep} / 7 단계` : '3개 트랙 전 과정'}
                   </strong>
                 </span>
               ) : (
                 <span>
-                  진행 단계: <strong className="text-white">{activeRun.currentStage} / 5</strong>
+                  진행 단계: <strong className="text-zinc-100">{activeRun.currentStage} / 5</strong>
                 </span>
               )}
             </div>
 
-            <div className="h-4 w-px bg-slate-700 mx-1" />
+            <div className="h-4 w-px bg-white/[0.1] mx-1" />
 
             <button
               onClick={() => setIsTerminalOpen(!isTerminalOpen)}
-              className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1 rounded-md text-[11px] font-semibold flex items-center gap-1.5 transition-all ${
                 isTerminalOpen
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-950'
-                  : 'hover:bg-slate-800 text-slate-300 hover:text-white'
+                  ? 'bg-zinc-100 text-zinc-950'
+                  : 'hover:bg-white/[0.06] text-zinc-300 hover:text-zinc-100'
               }`}
               title="실시간 러너 터미널 콘솔 열기/닫기"
             >
-              <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+              <Terminal className={cn("w-3.5 h-3.5", isTerminalOpen ? "text-zinc-950" : "text-emerald-400")} />
               <span>콘솔 {isTerminalOpen ? '닫기' : '열기'}</span>
             </button>
           </div>
@@ -2469,64 +2470,64 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
 
         {/* 3. RIGHT INSPECTOR DRAWER */}
         {isInspectorOpen && (
-          <aside className="inspector-panel w-96 border-l border-slate-800 bg-slate-900/95 backdrop-blur-xl flex flex-col z-20 shrink-0 shadow-2xl">
+          <aside className="inspector-panel w-96 border-l border-white/[0.08] bg-[#0f0f11] flex flex-col z-20 shrink-0 shadow-2xl">
             {/* Inspector Header */}
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/40">
+            <div className="p-4 border-b border-white/[0.08] flex items-center justify-between bg-[#141417]/80">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-indigo-400" />
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                <SlidersHorizontal className="w-4 h-4 text-zinc-400" />
+                <span className="text-xs font-semibold text-zinc-100 uppercase tracking-wider font-mono">
                   노드 상세 속성 검사기
                 </span>
               </div>
               <button
                 onClick={() => setIsInspectorOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                className="text-zinc-400 hover:text-zinc-100 p-1 rounded hover:bg-white/[0.06]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Inspector Body based on selectedNodeId */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-5 text-xs text-slate-300">
+            <div className="flex-1 overflow-y-auto p-4 space-y-5 text-xs text-zinc-300">
               {/* NODE 1 INSPECTION */}
               {selectedNodeId === 'node-trigger' && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-semibold">
                       1
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white">Git 소스 이벤트 트리거</h4>
-                      <span className="text-[10px] text-slate-400 font-mono">ID: trigger-git-event</span>
+                      <h4 className="text-sm font-semibold text-zinc-100">Git 소스 이벤트 트리거</h4>
+                      <span className="text-[10px] text-zinc-400 font-mono">ID: trigger-git-event</span>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                    <span className="text-[11px] text-slate-400 font-semibold block">이벤트 메타데이터</span>
+                  <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] space-y-2">
+                    <span className="text-[11px] text-zinc-400 font-semibold block">이벤트 메타데이터</span>
                     <div className="space-y-1.5 text-[11px]">
                       <div className="flex justify-between">
-                        <span className="text-slate-500">실행 계기</span>
-                        <span className="text-white font-bold">{activeRun.trigger}</span>
+                        <span className="text-zinc-500">실행 계기</span>
+                        <span className="text-zinc-100 font-semibold">{activeRun.trigger}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">작성자</span>
-                        <span className="text-white font-semibold">{activeRun.author} ({activeRun.authorRole})</span>
+                        <span className="text-zinc-500">작성자</span>
+                        <span className="text-zinc-100 font-semibold">{activeRun.author} ({activeRun.authorRole})</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">부서 / 이메일</span>
-                        <span className="font-mono text-slate-300">{activeRun.authorEmail}</span>
+                        <span className="text-zinc-500">부서 / 이메일</span>
+                        <span className="font-mono text-zinc-300">{activeRun.authorEmail}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">작업 브랜치</span>
-                        <span className="font-mono text-indigo-400">{activeRun.branch}</span>
+                        <span className="text-zinc-500">작업 브랜치</span>
+                        <span className="font-mono text-zinc-100 font-semibold">{activeRun.branch}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">타겟 브랜치</span>
-                        <span className="font-mono text-slate-400">{activeRun.targetBranch}</span>
+                        <span className="text-zinc-500">타겟 브랜치</span>
+                        <span className="font-mono text-zinc-400">{activeRun.targetBranch}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">커밋 ID</span>
-                        <span className="font-mono text-slate-300">@{activeRun.commitId}</span>
+                        <span className="text-zinc-500">커밋 ID</span>
+                        <span className="font-mono text-zinc-300">@{activeRun.commitId}</span>
                       </div>
                     </div>
                   </div>
@@ -2535,7 +2536,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                     <Button
                       size="sm"
                       onClick={() => setIsPrChecksModalOpen(true)}
-                      className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-8 gap-1.5 shadow-md shadow-emerald-950"
+                      className="w-full bg-zinc-100 hover:bg-zinc-200 text-zinc-950 font-semibold text-xs h-8 gap-1.5"
                     >
                       <GitPullRequest className="w-3.5 h-3.5" />
                       GitHub PR Checks & 봇 코멘트 보기 (#{activeRun.prNumber || 142})
@@ -2543,8 +2544,8 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                   )}
 
                   <div className="space-y-2">
-                    <span className="text-[11px] font-semibold text-slate-400">사내 Git Webhook 페이로드 (JSON)</span>
-                    <pre className="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-[10px] text-emerald-400 overflow-x-auto leading-relaxed">
+                    <span className="text-[11px] font-semibold text-zinc-400">사내 Git Webhook 페이로드 (JSON)</span>
+                    <pre className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] font-mono text-[10px] text-emerald-400 overflow-x-auto leading-relaxed">
 {`{
   "event": "${activeRun.trigger}",
   "ref": "refs/heads/${activeRun.branch}",
@@ -2566,33 +2567,33 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold ${
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold border ${
                         isScannerRunning
-                          ? 'bg-indigo-500/20 text-indigo-400'
+                          ? 'bg-white/[0.1] text-zinc-100 border-white/[0.2]'
                           : isScannerDone
-                          ? 'bg-emerald-500/20 text-emerald-400'
-                          : 'bg-slate-800 text-slate-500'
+                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                          : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                       }`}
                     >
                       2
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white">CI/CD 보안점검 엔진</h4>
-                      <span className="text-[10px] text-slate-400 font-mono">ID: scanner-cluster-runner</span>
+                      <h4 className="text-sm font-semibold text-zinc-100">CI/CD 보안점검 엔진</h4>
+                      <span className="text-[10px] text-zinc-400 font-mono">ID: scanner-cluster-runner</span>
                     </div>
                   </div>
 
                   {isScannerPending ? (
-                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-2">
-                      <Clock className="w-8 h-8 mx-auto text-slate-600" />
-                      <h5 className="font-bold text-slate-300">점검 대기 상태 (진행 전)</h5>
-                      <p className="text-[11px] text-slate-500 leading-relaxed">
-                        아직 점검 러너가 시작되지 않은 상태입니다. 상단의 <strong>[파이프라인 재실행]</strong> 버튼을 누르면 즉시 컨테이너가 가동되어 실시간 점검이 수행됩니다.
+                    <div className="p-4 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-2">
+                      <Clock className="w-8 h-8 mx-auto text-zinc-600" />
+                      <h5 className="font-semibold text-zinc-300">점검 대기 상태 (진행 전)</h5>
+                      <p className="text-[11px] text-zinc-500 leading-relaxed">
+                        아직 점검 러너가 시작되지 않은 상태입니다. 상단의 <strong>[시나리오 실행]</strong> 버튼을 누르면 즉시 컨테이너가 가동되어 실시간 점검이 수행됩니다.
                       </p>
                       <Button
                         size="sm"
                         onClick={handleRunSimulation}
-                        className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs h-8 gap-1.5 mt-2"
+                        className="bg-zinc-100 hover:bg-zinc-200 text-zinc-950 font-semibold text-xs h-8 gap-1.5 mt-2"
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
                         지금 즉시 점검 시작
@@ -2600,31 +2601,31 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                     </div>
                   ) : (
                     <>
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
-                        <span className="text-[11px] text-slate-400 font-semibold block">4대 점검 도구 상태</span>
-                        <div className="space-y-2">
-                          <div className="p-2 rounded bg-slate-900 flex items-center justify-between text-[11px]">
+                      <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] space-y-2.5">
+                        <span className="text-[11px] text-zinc-400 font-semibold block">4대 점검 도구 상태</span>
+                        <div className="space-y-1.5">
+                          <div className="p-2 rounded bg-[#141417] border border-white/[0.06] flex items-center justify-between text-[11px]">
                             <span>SonarQube (SAST)</span>
-                            <span className="font-mono text-amber-400 font-bold">{activeRun.toolStatuses.sast.count}건 ({activeRun.toolStatuses.sast.duration}초)</span>
+                            <span className="font-mono text-amber-400 font-semibold">{activeRun.toolStatuses.sast.count}건 ({activeRun.toolStatuses.sast.duration}초)</span>
                           </div>
-                          <div className="p-2 rounded bg-slate-900 flex items-center justify-between text-[11px]">
+                          <div className="p-2 rounded bg-[#141417] border border-white/[0.06] flex items-center justify-between text-[11px]">
                             <span>Snyk (SCA)</span>
-                            <span className="font-mono text-amber-400 font-bold">{activeRun.toolStatuses.sca.count}건 ({activeRun.toolStatuses.sca.duration}초)</span>
+                            <span className="font-mono text-amber-400 font-semibold">{activeRun.toolStatuses.sca.count}건 ({activeRun.toolStatuses.sca.duration}초)</span>
                           </div>
-                          <div className="p-2 rounded bg-slate-900 flex items-center justify-between text-[11px]">
+                          <div className="p-2 rounded bg-[#141417] border border-white/[0.06] flex items-center justify-between text-[11px]">
                             <span>Gitleaks (Secret)</span>
-                            <span className="font-mono text-emerald-400 font-bold">{activeRun.toolStatuses.secret.count}건 ({activeRun.toolStatuses.secret.duration}초)</span>
+                            <span className="font-mono text-emerald-400 font-semibold">{activeRun.toolStatuses.secret.count}건 ({activeRun.toolStatuses.secret.duration}초)</span>
                           </div>
-                          <div className="p-2 rounded bg-slate-900 flex items-center justify-between text-[11px]">
+                          <div className="p-2 rounded bg-[#141417] border border-white/[0.06] flex items-center justify-between text-[11px]">
                             <span>Checkov (IaC)</span>
-                            <span className="font-mono text-emerald-400 font-bold">{activeRun.toolStatuses.iac.count}건 ({activeRun.toolStatuses.iac.duration}초)</span>
+                            <span className="font-mono text-emerald-400 font-semibold">{activeRun.toolStatuses.iac.count}건 ({activeRun.toolStatuses.iac.duration}초)</span>
                           </div>
                         </div>
                       </div>
 
                       {activeRun.toolFailure === 'sast' && (
-                        <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/80 space-y-2">
-                          <div className="flex items-center gap-2 text-rose-300 font-bold">
+                        <div className="p-3 rounded-lg bg-rose-950/30 border border-rose-500/40 space-y-2">
+                          <div className="flex items-center gap-2 text-rose-300 font-semibold">
                             <AlertCircle className="w-4 h-4 text-rose-400" />
                             SAST 엔진 504 Gateway Timeout 장애
                           </div>
@@ -2635,7 +2636,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                             size="sm"
                             onClick={() => handleRetryScanner('sast')}
                             disabled={retryingTool !== null}
-                            className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs h-8 gap-1.5"
+                            className="w-full bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs h-8 gap-1.5"
                           >
                             {retryingTool === 'sast' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
                             SAST 점검 엔진 단독 재시도
@@ -2643,40 +2644,40 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                         </div>
                       )}
 
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-[11px]">
-                        <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                      <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] space-y-2 text-[11px]">
+                        <span className="font-semibold text-zinc-200 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
                           공급망 보안 (Supply Chain Security)
                         </span>
-                        <div className="space-y-1 text-slate-400">
+                        <div className="space-y-1 text-zinc-400">
                           <div className="flex justify-between">
                             <span>Cosign 이미지 서명:</span>
-                            <span className="text-emerald-400 font-semibold font-mono">✅ 서명 유효 (SLSA-3)</span>
+                            <span className="text-emerald-400 font-semibold font-mono">서명 유효 (SLSA-3)</span>
                           </div>
                           <div className="flex justify-between">
                             <span>SBOM 산출물:</span>
-                            <span className="text-cyan-300 font-semibold font-mono">CycloneDX v1.5 (142 pkgs)</span>
+                            <span className="text-zinc-200 font-semibold font-mono">CycloneDX v1.5 (142 pkgs)</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+                        <span className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5">
                           <Terminal className="w-3.5 h-3.5 text-emerald-400" />
                           실시간 컨테이너 러너 로그
                         </span>
-                        <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-[10px] text-slate-300 space-y-1 max-h-48 overflow-y-auto leading-relaxed">
+                        <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] font-mono text-[10px] text-zinc-300 space-y-1 max-h-48 overflow-y-auto leading-relaxed">
                           {activeRun.executionLogs.map((log, lIdx) => (
                             <div
                               key={lIdx}
                               className={
                                 log.includes('[ERROR]')
-                                  ? 'text-rose-400 font-bold'
+                                  ? 'text-rose-400 font-semibold'
                                   : log.includes('[WARN]')
                                   ? 'text-amber-400'
                                   : log.includes('[SUCCESS]')
-                                  ? 'text-emerald-400 font-bold'
-                                  : 'text-slate-400'
+                                  ? 'text-emerald-400 font-semibold'
+                                  : 'text-zinc-400'
                               }
                             >
                               {log}
@@ -2689,7 +2690,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                         <Button
                           onClick={handleRunSimulation}
                           disabled={simulationStage !== null}
-                          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs h-8 gap-1.5"
+                          className="w-full bg-zinc-100 hover:bg-zinc-200 text-zinc-950 font-semibold text-xs h-8 gap-1.5"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
                           컨테이너 점검 재시도 (실시간 시뮬레이션)
@@ -2703,7 +2704,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                               onClose();
                               onNavigate('findings', { branch: activeRun.branch });
                             }}
-                            className="w-full text-xs h-8 gap-1.5 border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200"
+                            className="w-full text-xs h-8 gap-1.5 border-white/[0.1] bg-[#141417] hover:bg-zinc-800 text-zinc-200"
                           >
                             <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
                             결함 관리(Findings)에서 상세 보기
@@ -2721,75 +2722,75 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold ${
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold border ${
                         isGatePassed
-                          ? 'bg-emerald-500/20 text-emerald-400'
+                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                           : isGateReview
-                          ? 'bg-amber-500/20 text-amber-400'
+                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                           : isGateBlocked
-                          ? 'bg-rose-500/20 text-rose-400'
-                          : 'bg-slate-800 text-slate-500'
+                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                       }`}
                     >
                       3
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white">보안 정책 게이트 평가</h4>
-                      <span className="text-[10px] text-slate-400 font-mono">ID: gate-decision-engine</span>
+                      <h4 className="text-sm font-semibold text-zinc-100">보안 정책 게이트 평가</h4>
+                      <span className="text-[10px] text-zinc-400 font-mono">ID: gate-decision-engine</span>
                     </div>
                   </div>
 
                   {isGatePending ? (
-                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-2">
-                      <Clock className="w-8 h-8 mx-auto text-slate-600" />
-                      <h5 className="font-bold text-slate-300">정책 평가 대기 (진행 전)</h5>
-                      <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <div className="p-4 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-2">
+                      <Clock className="w-8 h-8 mx-auto text-zinc-600" />
+                      <h5 className="font-semibold text-zinc-300">정책 평가 대기 (진행 전)</h5>
+                      <p className="text-[11px] text-zinc-500 leading-relaxed">
                         2단계 보안점검 결과가 생성된 이후 자동으로 정책 임계치가 평가됩니다.
                       </p>
                     </div>
                   ) : (
                     <>
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                        <span className="text-[11px] text-slate-400 font-semibold block">적용 정책 기준</span>
+                      <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] space-y-2">
+                        <span className="text-[11px] text-zinc-400 font-semibold block">적용 정책 기준</span>
                         <div className="space-y-1.5 text-[11px]">
                           <div className="flex justify-between">
-                            <span className="text-slate-500">치명적 차단 규칙</span>
-                            <span className="text-white font-bold">{policy.blockOnCritical ? '1건 이상 시 즉시 차단' : '미적용'}</span>
+                            <span className="text-zinc-500">치명적 차단 규칙</span>
+                            <span className="text-zinc-100 font-semibold">{policy.blockOnCritical ? '1건 이상 시 즉시 차단' : '미적용'}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-500">높음 차단 임계치</span>
-                            <span className="font-mono text-white">{policy.highThresholdForBlock}건 이상 시 차단</span>
+                            <span className="text-zinc-500">높음 차단 임계치</span>
+                            <span className="font-mono text-zinc-100">{policy.highThresholdForBlock}건 이상 시 차단</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-500">중간 검토 임계치</span>
-                            <span className="font-mono text-white">{policy.mediumThresholdForReview}건 이상</span>
+                            <span className="text-zinc-500">중간 검토 임계치</span>
+                            <span className="font-mono text-zinc-100">{policy.mediumThresholdForReview}건 이상</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                        <span className="text-[11px] text-slate-400 font-semibold block">
+                      <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] space-y-2">
+                        <span className="text-[11px] text-zinc-400 font-semibold block">
                           판정 근거: <strong className={isGateBlocked ? 'text-rose-400' : isGateReview ? 'text-amber-400' : 'text-emerald-400'}>
                             {activeRun.policyNotes || '정책 평가 완료'}
                           </strong>
                         </span>
-                        <div className="text-[11px] text-slate-400">
-                          탐지된 치명적 결함: <strong className="text-white">{activeRun.critCount}건</strong>,
-                          높음: <strong className="text-white">{activeRun.highCount}건</strong>,
-                          중간: <strong className="text-white">{activeRun.medCount}건</strong>
+                        <div className="text-[11px] text-zinc-400">
+                          탐지된 치명적 결함: <strong className="text-zinc-100 font-mono">{activeRun.critCount}건</strong>,
+                          높음: <strong className="text-zinc-100 font-mono">{activeRun.highCount}건</strong>,
+                          중간: <strong className="text-zinc-100 font-mono">{activeRun.medCount}건</strong>
                         </div>
                       </div>
 
                       {isOverridden && (
-                        <div className="p-3 rounded-xl bg-fuchsia-950/40 border border-fuchsia-700/60 space-y-1.5 text-[11px] text-fuchsia-200">
-                          <span className="font-bold flex items-center gap-1.5 text-fuchsia-300">
+                        <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-500/40 space-y-1.5 text-[11px] text-amber-200">
+                          <span className="font-semibold flex items-center gap-1.5 text-amber-300">
                             <ShieldAlert className="w-3.5 h-3.5" />
                             CISO 긴급 보안 예외 승인 증적 (Audit Trail)
                           </span>
-                          <div>승인자: <strong className="text-white">{activeRun.overrideData?.approver || 'CISO 김철수 상무'}</strong></div>
-                          <div>사유 구분: <span className="font-semibold text-fuchsia-300">{activeRun.overrideData?.reason}</span></div>
-                          <div className="italic text-[10px] text-slate-300">"{activeRun.overrideData?.detail}"</div>
-                          <div className="text-[10px] text-amber-300 font-mono">⏳ 사후 조치 기한: 24시간 이내 패치 보증</div>
+                          <div>승인자: <strong className="text-zinc-100">{activeRun.overrideData?.approver || 'CISO 김철수 상무'}</strong></div>
+                          <div>사유 구분: <span className="font-semibold text-amber-300">{activeRun.overrideData?.reason}</span></div>
+                          <div className="italic text-[10px] text-zinc-300">"{activeRun.overrideData?.detail}"</div>
+                          <div className="text-[10px] text-amber-300 font-mono">사후 조치 기한: 24시간 이내 패치 보증</div>
                         </div>
                       )}
 
@@ -2798,14 +2799,14 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                         <div className="space-y-2">
                           {/* Secret Leak Specific Remediation Card */}
                           {activeRun.toolStatuses.secret.count > 0 && (
-                            <div className="p-3 rounded-xl bg-slate-950/80 border border-rose-800/80 space-y-1.5 font-mono text-[11px]">
-                              <div className="flex items-center gap-1.5 text-rose-400 font-bold">
+                            <div className="p-3 rounded-lg bg-[#09090b] border border-rose-500/40 space-y-1.5 font-mono text-[11px]">
+                              <div className="flex items-center gap-1.5 text-rose-400 font-semibold">
                                 <KeyRound className="w-3.5 h-3.5 shrink-0" />
                                 <span>탐지된 시크릿: AWS Secret Access Key</span>
                               </div>
-                              <div className="text-[10px] text-slate-400">발견 위치: src/config/auth.key:12 (Entropy: 5.82)</div>
-                              <div className="text-[10px] text-amber-300 bg-amber-950/40 p-2 rounded-lg border border-amber-900/50 leading-relaxed font-sans">
-                                💡 <strong>보안팀 긴급 조치 가이드:</strong><br />
+                              <div className="text-[10px] text-zinc-400">발견 위치: src/config/auth.key:12 (Entropy: 5.82)</div>
+                              <div className="text-[10px] text-zinc-300 bg-[#141417] p-2 rounded border border-white/[0.08] leading-relaxed font-sans">
+                                <strong>보안팀 긴급 조치 가이드:</strong><br />
                                 1. AWS 콘솔 IAM에서 노출된 Access Key를 즉시 비활성화(Deactivate)<br />
                                 2. <code>git filter-repo --invert-paths --path src/config/auth.key</code> 실행 후 Force Push
                               </div>
@@ -2814,14 +2815,14 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
 
                           {/* IaC Misconfiguration Specific Remediation Card */}
                           {activeRun.toolStatuses.iac.count > 0 && (
-                            <div className="p-3 rounded-xl bg-slate-950/80 border border-amber-800/80 space-y-1.5 font-mono text-[11px]">
-                              <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+                            <div className="p-3 rounded-lg bg-[#09090b] border border-amber-500/40 space-y-1.5 font-mono text-[11px]">
+                              <div className="flex items-center gap-1.5 text-amber-400 font-semibold">
                                 <FileCode className="w-3.5 h-3.5 shrink-0" />
                                 <span>탐지된 IaC 위반: CKV_AWS_20 (S3 Public ACL)</span>
                               </div>
-                              <div className="text-[10px] text-slate-400">발견 위치: infra/terraform/s3.tf:14</div>
-                              <div className="text-[10px] text-amber-300 bg-amber-950/40 p-2 rounded-lg border border-amber-900/50 leading-relaxed font-sans">
-                                💡 <strong>클라우드 인프라 수정 가이드:</strong><br />
+                              <div className="text-[10px] text-zinc-400">발견 위치: infra/terraform/s3.tf:14</div>
+                              <div className="text-[10px] text-zinc-300 bg-[#141417] p-2 rounded border border-white/[0.08] leading-relaxed font-sans">
+                                <strong>클라우드 인프라 수정 가이드:</strong><br />
                                 1. <code>acl = "private"</code>로 변경<br />
                                 2. <code>aws_s3_bucket_public_access_block</code> 리소스 추가 및 <code>block_public_acls = true</code> 지정
                               </div>
@@ -2830,14 +2831,14 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
 
                           {/* SAST SQLi Specific Remediation Card */}
                           {activeRun.toolStatuses.sast.count > 0 && activeRun.critCount > 0 && activeRun.toolStatuses.secret.count === 0 && (
-                            <div className="p-3 rounded-xl bg-slate-950/80 border border-rose-800/80 space-y-1.5 font-mono text-[11px]">
-                              <div className="flex items-center gap-1.5 text-rose-400 font-bold">
+                            <div className="p-3 rounded-lg bg-[#09090b] border border-rose-500/40 space-y-1.5 font-mono text-[11px]">
+                              <div className="flex items-center gap-1.5 text-rose-400 font-semibold">
                                 <Code2 className="w-3.5 h-3.5 shrink-0" />
                                 <span>탐지된 코드 취약점: CWE-89 SQL Injection</span>
                               </div>
-                              <div className="text-[10px] text-slate-400">발견 위치: src/controllers/authController.ts:42</div>
-                              <div className="text-[10px] text-amber-300 bg-amber-950/40 p-2 rounded-lg border border-amber-900/50 leading-relaxed font-sans">
-                                💡 <strong>소스코드 시큐어코딩 가이드:</strong><br />
+                              <div className="text-[10px] text-zinc-400">발견 위치: src/controllers/authController.ts:42</div>
+                              <div className="text-[10px] text-zinc-300 bg-[#141417] p-2 rounded border border-white/[0.08] leading-relaxed font-sans">
+                                <strong>소스코드 시큐어코딩 가이드:</strong><br />
                                 동적 문자열 결합(String Concatenation) SQL 쿼리를 즉시 제거하고 파라미터화된 쿼리(PreparedStatement) 또는 ORM 매핑을 사용하세요.
                               </div>
                             </div>
@@ -2848,33 +2849,33 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                       {isGateBlocked && !isOverridden && (
                         <div className="space-y-2 pt-1">
                           {/* Standard Path: Fix Branch (Recommended) */}
-                          <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/60 space-y-1.5">
+                          <div className="p-3 rounded-lg bg-[#09090b] border border-emerald-500/30 space-y-1.5">
                             <div className="flex items-center justify-between">
-                              <span className="font-bold text-xs text-emerald-300 flex items-center gap-1.5">
+                              <span className="font-semibold text-xs text-emerald-300 flex items-center gap-1.5">
                                 <GitBranch className="w-3.5 h-3.5 text-emerald-400" />
                                 표준 개발 워크플로우 (권장)
                               </span>
-                              <Badge variant="outline" className="text-[9px] border-emerald-500/60 text-emerald-300">
+                              <Badge variant="outline" className="text-[9px] border-emerald-500/40 text-emerald-300">
                                 Git Flow
                               </Badge>
                             </div>
-                            <p className="text-[11px] text-slate-300 leading-snug">
+                            <p className="text-[11px] text-zinc-300 leading-snug">
                               실무 표준대로 <strong>fix/ 브랜치</strong>를 분기하여 보안 결함을 수정한 뒤, 재검증 PR을 발행하여 0 defects 클린 배포를 진행합니다.
                             </p>
                             <Button
                               size="sm"
                               onClick={() => setIsPrChecksModalOpen(true)}
-                              className="w-full text-xs h-8 bg-emerald-600 hover:bg-emerald-500 text-white font-bold gap-1.5 shadow-md shadow-emerald-950 mt-1"
+                              className="w-full text-xs h-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-1.5 mt-1"
                             >
                               <GitBranch className="w-3.5 h-3.5" />
-                              🛠️ fix/ 조치 브랜치 생성 및 재검증 PR
+                              fix/ 조치 브랜치 생성 및 재검증 PR
                             </Button>
                           </div>
 
                           {/* Emergency Bypass Path: CISO Override */}
-                          <div className="p-3 rounded-xl bg-rose-950/20 border border-rose-900/40 space-y-1.5">
+                          <div className="p-3 rounded-lg bg-[#09090b] border border-rose-500/30 space-y-1.5">
                             <div className="flex items-center justify-between">
-                              <span className="font-bold text-xs text-rose-300 flex items-center gap-1.5">
+                              <span className="font-semibold text-xs text-rose-300 flex items-center gap-1.5">
                                 <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
                                 장애 긴급 핫픽스 우회 (특수 상황)
                               </span>
@@ -2882,16 +2883,16 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                                 CISO Bypass
                               </Badge>
                             </div>
-                            <p className="text-[11px] text-slate-400 leading-snug">
+                            <p className="text-[11px] text-zinc-400 leading-snug">
                               서비스 전면 장애 등 긴급 배포가 불가피한 경우, CISO 인가를 통해 24시간 내 사후 패치 확약서를 등록하고 즉시 배포합니다.
                             </p>
                             <Button
                               size="sm"
                               onClick={() => setIsOverrideModalOpen(true)}
-                              className="w-full text-xs h-8 bg-rose-600 hover:bg-rose-500 text-white font-bold gap-1.5 shadow-md shadow-rose-950 mt-1"
+                              className="w-full text-xs h-8 bg-rose-600 hover:bg-rose-500 text-white font-semibold gap-1.5 mt-1"
                             >
                               <ShieldAlert className="w-3.5 h-3.5" />
-                              🚨 CISO 긴급 예외 승인 신청
+                              CISO 긴급 예외 승인 신청
                             </Button>
                           </div>
 
@@ -2900,9 +2901,9 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                             size="sm"
                             variant="outline"
                             onClick={() => setIsPrChecksModalOpen(true)}
-                            className="w-full text-xs h-8 border-indigo-700/80 bg-indigo-950/40 hover:bg-indigo-900/60 text-indigo-300 font-semibold gap-1.5"
+                            className="w-full text-xs h-8 border-white/[0.12] bg-[#141417] hover:bg-zinc-800 text-zinc-200 font-semibold gap-1.5"
                           >
-                            <GitPullRequest className="w-3.5 h-3.5 text-indigo-400" />
+                            <GitPullRequest className="w-3.5 h-3.5 text-emerald-400" />
                             GitHub PR 화면에서 봇 피드백 보기
                           </Button>
                         </div>
@@ -2916,7 +2917,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                             onClose();
                             onNavigate('findings', { branch: activeRun.branch });
                           }}
-                          className="w-full text-xs h-8 gap-1.5 border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200"
+                          className="w-full text-xs h-8 gap-1.5 border-white/[0.1] bg-[#141417] hover:bg-zinc-800 text-zinc-200"
                         >
                           <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
                           차단 원인 결함 목록 확인하기
@@ -2933,72 +2934,72 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold ${
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold border ${
                         isReviewApproved
-                          ? 'bg-emerald-500/20 text-emerald-400'
+                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                           : isReviewPending
-                          ? 'bg-amber-500/20 text-amber-400'
+                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                           : isReviewRejected
-                          ? 'bg-rose-500/20 text-rose-400'
-                          : 'bg-slate-800 text-slate-500'
+                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                       }`}
                     >
                       4
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white">배포 심사 및 인가</h4>
-                      <span className="text-[10px] text-slate-400 font-mono">ID: deployment-review-gate</span>
+                      <h4 className="text-sm font-semibold text-zinc-100">배포 심사 및 인가</h4>
+                      <span className="text-[10px] text-zinc-400 font-mono">ID: deployment-review-gate</span>
                     </div>
                   </div>
 
                   {isReviewNotReached ? (
-                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-2">
-                      <Clock className="w-8 h-8 mx-auto text-slate-600" />
-                      <h5 className="font-bold text-slate-300">심사 단계 미도달 (진행 전)</h5>
-                      <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <div className="p-4 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-2">
+                      <Clock className="w-8 h-8 mx-auto text-zinc-600" />
+                      <h5 className="font-semibold text-zinc-300">심사 단계 미도달 (진행 전)</h5>
+                      <p className="text-[11px] text-zinc-500 leading-relaxed">
                         이전 단계의 보안 정책 게이트를 통과해야 심사 프로세스가 생성됩니다.
                       </p>
                     </div>
                   ) : (
                     <>
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-[11px]">
+                      <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] space-y-2 text-[11px]">
                         <div className="flex justify-between">
-                          <span className="text-slate-500">배포 타겟 환경</span>
-                          <Badge variant="outline" className="text-[10px] text-indigo-300 border-indigo-500/40">
+                          <span className="text-zinc-500">배포 타겟 환경</span>
+                          <Badge variant="outline" className="text-[10px] text-zinc-200 border-white/[0.15]">
                             {activeRun.targetEnvironment} 배포
                           </Badge>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">배포 요청 커밋</span>
-                          <span className="font-mono text-slate-300">@{activeRun.commitId}</span>
+                          <span className="text-zinc-500">배포 요청 커밋</span>
+                          <span className="font-mono text-zinc-300">@{activeRun.commitId}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">커밋 일치 검증</span>
-                          <span className="font-semibold text-emerald-400">
-                            {activeRun.commitMatch ? '✅ 일치 확인' : '❌ 불일치'}
+                          <span className="text-zinc-500">커밋 일치 검증</span>
+                          <span className="font-semibold text-emerald-400 font-mono">
+                            {activeRun.commitMatch ? '일치 확인' : '불일치'}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">심사 결과</span>
-                          <span className={`font-bold ${isReviewApproved ? 'text-emerald-400' : isReviewRejected ? 'text-rose-400' : 'text-amber-400'}`}>
+                          <span className="text-zinc-500">심사 결과</span>
+                          <span className={`font-semibold ${isReviewApproved ? 'text-emerald-400' : isReviewRejected ? 'text-rose-400' : 'text-amber-400'}`}>
                             {isReviewApproved ? '승인 완료' : isReviewRejected ? '심사 반려' : '심사 대기 중'}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">심사자</span>
-                          <span className="text-slate-200">{activeRun.reviewer || '미배정'}</span>
+                          <span className="text-zinc-500">심사자</span>
+                          <span className="text-zinc-200">{activeRun.reviewer || '미배정'}</span>
                         </div>
                       </div>
 
                       {/* Interactive Review Action simulation */}
                       {isReviewPending && (
-                        <div className="space-y-2 pt-2 border-t border-slate-800">
-                          <span className="text-[11px] text-slate-400 font-semibold">심사 조치 시뮬레이션</span>
+                        <div className="space-y-2 pt-2 border-t border-white/[0.08]">
+                          <span className="text-[11px] text-zinc-400 font-semibold">심사 조치 시뮬레이션</span>
                           <div className="flex gap-2">
                             <Button
                               size="sm"
                               onClick={handleApproveReview}
-                              className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs h-8"
+                              className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs h-8 font-semibold"
                             >
                               <Check className="w-3.5 h-3.5 mr-1" />
                               승인 처리
@@ -3007,7 +3008,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                               size="sm"
                               variant="destructive"
                               onClick={handleRejectReview}
-                              className="flex-1 text-xs h-8"
+                              className="flex-1 text-xs h-8 font-semibold"
                             >
                               <X className="w-3.5 h-3.5 mr-1" />
                               반려 처리
@@ -3025,69 +3026,69 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold ${
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold border ${
                         isDeployActive
-                          ? 'bg-emerald-500/20 text-emerald-400'
+                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                           : isDeployBlocked
-                          ? 'bg-rose-500/20 text-rose-400'
-                          : 'bg-slate-800 text-slate-500'
+                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                       }`}
                     >
                       5
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white">운영 인프라 배포 타겟</h4>
-                      <span className="text-[10px] text-slate-400 font-mono">ID: kubernetes-prod-target</span>
+                      <h4 className="text-sm font-semibold text-zinc-100">운영 인프라 배포 타겟</h4>
+                      <span className="text-[10px] text-zinc-400 font-mono">ID: kubernetes-prod-target</span>
                     </div>
                   </div>
 
                   {isDeployPending ? (
-                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-2">
-                      <Clock className="w-8 h-8 mx-auto text-slate-600" />
-                      <h5 className="font-bold text-slate-300">배포 전 대기 상태 (진행 전)</h5>
-                      <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <div className="p-4 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-2">
+                      <Clock className="w-8 h-8 mx-auto text-zinc-600" />
+                      <h5 className="font-semibold text-zinc-300">배포 전 대기 상태 (진행 전)</h5>
+                      <p className="text-[11px] text-zinc-500 leading-relaxed">
                         4단계 배포 심사가 승인되면 클러스터 네임스페이스(<strong>{activeRun.namespace}</strong>)로 무중단 롤링 업데이트가 수행됩니다.
                       </p>
                     </div>
                   ) : (
                     <>
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-[11px]">
+                      <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] space-y-2 text-[11px]">
                         <div className="flex justify-between">
-                          <span className="text-slate-500">배포 상태</span>
-                          <span className={`font-bold ${isDeployActive ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          <span className="text-zinc-500">배포 상태</span>
+                          <span className={`font-semibold ${isDeployActive ? 'text-emerald-400' : 'text-rose-400'}`}>
                             {isDeployActive ? '배포 완료 (Active)' : '배포 차단 (Blocked)'}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">대상 클러스터</span>
-                          <span className="font-mono text-white">{activeRun.cluster} (v1.29)</span>
+                          <span className="text-zinc-500">대상 클러스터</span>
+                          <span className="font-mono text-zinc-100">{activeRun.cluster} (v1.29)</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">네임스페이스</span>
-                          <span className="font-mono text-indigo-400">{activeRun.namespace}</span>
+                          <span className="text-zinc-500">네임스페이스</span>
+                          <span className="font-mono text-zinc-200">{activeRun.namespace}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Pod 복제본</span>
-                          <span className="font-mono text-emerald-400 font-bold">{activeRun.replicas}</span>
+                          <span className="text-zinc-500">Pod 복제본</span>
+                          <span className="font-mono text-emerald-400 font-semibold">{activeRun.replicas}</span>
                         </div>
                       </div>
 
                       {isRolledBack && (
-                        <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-700/60 space-y-1.5 text-[11px] text-cyan-200">
-                          <span className="font-bold flex items-center gap-1.5 text-cyan-300">
+                        <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.15] space-y-1.5 text-[11px] text-zinc-200">
+                          <span className="font-semibold flex items-center gap-1.5 text-zinc-100">
                             <Undo2 className="w-3.5 h-3.5" />
                             카나리 자동 롤백 완료 증적
                           </span>
-                          <div>복구 리비전: <strong className="font-mono text-white">@v2.4.0 (Stable Release)</strong></div>
-                          <div className="text-[10px] text-slate-300">
+                          <div>복구 리비전: <strong className="font-mono text-zinc-100">@v2.4.0 (Stable Release)</strong></div>
+                          <div className="text-[10px] text-zinc-400">
                             HTTP 5xx 에러율 14.8% 감지 후 무중단 카나리 자동 롤백 성공.
                           </div>
                         </div>
                       )}
 
                       {isCanaryFailed && (
-                        <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/80 space-y-2">
-                          <div className="flex items-center gap-2 text-rose-300 font-bold text-xs">
+                        <div className="p-3 rounded-lg bg-rose-950/30 border border-rose-500/40 space-y-2">
+                          <div className="flex items-center gap-2 text-rose-300 font-semibold text-xs">
                             <AlertCircle className="w-4 h-4 text-rose-400" />
                             카나리 헬스체크 이상 감지 (에러율 14.8%)
                           </div>
@@ -3097,7 +3098,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                           <Button
                             size="sm"
                             onClick={handleRollback}
-                            className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs h-8 gap-1.5 shadow-md shadow-cyan-950"
+                            className="w-full bg-zinc-100 hover:bg-zinc-200 text-zinc-950 font-semibold text-xs h-8 gap-1.5"
                           >
                             <Undo2 className="w-3.5 h-3.5" />
                             이전 안정 버전(@v2.4.0)으로 즉시 롤백
@@ -3106,8 +3107,8 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                       )}
 
                       {isOverridden && (
-                        <div className="p-3 rounded-xl bg-fuchsia-950/40 border border-fuchsia-700/60 space-y-1 text-[11px] text-fuchsia-200">
-                          <span className="font-bold text-fuchsia-300">🚨 CISO 긴급 승인 인프라 가동 중</span>
+                        <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-500/40 space-y-1 text-[11px] text-amber-200">
+                          <span className="font-semibold text-amber-300">CISO 긴급 승인 인프라 가동 중</span>
                           <div>승인자: {activeRun.overrideData?.approver || 'CISO 김철수 상무'}</div>
                           <div className="text-[10px] text-amber-300 font-mono">24시간 이내 보안 결함 패치 완료 보증</div>
                         </div>

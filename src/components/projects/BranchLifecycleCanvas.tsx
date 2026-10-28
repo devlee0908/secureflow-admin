@@ -107,50 +107,50 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
             {/* Run Group Header Banner when multi-run */}
             {runsToRender.length > 1 && (
               <div
-                className="absolute z-20 flex items-center justify-between px-6 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 backdrop-blur-md shadow-xl"
+                className="absolute z-20 flex items-center justify-between px-6 py-2.5 rounded-xl bg-[#141417]/95 border border-white/[0.1] backdrop-blur-md shadow-xl"
                 style={{ left: '40px', top: `${offsetY + 5}px`, width: '2170px' }}
               >
                 <div className="flex items-center gap-3">
                   <span className={cn(
-                    "flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-mono border",
+                    "flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold font-mono border",
                     isThisRunActive
-                      ? "bg-indigo-500/30 border-indigo-400 text-white"
-                      : "bg-slate-800 text-slate-300 border-slate-700"
+                      ? "bg-zinc-100 border-zinc-100 text-zinc-950"
+                      : "bg-zinc-900 text-zinc-300 border-white/[0.1]"
                   )}>
-                    <GitFork className="w-3.5 h-3.5 text-indigo-400" />
+                    <GitFork className="w-3.5 h-3.5" />
                     RUN #{runIdx + 1}
                   </span>
                   <div className="flex items-center gap-2">
-                    <div className={`w-6 h-6 rounded-full bg-gradient-to-tr ${runItem.avatarColor} text-white font-bold flex items-center justify-center text-[10px]`}>
+                    <div className="w-6 h-6 rounded-full bg-zinc-800 border border-white/[0.12] text-zinc-100 font-semibold flex items-center justify-center text-[10px]">
                       {runItem.author[0]}
                     </div>
-                    <span className="font-bold text-white text-xs">👤 {runItem.author}</span>
-                    <span className="text-slate-400 text-xs">({runItem.authorRole} · {runItem.department})</span>
+                    <span className="font-semibold text-zinc-100 text-xs">{runItem.author}</span>
+                    <span className="text-zinc-400 text-xs">({runItem.authorRole} · {runItem.department})</span>
                   </div>
-                  <span className="text-slate-600">|</span>
+                  <span className="text-zinc-700">|</span>
                   <div className="flex items-center gap-2 font-mono text-xs">
-                    <span className="text-slate-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                      {runItem.trigger === 'PR/MR' ? `🔀 PR #${runItem.prNumber}` : '⚡ Push'}
+                    <span className="text-zinc-300 bg-[#09090b] px-2 py-0.5 rounded border border-white/[0.08]">
+                      {runItem.trigger === 'PR/MR' ? `PR #${runItem.prNumber}` : 'Push'}
                     </span>
-                    <span className="text-indigo-300 font-bold">{runItem.branch}</span>
-                    <span className="text-slate-500">@{runItem.commitId}</span>
+                    <span className="text-zinc-100 font-semibold">{runItem.branch}</span>
+                    <span className="text-zinc-500">@{runItem.commitId}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                   {runItem.gateStatus === 'blocked' ? (
-                    <Badge variant="destructive" className="text-xs font-bold gap-1 px-3 py-1">
+                    <Badge variant="destructive" className="text-xs font-semibold gap-1 px-3 py-1">
                       <ShieldAlert className="w-3 h-3" />
                       정책 게이트 차단 (조치 라이프사이클 가동)
                     </Badge>
                   ) : runItem.deployStatus === 'deployed' ? (
-                    <Badge variant="outline" className="border-emerald-500 text-emerald-400 bg-emerald-950/40 text-xs font-bold gap-1 px-3 py-1">
+                    <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 text-xs font-semibold gap-1 px-3 py-1">
                       <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                       운영 배포 완료
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="border-indigo-500 text-indigo-300 bg-indigo-950/40 text-xs font-bold gap-1 px-3 py-1">
-                      <Clock className="w-3 h-3 text-indigo-400" />
+                    <Badge variant="outline" className="border-white/[0.15] text-zinc-200 bg-white/[0.06] text-xs font-semibold gap-1 px-3 py-1">
+                      <Clock className="w-3 h-3 text-zinc-400" />
                       파이프라인 진행 중
                     </Badge>
                   )}
@@ -160,11 +160,11 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                     className={cn(
                       "px-3 py-1 rounded-md text-xs font-semibold transition-all border",
                       isThisRunActive
-                        ? "bg-indigo-600 text-white border-indigo-400 shadow-sm"
-                        : "bg-slate-800 text-slate-300 hover:text-white border-slate-700"
+                        ? "bg-zinc-100 text-zinc-950 border-zinc-100"
+                        : "bg-zinc-900 text-zinc-300 hover:text-white border-white/[0.1]"
                     )}
                   >
-                    {isThisRunActive ? '✓ 선택됨 (인스펙터 연동)' : '이 런 포커스'}
+                    {isThisRunActive ? '선택됨 (인스펙터 연동)' : '이 런 포커스'}
                   </button>
                 </div>
               </div>
@@ -176,25 +176,25 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
 
             {/* Track 1: Feature Branch (Top Lane) */}
             <div
-              className="absolute rounded-3xl border border-rose-900/40 bg-slate-900/40 transition-all overflow-hidden"
+              className="absolute rounded-xl border border-rose-500/25 bg-[#0f0f11]/60 transition-all overflow-hidden"
               style={{ left: '40px', top: `${offsetY + 40}px`, width: '1070px', height: '260px' }}
             >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-rose-900/30 bg-rose-950/25">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-rose-500/20 bg-rose-950/20">
                 <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold text-xs font-mono">
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-500/15 border border-rose-500/30 text-rose-300 font-semibold text-xs font-mono">
                     <GitBranch className="w-3.5 h-3.5 text-rose-400" />
                     TRACK 1
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-100 text-xs">Feature 개발 브랜치</span>
-                    <span className="text-[11px] text-rose-300/90 font-mono bg-slate-950/80 px-2 py-0.5 rounded border border-rose-900/50">
+                    <span className="font-semibold text-zinc-100 text-xs">Feature 개발 브랜치</span>
+                    <span className="text-[11px] text-rose-300 font-mono bg-[#09090b] px-2 py-0.5 rounded border border-rose-500/30">
                       {runItem.branch}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-rose-500/60 text-rose-400 bg-rose-950/50 text-[11px] font-bold gap-1.5 px-2.5 py-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                  <Badge variant="outline" className="border-rose-500/40 text-rose-400 bg-rose-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                     정책 게이트 배포 차단
                   </Badge>
                 </div>
@@ -203,24 +203,24 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
 
             {/* Track 2: Fix Remediation Branch (Middle Lane) */}
             <div
-              className="absolute rounded-3xl border border-emerald-900/40 bg-slate-900/40 transition-all overflow-hidden"
+              className="absolute rounded-xl border border-emerald-500/25 bg-[#0f0f11]/60 transition-all overflow-hidden"
               style={{ left: '740px', top: `${offsetY + 390}px`, width: '1090px', height: '260px' }}
             >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-emerald-900/30 bg-emerald-950/25">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-emerald-500/20 bg-emerald-950/20">
                 <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold text-xs font-mono">
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold text-xs font-mono">
                     <GitFork className="w-3.5 h-3.5 text-emerald-400" />
                     TRACK 2
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-100 text-xs">Fix 조치 브랜치</span>
-                    <span className="text-[11px] text-emerald-300/90 font-mono bg-slate-950/80 px-2 py-0.5 rounded border border-emerald-900/50">
+                    <span className="font-semibold text-zinc-100 text-xs">Fix 조치 브랜치</span>
+                    <span className="text-[11px] text-emerald-300 font-mono bg-[#09090b] px-2 py-0.5 rounded border border-emerald-500/30">
                       fix/revoke-leaked-secret (PR #153)
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-emerald-500/60 text-emerald-300 bg-emerald-950/50 text-[11px] font-bold gap-1.5 px-2.5 py-1">
+                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                     4대 점검 재실행 클린 통과
                   </Badge>
@@ -230,25 +230,25 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
 
             {/* Track 3: Main Production Branch (Bottom Lane) */}
             <div
-              className="absolute rounded-3xl border border-indigo-900/40 bg-slate-900/40 transition-all overflow-hidden"
+              className="absolute rounded-xl border border-white/[0.12] bg-[#0f0f11]/60 transition-all overflow-hidden"
               style={{ left: '1450px', top: `${offsetY + 740}px`, width: '760px', height: '260px' }}
             >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-indigo-900/30 bg-indigo-950/25">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.08] bg-[#141417]/80">
                 <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 font-bold text-xs font-mono">
-                    <GitMerge className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.08] border border-white/[0.15] text-zinc-100 font-semibold text-xs font-mono">
+                    <GitMerge className="w-3.5 h-3.5 text-zinc-300" />
                     TRACK 3
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-100 text-xs">Main 프로덕션 브랜치</span>
-                    <span className="text-[11px] text-indigo-300/90 font-mono bg-slate-950/80 px-2 py-0.5 rounded border border-indigo-900/50">
+                    <span className="font-semibold text-zinc-100 text-xs">Main 프로덕션 브랜치</span>
+                    <span className="text-[11px] text-zinc-300 font-mono bg-[#09090b] px-2 py-0.5 rounded border border-white/[0.1]">
                       main (릴리즈 통합 배포)
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-indigo-500/60 text-indigo-300 bg-indigo-950/50 text-[11px] font-bold gap-1.5 px-2.5 py-1">
-                    <Rocket className="w-3.5 h-3.5 text-indigo-400" />
+                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
+                    <Rocket className="w-3.5 h-3.5 text-emerald-400" />
                     K8s 무중단 배포 완료
                   </Badge>
                 </div>
@@ -341,9 +341,9 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               className="absolute z-20 pointer-events-none -translate-x-1/2 -translate-y-1/2"
               style={{ left: '925px', top: `${offsetY + 365}px` }}
             >
-              <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-950/95 border border-emerald-500 text-emerald-300 shadow-xl shadow-emerald-950/80 flex items-center gap-1.5 backdrop-blur-md">
+              <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#141417]/95 border border-emerald-500/50 text-emerald-300 shadow-lg flex items-center gap-1.5 backdrop-blur-md">
                 <CornerDownRight className="w-3.5 h-3.5 text-emerald-400" />
-                🌿 fix/ 브랜치 자동 분기 (수정 노드)
+                fix/ 브랜치 자동 분기 (수정 노드)
               </span>
             </div>
 
@@ -352,9 +352,9 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               className="absolute z-20 pointer-events-none -translate-x-1/2 -translate-y-1/2"
               style={{ left: '1645px', top: `${offsetY + 715}px` }}
             >
-              <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-indigo-950/95 border border-indigo-500 text-indigo-300 shadow-xl shadow-indigo-950/80 flex items-center gap-1.5 backdrop-blur-md">
-                <GitMerge className="w-3.5 h-3.5 text-indigo-400" />
-                🔀 PR 승인 & main 머지 (릴리즈)
+              <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#141417]/95 border border-white/[0.2] text-zinc-200 shadow-lg flex items-center gap-1.5 backdrop-blur-md">
+                <GitMerge className="w-3.5 h-3.5 text-emerald-400" />
+                PR 승인 & main 머지 (릴리즈)
               </span>
             </div>
 
@@ -370,30 +370,30 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectNode('node-trigger');
               }}
               className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 shadow-xl transition-all cursor-pointer flex flex-col justify-between',
-                isThisRunActive && selectedNodeId === 'node-trigger' ? 'border-indigo-400 ring-2 ring-indigo-500/30' : 'border-slate-800 hover:border-slate-700'
+                'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                isThisRunActive && selectedNodeId === 'node-trigger' ? 'border-zinc-200 ring-2 ring-white/[0.15]' : 'border-white/[0.08] hover:border-white/[0.18]'
               )}
               style={{ left: '70px', top: `${offsetY + 104}px`, width: '290px', height: '172px' }}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-white/[0.08] text-zinc-200 border border-white/[0.12] flex items-center justify-center font-semibold text-xs">
                     1
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">1. 소스코드 이벤트</h5>
-                    <span className="text-[10px] text-slate-400 font-mono">Git Webhook</span>
+                    <h5 className="font-semibold text-zinc-100 text-xs">1. 소스코드 이벤트</h5>
+                    <span className="text-[10px] text-zinc-400 font-mono">Git Webhook</span>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[10px] border-emerald-500/60 text-emerald-400 font-medium">
+                <Badge variant="outline" className="text-[10px] border-emerald-500/40 text-emerald-400 font-medium">
                   Push 완료
                 </Badge>
               </div>
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] space-y-1 font-mono">
-                <div className="text-slate-300 truncate">👤 {runItem.author} ({runItem.department})</div>
-                <div className="text-indigo-400 truncate">🌿 {runItem.branch} (@{runItem.commitId})</div>
+              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
+                <div className="text-zinc-300 truncate">{runItem.author} ({runItem.department})</div>
+                <div className="text-zinc-100 font-semibold truncate">{runItem.branch} (@{runItem.commitId})</div>
               </div>
-              <div className="text-[10px] text-slate-500 flex items-center justify-between">
+              <div className="text-[10px] text-zinc-500 flex items-center justify-between">
                 <span>러너 컨테이너 할당</span>
                 {runItem.trigger === 'PR/MR' && onOpenPrChecksModal ? (
                   <button
@@ -402,7 +402,7 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                       onSelectRun?.(runItem.id);
                       onOpenPrChecksModal();
                     }}
-                    className="text-emerald-400 hover:text-emerald-300 font-bold underline cursor-pointer flex items-center gap-1"
+                    className="text-emerald-400 hover:text-emerald-300 font-semibold underline cursor-pointer flex items-center gap-1"
                   >
                     <span>PR #{runItem.prNumber || 142}</span>
                     <ExternalLink className="w-2.5 h-2.5" />
@@ -412,7 +412,7 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 )}
               </div>
               {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
             {/* Node L-F2: Feature CI/CD Scanners */}
@@ -422,47 +422,47 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectNode('node-scanners');
               }}
               className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 shadow-xl transition-all cursor-pointer flex flex-col justify-between',
-                isThisRunActive && selectedNodeId === 'node-scanners' ? 'border-rose-400 ring-2 ring-rose-500/30' : 'border-rose-900/60 hover:border-rose-800'
+                'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                isThisRunActive && selectedNodeId === 'node-scanners' ? 'border-rose-400 ring-2 ring-rose-500/20' : 'border-rose-500/40 hover:border-rose-400/70'
               )}
               style={{ left: '420px', top: `${offsetY + 104}px`, width: '290px', height: '172px' }}
             >
               {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-semibold text-xs">
                     2
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">2. CI/CD 보안점검</h5>
+                    <h5 className="font-semibold text-zinc-100 text-xs">2. CI/CD 보안점검</h5>
                     <span className="text-[10px] text-rose-400 font-mono">Defects Found</span>
                   </div>
                 </div>
-                <Badge variant="destructive" className="text-[10px] font-bold">
+                <Badge variant="destructive" className="text-[10px] font-semibold">
                   결함 2건 탐지
                 </Badge>
               </div>
               <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                <div className="p-1 rounded bg-rose-950/40 border border-rose-800/50 text-rose-300">
-                  🔑 Secret: 1건
+                <div className="p-1 rounded bg-rose-950/30 border border-rose-500/30 text-rose-300">
+                  Secret: 1건
                 </div>
-                <div className="p-1 rounded bg-amber-950/40 border border-amber-800/50 text-amber-300">
-                  💻 SAST: 1건
+                <div className="p-1 rounded bg-amber-950/30 border border-amber-500/30 text-amber-300">
+                  SAST: 1건
                 </div>
-                <div className="p-1 rounded bg-slate-950 border border-slate-800 text-slate-400">
-                  📦 SCA: 0건 ✓
+                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-zinc-400">
+                  SCA: 0건
                 </div>
-                <div className="p-1 rounded bg-slate-950 border border-slate-800 text-slate-400">
-                  📜 IaC: 0건 ✓
+                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-zinc-400">
+                  IaC: 0건
                 </div>
               </div>
-              <div className="text-[10px] text-slate-500 flex items-center justify-between">
+              <div className="text-[10px] text-zinc-500 flex items-center justify-between">
                 <span>분석 소요: 68초</span>
-                <span className="text-rose-400 font-bold">임계치 초과</span>
+                <span className="text-rose-400 font-semibold">임계치 초과</span>
               </div>
               {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-slate-950" />
+              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-[#09090b]" />
             </div>
 
             {/* Node L-F3: Feature Policy Gate (Blocked!) */}
@@ -472,28 +472,28 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectNode('node-policy');
               }}
               className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 border-rose-500/80 shadow-2xl transition-all cursor-pointer flex flex-col justify-between ring-2 ring-rose-500/30',
-                isThisRunActive && selectedNodeId === 'node-policy' ? 'border-amber-400 ring-4 ring-amber-500/30' : ''
+                'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 border-rose-500/60 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                isThisRunActive && selectedNodeId === 'node-policy' ? 'border-amber-400 ring-2 ring-amber-500/20' : ''
               )}
               style={{ left: '770px', top: `${offsetY + 104}px`, width: '310px', height: '172px' }}
             >
               {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-slate-950" />
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-[#09090b]" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-semibold text-xs">
                     3
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">3. 보안 정책 게이트</h5>
+                    <h5 className="font-semibold text-zinc-100 text-xs">3. 보안 정책 게이트</h5>
                     <span className="text-[10px] text-rose-400 font-mono">Policy Blocked</span>
                   </div>
                 </div>
-                <Badge variant="destructive" className="text-[10px] font-bold animate-pulse">
+                <Badge variant="destructive" className="text-[10px] font-semibold">
                   배포 차단 (Block)
                 </Badge>
               </div>
-              <div className="p-2 rounded-lg bg-rose-950/60 border border-rose-800/80 text-[11px] text-rose-200 flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-rose-950/30 border border-rose-500/40 text-[11px] text-rose-200 flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
                 <span className="truncate">치명적 결함(AWS 시크릿)으로 차단</span>
               </div>
@@ -503,13 +503,13 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                   e.stopPropagation();
                   onOpenFixModal();
                 }}
-                className="w-full h-7 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold gap-1 shadow-md shadow-emerald-950"
+                className="w-full h-7 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-1"
               >
                 <GitFork className="w-3.5 h-3.5" />
-                🛠️ fix/ 브랜치로 분기 & 패치
+                fix/ 브랜치로 분기 & 패치
               </Button>
               {/* Output Port Bottom */}
-              <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
             {/* ------------------- TRACK 2 NODES ------------------- */}
@@ -519,38 +519,35 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectRun?.(runItem.id);
                 onSelectNode('node-policy');
               }}
-              className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 shadow-xl transition-all cursor-pointer flex flex-col justify-between',
-                'border-emerald-500/80 ring-2 ring-emerald-500/30'
-              )}
+              className="workflow-node absolute rounded-xl border border-emerald-500/50 p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
               style={{ left: '770px', top: `${offsetY + 454}px`, width: '310px', height: '172px' }}
             >
               {/* Input Port Top */}
-              <div className="absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
                     4
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">4. 조치 커밋 반영</h5>
+                    <h5 className="font-semibold text-zinc-100 text-xs">4. 조치 커밋 반영</h5>
                     <span className="text-[10px] text-emerald-400 font-mono">Secret Removed</span>
                   </div>
                 </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-bold">
+                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
                   패치 완료
                 </Badge>
               </div>
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] space-y-1 font-mono">
+              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
                 <div className="text-emerald-400 truncate">fix/revoke-leaked-secret (@c82e1f4)</div>
-                <div className="text-slate-300">AWS Secret → Vault API 마이그레이션</div>
+                <div className="text-zinc-300">AWS Secret → Vault API 마이그레이션</div>
               </div>
-              <div className="text-[10px] text-slate-400 flex items-center justify-between">
+              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
                 <span>조치 담당자</span>
-                <span className="text-white font-mono">{runItem.author}</span>
+                <span className="text-zinc-100 font-mono">{runItem.author}</span>
               </div>
               {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
             {/* Node L-R2: Fix Branch Re-Scan */}
@@ -559,48 +556,45 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectRun?.(runItem.id);
                 onSelectNode('node-scanners');
               }}
-              className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 shadow-xl transition-all cursor-pointer flex flex-col justify-between',
-                'border-emerald-500/80 ring-2 ring-emerald-500/30'
-              )}
+              className="workflow-node absolute rounded-xl border border-emerald-500/50 p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
               style={{ left: '1140px', top: `${offsetY + 454}px`, width: '290px', height: '172px' }}
             >
               {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
                     5
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">5. fix/ 재점검 통과</h5>
+                    <h5 className="font-semibold text-zinc-100 text-xs">5. fix/ 재점검 통과</h5>
                     <span className="text-[10px] text-emerald-400 font-mono">0 Defects Pass</span>
                   </div>
                 </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-bold">
+                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
                   통과 (0건)
                 </Badge>
               </div>
               <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                <div className="p-1 rounded bg-slate-950 border border-slate-800 text-emerald-400">
-                  ✓ Secret: 0건
+                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
+                  Secret: 0건
                 </div>
-                <div className="p-1 rounded bg-slate-950 border border-slate-800 text-emerald-400">
-                  ✓ SAST: 0건
+                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
+                  SAST: 0건
                 </div>
-                <div className="p-1 rounded bg-slate-950 border border-slate-800 text-emerald-400">
-                  ✓ SCA: 0건
+                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
+                  SCA: 0건
                 </div>
-                <div className="p-1 rounded bg-slate-950 border border-slate-800 text-emerald-400">
-                  ✓ IaC: 0건
+                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
+                  IaC: 0건
                 </div>
               </div>
-              <div className="text-[10px] text-slate-400 flex items-center justify-between">
+              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
                 <span>정책 게이트 판정</span>
-                <span className="text-emerald-400 font-bold">PASS (승인 가능)</span>
+                <span className="text-emerald-400 font-semibold">PASS (승인 가능)</span>
               </div>
               {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
             {/* Node L-R3: PR Approval & Merge */}
@@ -609,33 +603,30 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectRun?.(runItem.id);
                 onSelectNode('node-review');
               }}
-              className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 shadow-xl transition-all cursor-pointer flex flex-col justify-between',
-                'border-indigo-500/80 ring-2 ring-indigo-500/30'
-              )}
+              className="workflow-node absolute rounded-xl border border-white/[0.2] p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
               style={{ left: '1490px', top: `${offsetY + 454}px`, width: '310px', height: '172px' }}
             >
               {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-white/[0.08] text-zinc-200 border border-white/[0.12] flex items-center justify-center font-semibold text-xs">
                     6
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">6. PR 심사 & main 머지</h5>
-                    <span className="text-[10px] text-indigo-400 font-mono">Approved & Merged</span>
+                    <h5 className="font-semibold text-zinc-100 text-xs">6. PR 심사 & main 머지</h5>
+                    <span className="text-[10px] text-zinc-400 font-mono">Approved & Merged</span>
                   </div>
                 </div>
-                <Badge className="bg-indigo-600 text-white text-[10px] font-bold">
+                <Badge className="bg-zinc-100 text-zinc-950 text-[10px] font-semibold">
                   Merge 완료
                 </Badge>
               </div>
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] space-y-1">
-                <div className="text-slate-300">심사위원: <strong className="text-white">보안팀 최수민 팀장</strong></div>
+              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1">
+                <div className="text-zinc-300">심사위원: <strong className="text-zinc-100">보안팀 최수민 팀장</strong></div>
                 <div className="text-emerald-400 text-[10px] font-mono">"보안 취약점 조치 확인 완료, 머지 승인"</div>
               </div>
-              <div className="text-[10px] text-slate-400 flex items-center justify-between">
+              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
                 <span>병합 대상: main</span>
                 {onOpenPrChecksModal ? (
                   <button
@@ -643,17 +634,17 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                       e.stopPropagation();
                       onOpenPrChecksModal();
                     }}
-                    className="text-indigo-400 hover:text-indigo-300 font-bold underline cursor-pointer flex items-center gap-1"
+                    className="text-zinc-200 hover:text-white font-semibold underline cursor-pointer flex items-center gap-1"
                   >
                     <span>PR Checks 뷰</span>
                     <ExternalLink className="w-2.5 h-2.5" />
                   </button>
                 ) : (
-                  <span className="text-indigo-400 font-bold">✓ Fast-Forward</span>
+                  <span className="text-emerald-400 font-semibold">Fast-Forward</span>
                 )}
               </div>
               {/* Output Port Bottom */}
-              <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-indigo-500 border-2 border-slate-950" />
+              <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
             {/* ------------------- TRACK 3 NODES ------------------- */}
@@ -663,38 +654,35 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectRun?.(runItem.id);
                 onSelectNode('node-scanners');
               }}
-              className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 shadow-xl transition-all cursor-pointer flex flex-col justify-between',
-                'border-emerald-500/80 ring-2 ring-emerald-500/30'
-              )}
+              className="workflow-node absolute rounded-xl border border-emerald-500/50 p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
               style={{ left: '1490px', top: `${offsetY + 804}px`, width: '310px', height: '172px' }}
             >
               {/* Input Port Top */}
-              <div className="absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-indigo-500 border-2 border-slate-950" />
+              <div className="absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
                     7
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">7. main 통합 무결점 재점검</h5>
+                    <h5 className="font-semibold text-zinc-100 text-xs">7. main 통합 무결점 재점검</h5>
                     <span className="text-[10px] text-emerald-400 font-mono">Regression Clean</span>
                   </div>
                 </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-bold">
+                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
                   검증 완료
                 </Badge>
               </div>
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] space-y-1 font-mono">
-                <div className="text-slate-300">main 브랜치 최신 베이스 통합 빌드</div>
-                <div className="text-emerald-400 text-[10.5px]">✓ 회귀 취약점 0건 (Total 0 defects)</div>
+              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
+                <div className="text-zinc-300">main 브랜치 최신 베이스 통합 빌드</div>
+                <div className="text-emerald-400 text-[10.5px]">회귀 취약점 0건 (Total 0 defects)</div>
               </div>
-              <div className="text-[10px] text-slate-400 flex items-center justify-between">
+              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
                 <span>Cosign 이미지 서명 유효</span>
-                <span className="text-cyan-300">SLSA Level 3</span>
+                <span className="text-zinc-200 font-mono">SLSA Level 3</span>
               </div>
               {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
             {/* Node L-M2: Production K8s Deployment */}
@@ -703,35 +691,32 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                 onSelectRun?.(runItem.id);
                 onSelectNode('node-deploy');
               }}
-              className={cn(
-                'workflow-node absolute rounded-2xl border p-4 bg-slate-900/95 shadow-2xl transition-all cursor-pointer flex flex-col justify-between',
-                'border-emerald-400 ring-4 ring-emerald-500/30 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
-              )}
+              className="workflow-node absolute rounded-xl border border-emerald-400/70 p-4 bg-[#141417] shadow-lg transition-all cursor-pointer flex flex-col justify-between"
               style={{ left: '1860px', top: `${offsetY + 804}px`, width: '310px', height: '172px' }}
             >
               {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
                     8
                   </div>
                   <div>
-                    <h5 className="font-bold text-white text-xs">8. 운영 K8s 클러스터 배포</h5>
+                    <h5 className="font-semibold text-zinc-100 text-xs">8. 운영 K8s 클러스터 배포</h5>
                     <span className="text-[10px] text-emerald-400 font-mono">Production Serving</span>
                   </div>
                 </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-bold">
-                  배포 성공 🚀
+                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
+                  배포 성공
                 </Badge>
               </div>
-              <div className="p-2 rounded bg-slate-950 border border-slate-800 text-[11px] space-y-1 font-mono">
-                <div className="text-slate-300">클러스터: k8s-prod-seoul (v1.29)</div>
-                <div className="text-emerald-400 font-bold">Pod: 4 / 4 Active Serving</div>
+              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
+                <div className="text-zinc-300">클러스터: k8s-prod-seoul (v1.29)</div>
+                <div className="text-emerald-400 font-semibold">Pod: 4 / 4 Active Serving</div>
               </div>
-              <div className="text-[10px] text-slate-400 flex items-center justify-between">
+              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
                 <span>무중단 롤링 업데이트</span>
-                <span className="text-emerald-400 font-bold">HTTP 200 OK</span>
+                <span className="text-emerald-400 font-semibold">HTTP 200 OK</span>
               </div>
             </div>
           </div>

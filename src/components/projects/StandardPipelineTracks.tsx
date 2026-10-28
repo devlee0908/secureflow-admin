@@ -409,10 +409,10 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
             {/* Swimlane Track Container */}
             <div
               className={cn(
-                'absolute rounded-3xl border transition-all overflow-hidden pointer-events-none',
+                'absolute rounded-xl border transition-all overflow-hidden pointer-events-none',
                 isSelectedRun
-                  ? 'bg-slate-900/50 border-indigo-500/70 shadow-[0_0_25px_rgba(99,102,241,0.18)] ring-1 ring-indigo-500/40'
-                  : 'bg-slate-900/25 border-slate-800/80 hover:border-slate-700/80'
+                  ? 'bg-[#0f0f11]/85 border-white/[0.18] ring-1 ring-white/[0.08]'
+                  : 'bg-[#0f0f11]/45 border-white/[0.08] hover:border-white/[0.14]'
               )}
               style={{
                 left: '30px',
@@ -422,42 +422,42 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               }}
             >
               {/* Track Header */}
-              <div className="h-12 px-5 border-b border-slate-800/80 bg-slate-950/70 flex items-center justify-between pointer-events-auto">
+              <div className="h-12 px-5 border-b border-white/[0.08] bg-[#141417]/90 flex items-center justify-between pointer-events-auto">
                 <div className="flex items-center gap-3">
                   <span
                     className={cn(
-                      'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold font-mono border',
+                      'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold font-mono border',
                       isSelectedRun
-                        ? 'bg-indigo-500/25 border-indigo-500/50 text-indigo-200'
-                        : 'bg-slate-800/60 border-slate-700 text-slate-300'
+                        ? 'bg-zinc-100 border-zinc-100 text-zinc-950'
+                        : 'bg-zinc-900 border-white/[0.1] text-zinc-300'
                     )}
                   >
-                    <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-400" />
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
                     TRACK {runIndex + 1}
                   </span>
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-6 h-6 rounded-full bg-gradient-to-tr ${r.avatarColor} text-white font-bold flex items-center justify-center text-[10px]`}
+                      className="w-6 h-6 rounded-full bg-zinc-800 border border-white/[0.12] text-zinc-100 font-semibold flex items-center justify-center text-[10px]"
                     >
                       {r.author[0]}
                     </div>
-                    <span className="font-bold text-white text-xs">👤 {r.author}</span>
-                    <span className="text-[11px] text-slate-400 font-mono">
+                    <span className="font-semibold text-zinc-100 text-xs">{r.author}</span>
+                    <span className="text-[11px] text-zinc-400 font-mono">
                       ({r.authorRole} · {r.department})
                     </span>
                   </div>
-                  <span className="text-slate-700">|</span>
+                  <span className="text-zinc-700">|</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-mono text-slate-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                      {r.trigger === 'PR/MR' ? `🔀 PR #${r.prNumber}` : '⚡ Push'}
+                    <span className="text-[11px] font-mono text-zinc-300 bg-[#09090b] px-2 py-0.5 rounded border border-white/[0.08]">
+                      {r.trigger === 'PR/MR' ? `PR #${r.prNumber}` : 'Push'}
                     </span>
-                    <span className="text-xs font-mono font-bold text-indigo-300">
+                    <span className="text-xs font-mono font-semibold text-zinc-100">
                       {r.branch}
                     </span>
-                    <span className="text-[11px] font-mono text-slate-400">
+                    <span className="text-[11px] font-mono text-zinc-400">
                       @{r.commitId}
                     </span>
-                    <span className="text-[11px] text-slate-400 italic truncate max-w-[280px]">
+                    <span className="text-[11px] text-zinc-400 italic truncate max-w-[280px]">
                       "{r.commitMessage}"
                     </span>
                   </div>
@@ -467,7 +467,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   {r.deployStatus === 'deployed' && (
                     <Badge
                       variant="outline"
-                      className="border-emerald-500/60 text-emerald-400 bg-emerald-950/40 text-[11px] font-bold gap-1 px-2.5 py-0.5"
+                      className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 text-[11px] font-semibold gap-1 px-2.5 py-0.5"
                     >
                       <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                       배포 완료 (Prod Active)
@@ -476,7 +476,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   {r.reviewStatus === 'pending_review' && (
                     <Badge
                       variant="outline"
-                      className="border-amber-500/60 text-amber-300 bg-amber-950/40 text-[11px] font-bold gap-1 px-2.5 py-0.5"
+                      className="border-amber-500/40 text-amber-300 bg-amber-500/10 text-[11px] font-semibold gap-1 px-2.5 py-0.5"
                     >
                       <Clock className="w-3 h-3 text-amber-400" />
                       배포 심사 대기 중
@@ -485,7 +485,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   {r.reviewStatus === 'rejected' && (
                     <Badge
                       variant="outline"
-                      className="border-rose-500/60 text-rose-300 bg-rose-950/40 text-[11px] font-bold gap-1 px-2.5 py-0.5"
+                      className="border-rose-500/40 text-rose-300 bg-rose-500/10 text-[11px] font-semibold gap-1 px-2.5 py-0.5"
                     >
                       <XCircle className="w-3 h-3 text-rose-400" />
                       심사 반려
@@ -494,7 +494,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   {r.gateStatus === 'blocked' && (
                     <Badge
                       variant="outline"
-                      className="border-rose-500/60 text-rose-300 bg-rose-950/40 text-[11px] font-bold gap-1 px-2.5 py-0.5 animate-pulse"
+                      className="border-rose-500/40 text-rose-300 bg-rose-500/10 text-[11px] font-semibold gap-1 px-2.5 py-0.5"
                     >
                       <ShieldAlert className="w-3 h-3 text-rose-400" />
                       정책 게이트 차단
@@ -503,18 +503,18 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   {r.scanStatus === 'running' && (
                     <Badge
                       variant="outline"
-                      className="border-indigo-500/60 text-indigo-300 bg-indigo-950/40 text-[11px] font-bold gap-1 px-2.5 py-0.5 animate-pulse"
+                      className="border-white/[0.15] text-zinc-200 bg-white/[0.06] text-[11px] font-semibold gap-1 px-2.5 py-0.5"
                     >
-                      <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                      <Loader2 className="w-3 h-3 animate-spin text-zinc-300" />
                       보안점검 진행 중
                     </Badge>
                   )}
                   {r.currentStage === 1 && (
                     <Badge
                       variant="outline"
-                      className="border-slate-700 text-slate-400 bg-slate-800/40 text-[11px] font-medium gap-1 px-2.5 py-0.5"
+                      className="border-white/[0.1] text-zinc-400 bg-zinc-900 text-[11px] font-medium gap-1 px-2.5 py-0.5"
                     >
-                      <Clock className="w-3 h-3 text-slate-500" />
+                      <Clock className="w-3 h-3 text-zinc-500" />
                       점검 큐 대기
                     </Badge>
                   )}
@@ -524,11 +524,11 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                     className={cn(
                       'px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all border cursor-pointer',
                       isSelectedRun
-                        ? 'bg-indigo-600 text-white border-indigo-400 shadow-sm'
-                        : 'bg-slate-800 text-slate-300 hover:text-white border-slate-700 hover:bg-slate-750'
+                        ? 'bg-zinc-100 text-zinc-950 border-zinc-100'
+                        : 'bg-zinc-900 text-zinc-300 hover:text-white border-white/[0.1] hover:bg-zinc-800'
                     )}
                   >
-                    {isSelectedRun ? '✓ 선택됨 (인스펙터 연동)' : '이 트랙 포커스'}
+                    {isSelectedRun ? '선택됨 (인스펙터 연동)' : '이 트랙 포커스'}
                   </button>
                 </div>
               </div>
@@ -540,10 +540,10 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 onSelectRun(r.id);
                 onSelectNode('node-trigger');
               }}
-              className={`workflow-node absolute rounded-2xl border transition-all duration-200 cursor-pointer shadow-2xl ${
+              className={`workflow-node absolute rounded-xl border transition-all duration-200 cursor-pointer shadow-lg ${
                 isSelectedRun && selectedNodeId === 'node-trigger'
-                  ? 'border-emerald-400 bg-slate-900/95 ring-4 ring-emerald-500/20'
-                  : 'border-emerald-500/60 bg-slate-900/90 hover:border-emerald-400'
+                  ? 'border-emerald-400 bg-[#141417] ring-2 ring-emerald-500/20'
+                  : 'border-emerald-500/40 bg-[#141417]/95 hover:border-emerald-400/80'
               }`}
               style={{
                 left: `${nodePositions['node-trigger'].x}px`,
@@ -552,9 +552,9 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 minHeight: '280px',
               }}
             >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/40 rounded-t-2xl">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-[#09090b]/60 rounded-t-xl">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                  <div className="w-6 h-6 rounded-md bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
                     {r.trigger === 'PR/MR' ? (
                       <GitPullRequest className="w-3.5 h-3.5" />
                     ) : (
@@ -562,50 +562,50 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                     )}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-200">1. Git 소스 이벤트</div>
+                    <div className="text-xs font-semibold text-zinc-100">1. Git 소스 이벤트</div>
                     <span className="text-[10px] text-emerald-400 font-mono">Trigger Source</span>
                   </div>
                 </div>
-                <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-950/40 text-[10px] font-bold">
+                <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[10px] font-semibold">
                   완료 (Active)
                 </Badge>
               </div>
 
               {/* Author & Commit Body */}
               <div className="p-4 space-y-3 text-xs">
-                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <div className={`w-8 h-8 rounded-full bg-gradient-to-tr ${r.avatarColor} text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-sm`}>
+                <div className="flex items-center gap-2.5 p-2 rounded-lg bg-[#09090b] border border-white/[0.08]">
+                  <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/[0.12] text-zinc-100 font-semibold flex items-center justify-center text-xs shrink-0">
                     {r.author[0]}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-bold text-white text-xs truncate flex items-center gap-1.5">
+                    <div className="font-semibold text-zinc-100 text-xs truncate flex items-center gap-1.5">
                       {r.author}
-                      <span className="text-[10px] font-normal text-slate-400 font-mono truncate">
+                      <span className="text-[10px] font-normal text-zinc-400 font-mono truncate">
                         ({r.department})
                       </span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono truncate block">
+                    <span className="text-[10px] text-zinc-400 font-mono truncate block">
                       {r.authorEmail}
                     </span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div className="p-2 rounded-lg bg-slate-950/40 border border-slate-800/80">
-                    <span className="text-slate-500 text-[10px] block">작업 브랜치</span>
-                    <span className="font-mono font-bold text-indigo-400 truncate block">
+                  <div className="p-2 rounded-lg bg-[#09090b]/80 border border-white/[0.08]">
+                    <span className="text-zinc-500 text-[10px] block">작업 브랜치</span>
+                    <span className="font-mono font-semibold text-zinc-100 truncate block">
                       {r.branch}
                     </span>
                   </div>
-                  <div className="p-2 rounded-lg bg-slate-950/40 border border-slate-800/80">
-                    <span className="text-slate-500 text-[10px] block">커밋 해시</span>
-                    <span className="font-mono font-bold text-slate-300 block truncate">
+                  <div className="p-2 rounded-lg bg-[#09090b]/80 border border-white/[0.08]">
+                    <span className="text-zinc-500 text-[10px] block">커밋 해시</span>
+                    <span className="font-mono font-semibold text-zinc-300 block truncate">
                       @{r.commitId}
                     </span>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-400 italic bg-slate-950/30 p-2 rounded border border-slate-800/60 line-clamp-2">
+                <div className="text-[11px] text-zinc-400 italic bg-[#09090b]/60 p-2 rounded-md border border-white/[0.06] line-clamp-2">
                   "{r.commitMessage}"
                 </div>
 
@@ -616,7 +616,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                       onSelectRun(r.id);
                       onOpenPrChecksModal();
                     }}
-                    className="w-full flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/80 text-[11px] font-semibold transition-all mt-1"
+                    className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold transition-all mt-1"
                   >
                     <GitPullRequest className="w-3 h-3 text-emerald-400" />
                     <span>GitHub PR Checks 뷰 (#{r.prNumber || 142})</span>
@@ -624,7 +624,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 )}
               </div>
 
-              <div className="absolute -right-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-950 shadow-[0_0_8px_#10b981]" />
+              <div className="absolute -right-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
             {/* NODE 2: CI/CD SECURITY SCANNER CLUSTER (Step 2) */}
@@ -633,16 +633,16 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 onSelectRun(r.id);
                 onSelectNode('node-scanners');
               }}
-              className={`workflow-node absolute rounded-2xl border transition-all duration-200 cursor-pointer shadow-2xl ${
+              className={`workflow-node absolute rounded-xl border transition-all duration-200 cursor-pointer shadow-lg ${
                 isSelectedRun && selectedNodeId === 'node-scanners'
-                  ? 'border-indigo-400 bg-slate-900/95 ring-4 ring-indigo-500/20'
+                  ? 'border-zinc-200 bg-[#141417] ring-2 ring-white/[0.15]'
                   : isRunScannerRunning
-                  ? 'border-indigo-500/80 bg-slate-900/95 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
+                  ? 'border-zinc-400 bg-[#141417]'
                   : isRunScannerDone
-                  ? 'border-emerald-500/60 bg-slate-900/90'
+                  ? 'border-emerald-500/40 bg-[#141417]/95'
                   : isRunScannerFailed
-                  ? 'border-rose-500/80 bg-rose-950/20'
-                  : 'border-slate-800/80 bg-slate-950/40 opacity-55 hover:opacity-90'
+                  ? 'border-rose-500/60 bg-rose-950/20'
+                  : 'border-white/[0.08] bg-[#0f0f11]/60 opacity-60 hover:opacity-90'
               }`}
               style={{
                 left: `${nodePositions['node-scanners'].x}px`,
@@ -653,35 +653,35 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
             >
               {/* Input Port */}
               <div
-                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full border-2 ${
+                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 ${
                   isRunScannerRunning
-                    ? 'bg-indigo-500 border-slate-950 shadow-[0_0_8px_#6366f1]'
+                    ? 'bg-zinc-200 border-[#09090b]'
                     : isRunScannerDone
-                    ? 'bg-emerald-500 border-slate-950 shadow-[0_0_8px_#10b981]'
-                    : 'bg-slate-800 border-slate-700'
+                    ? 'bg-emerald-500 border-[#09090b]'
+                    : 'bg-zinc-800 border-zinc-700'
                 }`}
               />
 
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/40 rounded-t-2xl">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-[#09090b]/60 rounded-t-xl">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-6 h-6 rounded-lg flex items-center justify-center border ${
+                    className={`w-6 h-6 rounded-md flex items-center justify-center border ${
                       isRunScannerRunning
-                        ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30'
+                        ? 'bg-white/[0.1] text-zinc-100 border-white/[0.2]'
                         : isRunScannerDone
-                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : isRunScannerFailed
-                        ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-                        : 'bg-slate-800/50 text-slate-500 border-slate-700/40'
+                        ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                        : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                     }`}
                   >
                     <Scan className={`w-3.5 h-3.5 ${isRunScannerRunning ? 'animate-spin' : ''}`} />
                   </div>
                   <div>
-                    <div className={`text-xs font-bold ${isRunScannerPending ? 'text-slate-400' : 'text-slate-200'}`}>
+                    <div className={`text-xs font-semibold ${isRunScannerPending ? 'text-zinc-400' : 'text-zinc-100'}`}>
                       2. CI/CD 보안점검 엔진
                     </div>
-                    <span className="text-[10px] text-indigo-400 font-mono">
+                    <span className="text-[10px] text-zinc-400 font-mono">
                       {isRunScannerPending ? 'Not Started' : 'Runner Cluster'}
                     </span>
                   </div>
@@ -691,12 +691,12 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   variant="outline"
                   className={
                     isRunScannerRunning
-                      ? 'border-indigo-500 text-indigo-400 bg-indigo-950/60 animate-pulse text-[10px] font-bold'
+                      ? 'border-white/[0.2] text-zinc-100 bg-white/[0.08] text-[10px] font-semibold'
                       : isRunScannerDone
-                      ? 'border-emerald-500 text-emerald-400 bg-emerald-950/60 text-[10px] font-bold'
+                      ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10 text-[10px] font-semibold'
                       : isRunScannerFailed
-                      ? 'border-rose-500 text-rose-400 bg-rose-950/60 text-[10px] font-bold'
-                      : 'border-slate-700 text-slate-500 bg-slate-800/50 text-[10px] font-medium'
+                      ? 'border-rose-500/40 text-rose-400 bg-rose-500/10 text-[10px] font-semibold'
+                      : 'border-white/[0.08] text-zinc-500 bg-zinc-900 text-[10px] font-medium'
                   }
                 >
                   {isRunScannerRunning
@@ -712,12 +712,12 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               {/* Scanner Sub-engines */}
               <div className="p-3.5 space-y-2 text-xs">
                 {isRunScannerPending ? (
-                  <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/70 text-center space-y-1">
-                    <Clock className="w-5 h-5 mx-auto text-slate-600" />
-                    <span className="text-[11px] text-slate-400 font-medium block">
+                  <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-1">
+                    <Clock className="w-5 h-5 mx-auto text-zinc-600" />
+                    <span className="text-[11px] text-zinc-400 font-medium block">
                       점검 큐 등록 대기 중
                     </span>
-                    <span className="text-[10px] text-slate-600 block">
+                    <span className="text-[10px] text-zinc-500 block">
                       이전 소스 이벤트 검증 후 컨테이너 자동 할당
                     </span>
                   </div>
@@ -725,13 +725,13 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   <div className="space-y-2">
                     {/* Live Progress Bar during execution for active simulated run */}
                     {isSelectedRun && isRunScannerRunning && (
-                      <div className="space-y-1 p-2 rounded-lg bg-indigo-950/40 border border-indigo-500/30">
-                        <div className="flex items-center justify-between text-[10px] text-indigo-200 font-mono">
+                      <div className="space-y-1 p-2 rounded-lg bg-[#09090b] border border-white/[0.12]">
+                        <div className="flex items-center justify-between text-[10px] text-zinc-200 font-mono">
                           <span className="flex items-center gap-1.5">
-                            <Loader2 className="w-3 h-3 animate-spin text-cyan-400" />
+                            <Loader2 className="w-3 h-3 animate-spin text-emerald-400" />
                             {activeScannerTool ? `${activeScannerTool.toUpperCase()} 엔진 실시간 분석 중...` : '보안 엔진 병렬 분석 중...'}
                           </span>
-                          <span className="font-bold text-white">
+                          <span className="font-semibold text-white">
                             {toolScanProgress.sast === 'completed'
                               ? '100%'
                               : toolScanProgress.sca === 'completed'
@@ -743,9 +743,9 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                               : '15%'}
                           </span>
                         </div>
-                        <div className="w-full bg-slate-900 border border-indigo-900/60 rounded-full h-1.5 overflow-hidden">
+                        <div className="w-full bg-zinc-900 border border-white/[0.08] rounded-full h-1.5 overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-indigo-500 via-cyan-400 to-emerald-400 h-full transition-all duration-300 rounded-full"
+                            className="bg-emerald-500 h-full transition-all duration-300 rounded-full"
                             style={{
                               width: `${
                                 toolScanProgress.sast === 'completed'
@@ -769,22 +769,22 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                       <div className={cn(
                         'p-2 rounded-lg border flex flex-col gap-1 transition-all',
                         r.toolFailure === 'sast'
-                          ? 'bg-rose-950/40 border-rose-500/80 ring-1 ring-rose-500/50'
+                          ? 'bg-rose-950/30 border-rose-500/60'
                           : isSelectedRun && toolScanProgress.sast === 'running'
-                          ? 'bg-indigo-950/60 border-indigo-500/80 ring-1 ring-indigo-500/40'
-                          : 'bg-slate-950/60 border-slate-800'
+                          ? 'bg-white/[0.06] border-white/[0.2]'
+                          : 'bg-[#09090b] border-white/[0.08]'
                       )}>
                         <div className="flex items-center justify-between">
-                          <span className="flex items-center gap-1.5 text-slate-300">
-                            <Code2 className="w-3.5 h-3.5 text-indigo-400" />
+                          <span className="flex items-center gap-1.5 text-zinc-300">
+                            <Code2 className="w-3.5 h-3.5 text-zinc-400" />
                             SAST
                           </span>
                           {r.toolFailure === 'sast' ? (
-                            <span className="text-[10px] font-mono font-bold text-rose-400 flex items-center gap-1">
+                            <span className="text-[10px] font-mono font-semibold text-rose-400 flex items-center gap-1">
                               504 타임아웃
                             </span>
                           ) : (
-                            <span className={`text-[10px] font-mono font-bold ${r.toolStatuses.sast.count > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                            <span className={`text-[10px] font-mono font-semibold ${r.toolStatuses.sast.count > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
                               {r.toolStatuses.sast.count}건
                             </span>
                           )}
@@ -792,57 +792,57 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                       </div>
 
                       {/* SCA Tool Card */}
-                      <div className="p-2 rounded-lg border flex items-center justify-between transition-all bg-slate-950/60 border-slate-800">
-                        <span className="flex items-center gap-1.5 text-slate-300">
-                          <Package className="w-3.5 h-3.5 text-emerald-400" />
+                      <div className="p-2 rounded-lg border flex items-center justify-between transition-all bg-[#09090b] border-white/[0.08]">
+                        <span className="flex items-center gap-1.5 text-zinc-300">
+                          <Package className="w-3.5 h-3.5 text-zinc-400" />
                           SCA
                         </span>
-                        <span className={`text-[10px] font-mono font-bold ${r.toolStatuses.sca.count > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                        <span className={`text-[10px] font-mono font-semibold ${r.toolStatuses.sca.count > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
                           {r.toolStatuses.sca.count}건
                         </span>
                       </div>
 
                       {/* Secret Tool Card */}
-                      <div className="p-2 rounded-lg border flex items-center justify-between transition-all bg-slate-950/60 border-slate-800">
-                        <span className="flex items-center gap-1.5 text-slate-300">
-                          <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                      <div className="p-2 rounded-lg border flex items-center justify-between transition-all bg-[#09090b] border-white/[0.08]">
+                        <span className="flex items-center gap-1.5 text-zinc-300">
+                          <KeyRound className="w-3.5 h-3.5 text-zinc-400" />
                           Secret
                         </span>
-                        <span className={`text-[10px] font-mono font-bold ${r.toolStatuses.secret.count > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                        <span className={`text-[10px] font-mono font-semibold ${r.toolStatuses.secret.count > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                           {r.toolStatuses.secret.count}건
                         </span>
                       </div>
 
                       {/* IaC Tool Card */}
-                      <div className="p-2 rounded-lg border flex items-center justify-between transition-all bg-slate-950/60 border-slate-800">
-                        <span className="flex items-center gap-1.5 text-slate-300">
-                          <FileCode className="w-3.5 h-3.5 text-purple-400" />
+                      <div className="p-2 rounded-lg border flex items-center justify-between transition-all bg-[#09090b] border-white/[0.08]">
+                        <span className="flex items-center gap-1.5 text-zinc-300">
+                          <FileCode className="w-3.5 h-3.5 text-zinc-400" />
                           IaC
                         </span>
-                        <span className={`text-[10px] font-mono font-bold ${r.toolStatuses.iac.count > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                        <span className={`text-[10px] font-mono font-semibold ${r.toolStatuses.iac.count > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
                           {r.toolStatuses.iac.count}건
                         </span>
                       </div>
                     </div>
 
                     {/* Supply Chain Security & SBOM Badges */}
-                    <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-[10px]">
-                      <span className="flex items-center gap-1 text-slate-400">
-                        <Sparkles className="w-3 h-3 text-indigo-400" />
+                    <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#09090b] border border-white/[0.08] text-[10px]">
+                      <span className="flex items-center gap-1 text-zinc-400">
+                        <Sparkles className="w-3 h-3 text-zinc-400" />
                         Cosign: <strong className="text-emerald-400">검증완료</strong>
                       </span>
-                      <span className="text-slate-600">|</span>
-                      <span className="flex items-center gap-1 text-slate-400">
-                        <Package className="w-3 h-3 text-cyan-400" />
-                        SBOM: <strong className="text-cyan-300">CycloneDX</strong>
+                      <span className="text-zinc-600">|</span>
+                      <span className="flex items-center gap-1 text-zinc-400">
+                        <Package className="w-3 h-3 text-zinc-400" />
+                        SBOM: <strong className="text-zinc-200 font-mono">CycloneDX</strong>
                       </span>
                     </div>
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px] text-slate-400">
-                  <span>총 소요시간: <strong className="text-white font-mono">{r.scanDuration}초</strong></span>
-                  <span className={r.critCount > 0 ? 'text-rose-400 font-bold font-mono' : 'text-slate-300 font-mono'}>
+                <div className="flex items-center justify-between pt-2 border-t border-white/[0.08] text-[11px] text-zinc-400">
+                  <span>총 소요시간: <strong className="text-zinc-100 font-mono">{r.scanDuration}초</strong></span>
+                  <span className={r.critCount > 0 ? 'text-rose-400 font-semibold font-mono' : 'text-zinc-300 font-mono'}>
                     {isRunScannerPending ? '결함 미탐지' : `총 ${r.critCount + r.highCount + r.medCount}건 발견`}
                   </span>
                 </div>
@@ -850,12 +850,12 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
 
               {/* Output Port */}
               <div
-                className={`absolute -right-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full border-2 ${
+                className={`absolute -right-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 ${
                   isRunScannerRunning
-                    ? 'bg-indigo-500 border-slate-950 shadow-[0_0_8px_#6366f1]'
+                    ? 'bg-zinc-200 border-[#09090b]'
                     : isRunScannerDone
-                    ? 'bg-indigo-500 border-slate-950 shadow-[0_0_8px_#6366f1]'
-                    : 'bg-slate-800 border-slate-700'
+                    ? 'bg-emerald-500 border-[#09090b]'
+                    : 'bg-zinc-800 border-zinc-700'
                 }`}
               />
             </div>
@@ -866,16 +866,16 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 onSelectRun(r.id);
                 onSelectNode('node-policy');
               }}
-              className={`workflow-node absolute rounded-2xl border transition-all duration-200 cursor-pointer shadow-2xl ${
+              className={`workflow-node absolute rounded-xl border transition-all duration-200 cursor-pointer shadow-lg ${
                 isSelectedRun && selectedNodeId === 'node-policy'
-                  ? 'border-amber-400 bg-slate-900/95 ring-4 ring-amber-500/20'
+                  ? 'border-amber-400 bg-[#141417] ring-2 ring-amber-500/20'
                   : isRunGatePassed
-                  ? 'border-emerald-500/60 bg-slate-900/90'
+                  ? 'border-emerald-500/40 bg-[#141417]/95'
                   : isRunGateReview
-                  ? 'border-amber-400/90 bg-slate-900/95 ring-2 ring-amber-500/20'
+                  ? 'border-amber-400/60 bg-[#141417]/95'
                   : isRunGateBlocked
-                  ? 'border-rose-500/90 bg-rose-950/20 ring-2 ring-rose-500/30'
-                  : 'border-slate-800/80 bg-slate-950/40 opacity-55 hover:opacity-90'
+                  ? 'border-rose-500/70 bg-rose-950/20'
+                  : 'border-white/[0.08] bg-[#0f0f11]/60 opacity-60 hover:opacity-90'
               }`}
               style={{
                 left: `${nodePositions['node-policy'].x}px`,
@@ -886,34 +886,34 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
             >
               {/* Input Port */}
               <div
-                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full border-2 ${
+                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 ${
                   isRunGatePassed
-                    ? 'bg-emerald-500 border-slate-950'
+                    ? 'bg-emerald-500 border-[#09090b]'
                     : isRunGateReview
-                    ? 'bg-amber-500 border-slate-950'
+                    ? 'bg-amber-500 border-[#09090b]'
                     : isRunGateBlocked
-                    ? 'bg-rose-500 border-slate-950'
-                    : 'bg-slate-800 border-slate-700'
+                    ? 'bg-rose-500 border-[#09090b]'
+                    : 'bg-zinc-800 border-zinc-700'
                 }`}
               />
 
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/40 rounded-t-2xl">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-[#09090b]/60 rounded-t-xl">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-6 h-6 rounded-lg flex items-center justify-center border ${
+                    className={`w-6 h-6 rounded-md flex items-center justify-center border ${
                       isRunGatePassed
-                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : isRunGateReview
-                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                        ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                         : isRunGateBlocked
-                        ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-                        : 'bg-slate-800/50 text-slate-500 border-slate-700/40'
+                        ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                        : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                     }`}
                   >
                     <ShieldAlert className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <div className={`text-xs font-bold ${isRunGatePending ? 'text-slate-400' : 'text-slate-200'}`}>
+                    <div className={`text-xs font-semibold ${isRunGatePending ? 'text-zinc-400' : 'text-zinc-100'}`}>
                       3. 보안 정책 게이트
                     </div>
                     <span className="text-[10px] text-amber-400 font-mono">
@@ -926,14 +926,14 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   variant="outline"
                   className={
                     isRunOverridden
-                      ? 'border-fuchsia-500 text-fuchsia-300 bg-fuchsia-950/60 text-[10px] font-bold shadow-[0_0_8px_#c084fc]'
+                      ? 'border-amber-500/50 text-amber-300 bg-amber-500/10 text-[10px] font-semibold'
                       : isRunGatePassed
-                      ? 'border-emerald-500 text-emerald-400 bg-emerald-950/60 text-[10px] font-bold'
+                      ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10 text-[10px] font-semibold'
                       : isRunGateReview
-                      ? 'border-amber-500 text-amber-400 bg-amber-950/60 text-[10px] font-bold'
+                      ? 'border-amber-500/40 text-amber-400 bg-amber-500/10 text-[10px] font-semibold'
                       : isRunGateBlocked
-                      ? 'border-rose-500 text-rose-400 bg-rose-950/60 text-[10px] font-bold'
-                      : 'border-slate-700 text-slate-500 bg-slate-800/50 text-[10px] font-medium'
+                      ? 'border-rose-500/40 text-rose-400 bg-rose-500/10 text-[10px] font-semibold'
+                      : 'border-white/[0.08] text-zinc-500 bg-zinc-900 text-[10px] font-medium'
                   }
                 >
                   {isRunOverridden
@@ -951,41 +951,41 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               {/* Gate Rules Body */}
               <div className="p-4 space-y-3 text-xs">
                 {isRunGatePending ? (
-                  <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/70 text-center space-y-1">
-                    <Clock className="w-5 h-5 mx-auto text-slate-600" />
-                    <span className="text-[11px] text-slate-400 font-medium block">
+                  <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-1">
+                    <Clock className="w-5 h-5 mx-auto text-zinc-600" />
+                    <span className="text-[11px] text-zinc-400 font-medium block">
                       보안점검 완료 후 자동 평가
                     </span>
-                    <span className="text-[10px] text-slate-600 block">
+                    <span className="text-[10px] text-zinc-500 block">
                       정책 기준: Critical 0건, High {policy.highThresholdForBlock}건 미만
                     </span>
                   </div>
                 ) : (
                   <>
-                    <div className="space-y-1.5 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                    <div className="space-y-1.5 bg-[#09090b] p-2.5 rounded-lg border border-white/[0.08]">
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-400">치명적(Critical)</span>
-                        <span className={`font-mono font-bold ${r.critCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                        <span className="text-zinc-400">치명적(Critical)</span>
+                        <span className={`font-mono font-semibold ${r.critCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                           {r.critCount}건 {r.critCount > 0 ? '(차단 기준 위반)' : '(0건 정상)'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-400">높음(High)</span>
-                        <span className={`font-mono font-bold ${r.highCount >= policy.highThresholdForBlock ? 'text-rose-400' : 'text-amber-400'}`}>
+                        <span className="text-zinc-400">높음(High)</span>
+                        <span className={`font-mono font-semibold ${r.highCount >= policy.highThresholdForBlock ? 'text-rose-400' : 'text-amber-400'}`}>
                           {r.highCount}건 (기준: {policy.highThresholdForBlock}건)
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-400">중간(Medium)</span>
-                        <span className="font-mono font-bold text-slate-300">
+                        <span className="text-zinc-400">중간(Medium)</span>
+                        <span className="font-mono font-semibold text-zinc-300">
                           {r.medCount}건
                         </span>
                       </div>
                     </div>
 
-                    <div className="text-[11px] text-slate-400 leading-snug">
-                      * 정책 판정: <strong className={isRunOverridden ? 'text-fuchsia-300' : isRunGateBlocked ? 'text-rose-400' : isRunGateReview ? 'text-amber-300' : 'text-emerald-300'}>
-                        {isRunOverridden ? '🚨 CISO 긴급 보안 예외 승인' : isRunGateBlocked ? '배포 차단 (Block)' : isRunGateReview ? '수동 심사 필요' : '클린 통과 (Pass)'}
+                    <div className="text-[11px] text-zinc-400 leading-snug">
+                      * 정책 판정: <strong className={isRunOverridden ? 'text-amber-300' : isRunGateBlocked ? 'text-rose-400' : isRunGateReview ? 'text-amber-300' : 'text-emerald-300'}>
+                        {isRunOverridden ? 'CISO 긴급 보안 예외 승인' : isRunGateBlocked ? '배포 차단 (Block)' : isRunGateReview ? '수동 심사 필요' : '클린 통과 (Pass)'}
                       </strong>
                     </div>
 
@@ -998,11 +998,11 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                             onSelectRun(r.id);
                             onOpenFixModal();
                           }}
-                          className="h-7 text-[10.5px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold gap-1 shadow-md shadow-emerald-950"
+                          className="h-7 text-[10.5px] bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-1"
                           title="Git Flow 표준: fix/ 브랜치 분기 후 결함 조치 및 재검증 PR"
                         >
                           <GitBranch className="w-3 h-3" />
-                          🛠️ fix/ 조치 브랜치
+                          fix/ 조치 브랜치
                         </Button>
                         <Button
                           size="sm"
@@ -1011,11 +1011,11 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                             onSelectRun(r.id);
                             onOpenOverrideModal();
                           }}
-                          className="h-7 text-[10.5px] bg-rose-600 hover:bg-rose-500 text-white font-bold gap-1 shadow-md shadow-rose-950"
+                          className="h-7 text-[10.5px] bg-rose-600 hover:bg-rose-500 text-white font-semibold gap-1"
                           title="긴급 핫픽스용: CISO 예외 우회 인가"
                         >
                           <ShieldAlert className="w-3 h-3" />
-                          🚨 CISO 예외승인
+                          CISO 예외승인
                         </Button>
                       </div>
                     )}
@@ -1023,14 +1023,14 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 )}
               </div>
 
-              {/* Step 3 ➔ Step 4 Output Port (Right) */}
+              {/* Step 3 -> Step 4 Output Port (Right) */}
               <div
-                className={`absolute -right-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full border-2 ${
+                className={`absolute -right-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 ${
                   isRunGatePassed
-                    ? 'bg-emerald-500 border-slate-950 shadow-[0_0_8px_#10b981]'
+                    ? 'bg-emerald-500 border-[#09090b]'
                     : isRunGateReview
-                    ? 'bg-amber-500 border-slate-950 shadow-[0_0_8px_#f59e0b]'
-                    : 'bg-slate-800 border-slate-700'
+                    ? 'bg-amber-500 border-[#09090b]'
+                    : 'bg-zinc-800 border-zinc-700'
                 }`}
               />
             </div>
@@ -1041,16 +1041,16 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 onSelectRun(r.id);
                 onSelectNode('node-review');
               }}
-              className={`workflow-node absolute rounded-2xl border transition-all duration-200 cursor-pointer shadow-2xl ${
+              className={`workflow-node absolute rounded-xl border transition-all duration-200 cursor-pointer shadow-lg ${
                 isSelectedRun && selectedNodeId === 'node-review'
-                  ? 'border-indigo-400 bg-slate-900/95 ring-4 ring-indigo-500/20'
+                  ? 'border-zinc-200 bg-[#141417] ring-2 ring-white/[0.15]'
                   : isRunReviewApproved
-                  ? 'border-emerald-500/60 bg-slate-900/90'
+                  ? 'border-emerald-500/40 bg-[#141417]/95'
                   : isRunReviewPending
-                  ? 'border-amber-400/90 bg-slate-900/95 ring-2 ring-amber-500/20'
+                  ? 'border-amber-400/60 bg-[#141417]/95'
                   : isRunReviewRejected
-                  ? 'border-rose-500/90 bg-rose-950/20'
-                  : 'border-slate-800/80 bg-slate-950/40 opacity-55 hover:opacity-90'
+                  ? 'border-rose-500/70 bg-rose-950/20'
+                  : 'border-white/[0.08] bg-[#0f0f11]/60 opacity-60 hover:opacity-90'
               }`}
               style={{
                 left: `${nodePositions['node-review'].x}px`,
@@ -1060,37 +1060,37 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               }}
             >
               <div
-                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full border-2 ${
+                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 ${
                   isRunReviewPending
-                    ? 'bg-amber-500 border-slate-950'
+                    ? 'bg-amber-500 border-[#09090b]'
                     : isRunReviewApproved
-                    ? 'bg-emerald-500 border-slate-950'
+                    ? 'bg-emerald-500 border-[#09090b]'
                     : isRunReviewRejected
-                    ? 'bg-rose-500 border-slate-950'
-                    : 'bg-slate-800 border-slate-700'
+                    ? 'bg-rose-500 border-[#09090b]'
+                    : 'bg-zinc-800 border-zinc-700'
                 }`}
               />
 
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/40 rounded-t-2xl">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-[#09090b]/60 rounded-t-xl">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-6 h-6 rounded-lg flex items-center justify-center border ${
+                    className={`w-6 h-6 rounded-md flex items-center justify-center border ${
                       isRunReviewApproved
-                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : isRunReviewPending
-                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                        ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                         : isRunReviewRejected
-                        ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-                        : 'bg-slate-800/50 text-slate-500 border-slate-700/40'
+                        ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                        : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                     }`}
                   >
                     <FileCheck2 className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <div className={`text-xs font-bold ${isRunReviewNotReached ? 'text-slate-400' : 'text-slate-200'}`}>
+                    <div className={`text-xs font-semibold ${isRunReviewNotReached ? 'text-zinc-400' : 'text-zinc-100'}`}>
                       4. 배포 심사 및 인가
                     </div>
-                    <span className="text-[10px] text-blue-400 font-mono">
+                    <span className="text-[10px] text-zinc-400 font-mono">
                       {isRunReviewNotReached ? 'Not Reached' : 'Manual Approval'}
                     </span>
                   </div>
@@ -1100,12 +1100,12 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   variant="outline"
                   className={
                     isRunReviewApproved
-                      ? 'border-emerald-500 text-emerald-400 bg-emerald-950/60 text-[10px] font-bold'
+                      ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10 text-[10px] font-semibold'
                       : isRunReviewPending
-                      ? 'border-amber-500 text-amber-400 bg-amber-950/60 text-[10px] font-bold'
+                      ? 'border-amber-500/40 text-amber-400 bg-amber-500/10 text-[10px] font-semibold'
                       : isRunReviewRejected
-                      ? 'border-rose-500 text-rose-400 bg-rose-950/60 text-[10px] font-bold'
-                      : 'border-slate-700 text-slate-500 bg-slate-800/50 text-[10px] font-medium'
+                      ? 'border-rose-500/40 text-rose-400 bg-rose-500/10 text-[10px] font-semibold'
+                      : 'border-white/[0.08] text-zinc-500 bg-zinc-900 text-[10px] font-medium'
                   }
                 >
                   {isRunReviewApproved
@@ -1121,39 +1121,39 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               {/* Review Body */}
               <div className="p-4 space-y-3 text-xs">
                 {isRunReviewNotReached ? (
-                  <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/70 text-center space-y-1">
-                    <Clock className="w-5 h-5 mx-auto text-slate-600" />
-                    <span className="text-[11px] text-slate-400 font-medium block">
+                  <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-1">
+                    <Clock className="w-5 h-5 mx-auto text-zinc-600" />
+                    <span className="text-[11px] text-zinc-400 font-medium block">
                       정책 게이트 통과 후 활성화
                     </span>
-                    <span className="text-[10px] text-slate-600 block">
+                    <span className="text-[10px] text-zinc-500 block">
                       이전 단계가 차단되거나 아직 도달하지 않음
                     </span>
                   </div>
                 ) : (
                   <>
-                    <div className="space-y-1.5 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px]">
+                    <div className="space-y-1.5 bg-[#09090b] p-2.5 rounded-lg border border-white/[0.08] text-[11px]">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">환경</span>
-                        <Badge variant="outline" className="text-[10px] font-bold border-indigo-500/40 text-indigo-300">
+                        <span className="text-zinc-400">환경</span>
+                        <Badge variant="outline" className="text-[10px] font-semibold border-white/[0.15] text-zinc-200">
                           {r.targetEnvironment} 배포
                         </Badge>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">커밋 일치</span>
-                        <span className="font-semibold text-emerald-400">
-                          ✅ 일치 (@{r.commitId})
+                        <span className="text-zinc-400">커밋 일치</span>
+                        <span className="font-semibold text-emerald-400 font-mono">
+                          일치 (@{r.commitId})
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">심사위원</span>
-                        <span className="text-slate-200 font-medium truncate max-w-[150px]">
+                        <span className="text-zinc-400">심사위원</span>
+                        <span className="text-zinc-200 font-medium truncate max-w-[150px]">
                           {r.reviewer || '보안팀 최수민 팀장'}
                         </span>
                       </div>
                     </div>
 
-                    <div className="text-[11px] text-slate-400 italic bg-slate-950/40 p-2 rounded border border-slate-800/60 truncate">
+                    <div className="text-[11px] text-zinc-400 italic bg-[#09090b]/60 p-2 rounded border border-white/[0.06] truncate">
                       "{r.reviewComment || '심사 진행 중'}"
                     </div>
                   </>
@@ -1162,12 +1162,12 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
 
               {/* Right Output Port */}
               <div
-                className={`absolute -right-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full border-2 ${
+                className={`absolute -right-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 ${
                   isRunReviewApproved
-                    ? 'bg-emerald-500 border-slate-950 shadow-[0_0_8px_#10b981]'
+                    ? 'bg-emerald-500 border-[#09090b]'
                     : isRunReviewPending
-                    ? 'bg-amber-500 border-slate-950 shadow-[0_0_8px_#f59e0b]'
-                    : 'bg-slate-800 border-slate-700'
+                    ? 'bg-amber-500 border-[#09090b]'
+                    : 'bg-zinc-800 border-zinc-700'
                 }`}
               />
             </div>
@@ -1178,14 +1178,14 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 onSelectRun(r.id);
                 onSelectNode('node-deploy');
               }}
-              className={`workflow-node absolute rounded-2xl border transition-all duration-200 cursor-pointer shadow-2xl ${
+              className={`workflow-node absolute rounded-xl border transition-all duration-200 cursor-pointer shadow-lg ${
                 isSelectedRun && selectedNodeId === 'node-deploy'
-                  ? 'border-emerald-400 bg-slate-900/95 ring-4 ring-emerald-500/20'
+                  ? 'border-emerald-400 bg-[#141417] ring-2 ring-emerald-500/20'
                   : isRunDeployActive
-                  ? 'border-emerald-500/80 bg-slate-900/95 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
+                  ? 'border-emerald-500/50 bg-[#141417]/95'
                   : isRunDeployBlocked
-                  ? 'border-rose-900/60 bg-rose-950/20 opacity-70'
-                  : 'border-slate-800/80 bg-slate-950/40 opacity-55 hover:opacity-90'
+                  ? 'border-rose-500/40 bg-rose-950/20 opacity-75'
+                  : 'border-white/[0.08] bg-[#0f0f11]/60 opacity-60 hover:opacity-90'
               }`}
               style={{
                 left: `${nodePositions['node-deploy'].x}px`,
@@ -1195,28 +1195,28 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               }}
             >
               <div
-                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-4 h-4 rounded-full border-2 ${
+                className={`absolute -left-2 top-[140px] -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 ${
                   isRunDeployActive
-                    ? 'bg-emerald-500 border-slate-950 shadow-[0_0_8px_#10b981]'
-                    : 'bg-slate-800 border-slate-700'
+                    ? 'bg-emerald-500 border-[#09090b]'
+                    : 'bg-zinc-800 border-zinc-700'
                 }`}
               />
 
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/40 rounded-t-2xl">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-[#09090b]/60 rounded-t-xl">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-6 h-6 rounded-lg flex items-center justify-center border ${
+                    className={`w-6 h-6 rounded-md flex items-center justify-center border ${
                       isRunDeployActive
-                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : isRunDeployBlocked
-                        ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-                        : 'bg-slate-800/50 text-slate-500 border-slate-700/40'
+                        ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                        : 'bg-zinc-900 text-zinc-500 border-white/[0.08]'
                     }`}
                   >
                     <Server className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <div className={`text-xs font-bold ${isRunDeployPending ? 'text-slate-400' : 'text-slate-200'}`}>
+                    <div className={`text-xs font-semibold ${isRunDeployPending ? 'text-zinc-400' : 'text-zinc-100'}`}>
                       5. 클러스터 운영 배포
                     </div>
                     <span className="text-[10px] text-emerald-400 font-mono">
@@ -1229,16 +1229,16 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   variant="outline"
                   className={
                     isRunRolledBack
-                      ? 'bg-cyan-950 border-cyan-500/80 text-cyan-300 font-bold text-[10px]'
+                      ? 'bg-zinc-800 border-white/[0.2] text-zinc-200 font-semibold text-[10px]'
                       : isRunCanaryFailed
-                      ? 'bg-rose-950 border-rose-500 text-rose-300 font-bold text-[10px] animate-pulse'
+                      ? 'bg-rose-500/15 border-rose-500/50 text-rose-300 font-semibold text-[10px]'
                       : isRunOverridden
-                      ? 'bg-fuchsia-950 border-fuchsia-500 text-fuchsia-300 font-bold text-[10px]'
+                      ? 'bg-amber-500/15 border-amber-500/50 text-amber-300 font-semibold text-[10px]'
                       : isRunDeployActive
-                      ? 'border-emerald-500/60 bg-emerald-950/60 text-emerald-400 text-[10px] font-bold shadow-[0_0_8px_#10b981]'
+                      ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold'
                       : isRunDeployBlocked
-                      ? 'border-rose-500/60 bg-rose-950/60 text-rose-400 text-[10px] font-bold'
-                      : 'bg-slate-800 border border-slate-700 text-slate-400 font-medium text-[10px]'
+                      ? 'border-rose-500/40 bg-rose-500/10 text-rose-400 text-[10px] font-semibold'
+                      : 'bg-zinc-900 border border-white/[0.08] text-zinc-400 font-medium text-[10px]'
                   }
                 >
                   {isRunRolledBack
@@ -1258,9 +1258,9 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               {/* Deploy Body */}
               <div className="p-4 space-y-3 text-xs">
                 {/* Target Environment Switcher */}
-                <div className="flex items-center justify-between text-[11px] pb-2 border-b border-slate-800">
-                  <span className="text-slate-400 font-medium">대상 환경:</span>
-                  <div className="flex items-center gap-1 bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                <div className="flex items-center justify-between text-[11px] pb-2 border-b border-white/[0.08]">
+                  <span className="text-zinc-400 font-medium">대상 환경:</span>
+                  <div className="flex items-center gap-1 bg-[#09090b] p-0.5 rounded-md border border-white/[0.08]">
                     {(['개발', '검증', '운영'] as const).map((env) => (
                       <button
                         key={env}
@@ -1272,8 +1272,8 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                         className={cn(
                           'px-2 py-0.5 rounded text-[10px] font-semibold transition-all',
                           r.targetEnvironment === env
-                            ? 'bg-indigo-600 text-white shadow-xs'
-                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                            ? 'bg-zinc-100 text-zinc-950'
+                            : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]'
                         )}
                         title={`클릭하여 ${env} 환경으로 배포 대상 전환`}
                       >
@@ -1284,49 +1284,49 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 </div>
 
                 {isRunDeployPending ? (
-                  <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/70 text-center space-y-1">
-                    <Clock className="w-5 h-5 mx-auto text-slate-600" />
-                    <span className="text-[11px] text-slate-400 font-medium block">
+                  <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] text-center space-y-1">
+                    <Clock className="w-5 h-5 mx-auto text-zinc-600" />
+                    <span className="text-[11px] text-zinc-400 font-medium block">
                       최종 배포 승인 후 롤링 업데이트
                     </span>
-                    <span className="text-[10px] text-slate-600 block">
+                    <span className="text-[10px] text-zinc-500 block">
                       대상 클러스터: {r.cluster} ({r.namespace})
                     </span>
                   </div>
                 ) : (
                   <>
-                    <div className="space-y-1.5 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px]">
+                    <div className="space-y-1.5 bg-[#09090b] p-2.5 rounded-lg border border-white/[0.08] text-[11px]">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">클러스터</span>
-                        <span className="font-mono text-slate-200">{r.cluster}</span>
+                        <span className="text-zinc-400">클러스터</span>
+                        <span className="font-mono text-zinc-200">{r.cluster}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">네임스페이스</span>
-                        <span className="font-mono text-indigo-400">{r.namespace}</span>
+                        <span className="text-zinc-400">네임스페이스</span>
+                        <span className="font-mono text-zinc-200">{r.namespace}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-400">Pod 상태</span>
-                        <span className="font-mono text-emerald-400 font-bold">{r.replicas}</span>
+                        <span className="text-zinc-400">Pod 상태</span>
+                        <span className="font-mono text-emerald-400 font-semibold">{r.replicas}</span>
                       </div>
                     </div>
 
-                    <div className="text-[11px] text-slate-400 leading-snug">
+                    <div className="text-[11px] text-zinc-400 leading-snug">
                       {isRunRolledBack ? (
-                        <span className="text-cyan-300 font-semibold">
-                          🔄 카나리 에러 감지로 @v2.4.0 자동 롤백 성공 (정상 서빙 중)
+                        <span className="text-zinc-200 font-semibold">
+                          카나리 에러 감지로 @v2.4.0 자동 롤백 성공 (정상 서빙 중)
                         </span>
                       ) : isRunCanaryFailed ? (
-                        <span className="text-rose-400 font-bold animate-pulse">
-                          🚨 카나리 에러율 14.8% 감지 (기준치 초과)!
+                        <span className="text-rose-400 font-semibold">
+                          카나리 에러율 14.8% 감지 (기준치 초과)
                         </span>
                       ) : isRunOverridden ? (
-                        <span className="text-fuchsia-300 font-semibold">
-                          🚨 CISO 긴급 승인 배포 완료 (24H 패치 SLA)
+                        <span className="text-amber-300 font-semibold">
+                          CISO 긴급 승인 배포 완료 (24H 패치 SLA)
                         </span>
                       ) : isRunDeployActive ? (
-                        '✅ 정상 서비스 서빙 중 (Zero-Downtime)'
+                        <span className="text-emerald-400 font-medium">정상 서비스 서빙 중 (Zero-Downtime)</span>
                       ) : (
-                        '❌ 보안 정책 위반으로 배포 중단'
+                        <span className="text-rose-400 font-medium">보안 정책 위반으로 배포 중단</span>
                       )}
                     </div>
 
@@ -1337,7 +1337,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                           e.stopPropagation();
                           onRollback();
                         }}
-                        className="w-full mt-1 h-7 text-xs bg-cyan-600 hover:bg-cyan-500 text-white font-bold gap-1 shadow-md shadow-cyan-950"
+                        className="w-full mt-1 h-7 text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-950 font-semibold gap-1"
                       >
                         <Undo2 className="w-3.5 h-3.5" />
                         이전 버전(@v2.4.0) 롤백 실행

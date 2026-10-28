@@ -126,7 +126,7 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
 
   return (
     <div
-      className={`absolute bottom-0 left-0 right-0 z-30 transition-all duration-300 ease-in-out border-slate-800 bg-slate-950/95 backdrop-blur-xl shadow-2xl flex flex-col ${
+      className={`absolute bottom-0 left-0 right-0 z-30 transition-all duration-300 ease-in-out border-white/[0.08] bg-[#09090b]/98 backdrop-blur-xl shadow-2xl flex flex-col ${
         isOpen
           ? isExpandedFull
             ? 'h-[75%] translate-y-0 opacity-100 pointer-events-auto border-t visible'
@@ -135,23 +135,23 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
       }`}
     >
       {/* Terminal Title Bar & Quick Controls */}
-      <div className="h-10 px-4 flex items-center justify-between border-b border-slate-800/80 bg-slate-900/80 shrink-0 cursor-pointer select-none" onClick={onToggle}>
+      <div className="h-10 px-4 flex items-center justify-between border-b border-white/[0.08] bg-[#0f0f11] shrink-0 cursor-pointer select-none" onClick={onToggle}>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-100">
             <Terminal className="w-4 h-4 text-emerald-400" />
             <span>실시간 CI/CD 러너 터미널 콘솔</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-slate-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-zinc-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span>워커: {runnerInfo.workerNode}</span>
-            <span className="text-slate-600">|</span>
+            <span className="text-zinc-700">|</span>
             <span>컨테이너: {runnerInfo.containerId}</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-indigo-400 font-bold">@{runnerInfo.commitId}</span>
+            <span className="text-zinc-700">|</span>
+            <span className="text-zinc-200 font-semibold">@{runnerInfo.commitId}</span>
           </div>
 
-          <Badge variant="outline" className="text-[10px] font-mono border-slate-700 text-slate-400">
+          <Badge variant="outline" className="text-[10px] font-mono border-white/[0.1] text-zinc-400">
             {logs.length} 로그 라인
           </Badge>
         </div>
@@ -164,7 +164,7 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={handleCopyLogs}
-                className="h-7 px-2 text-slate-400 hover:text-white text-xs gap-1 hover:bg-slate-800"
+                className="h-7 px-2 text-zinc-400 hover:text-zinc-100 text-xs gap-1 hover:bg-white/[0.06]"
                 title="로그 전체 복사"
               >
                 {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -175,7 +175,7 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={handleToggleExpand}
-                className="h-7 px-2 text-slate-400 hover:text-white hover:bg-slate-800"
+                className="h-7 px-2 text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.06]"
                 title={isExpandedFull ? '축소' : '최대화'}
               >
                 {isExpandedFull ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -187,7 +187,7 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
             variant="ghost"
             size="sm"
             onClick={onToggle}
-            className="h-7 px-2 text-slate-400 hover:text-white hover:bg-slate-800"
+            className="h-7 px-2 text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.06]"
           >
             {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             <span className="text-xs ml-1">{isOpen ? '접기' : '콘솔 열기'}</span>
@@ -197,54 +197,54 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
 
       {/* Expanded Terminal Panel */}
       {isOpen && (
-        <div className="flex-1 flex flex-col min-h-0 bg-slate-950">
+        <div className="flex-1 flex flex-col min-h-0 bg-[#09090b]">
           {/* Sub Toolbar: Tabs, Search, Filter */}
-          <div className="px-4 py-2 bg-slate-900/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div className="px-4 py-2 bg-[#0f0f11]/80 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-2 shrink-0">
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1 bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-xs">
+            <div className="flex items-center gap-1 bg-[#141417] p-0.5 rounded-md border border-white/[0.08] text-xs">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`px-2.5 py-1 rounded-md transition-colors font-medium text-[11px] ${
-                  activeTab === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                className={`px-2.5 py-1 rounded transition-colors font-semibold text-[11px] ${
+                  activeTab === 'all' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 전체 로그 ({logs.length})
               </button>
               <button
                 onClick={() => setActiveTab('scan')}
-                className={`px-2.5 py-1 rounded-md transition-colors font-medium text-[11px] ${
-                  activeTab === 'scan' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                className={`px-2.5 py-1 rounded transition-colors font-semibold text-[11px] ${
+                  activeTab === 'scan' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                🔍 보안 점검
+                보안 점검
               </button>
               <button
                 onClick={() => setActiveTab('gate')}
-                className={`px-2.5 py-1 rounded-md transition-colors font-medium text-[11px] ${
-                  activeTab === 'gate' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                className={`px-2.5 py-1 rounded transition-colors font-semibold text-[11px] ${
+                  activeTab === 'gate' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                ⚖️ 정책 & 승인
+                정책 & 승인
               </button>
               <button
                 onClick={() => setActiveTab('deploy')}
-                className={`px-2.5 py-1 rounded-md transition-colors font-medium text-[11px] ${
-                  activeTab === 'deploy' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                className={`px-2.5 py-1 rounded transition-colors font-semibold text-[11px] ${
+                  activeTab === 'deploy' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                🚀 배포 & K8s
+                배포 & K8s
               </button>
             </div>
 
             {/* Search & Error Filter */}
             <div className="flex items-center gap-2">
               <div className="relative w-44 sm:w-56">
-                <Search className="w-3 h-3 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Search className="w-3 h-3 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="로그 검색..."
-                  className="h-7 pl-7 pr-2 bg-slate-950 border-slate-800 text-[11px] text-slate-200 rounded-lg placeholder:text-slate-600 focus:border-indigo-500 font-mono"
+                  className="h-7 pl-7 pr-2 bg-[#141417] border-white/[0.1] text-[11px] text-zinc-200 rounded-md placeholder:text-zinc-600 focus:border-zinc-500 font-mono"
                 />
               </div>
 
@@ -255,7 +255,7 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
                 className={`h-7 px-2.5 text-[11px] gap-1 font-mono ${
                   filterErrorsOnly
                     ? 'bg-rose-600 text-white'
-                    : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-white'
+                    : 'border-white/[0.1] bg-[#141417] text-zinc-400 hover:text-zinc-100'
                 }`}
               >
                 <AlertCircle className="w-3 h-3" />
@@ -265,9 +265,9 @@ export const PipelineLiveTerminal: React.FC<PipelineLiveTerminalProps> = ({
           </div>
 
           {/* Terminal Output Stream */}
-          <div className="flex-1 overflow-y-auto p-4 font-mono text-xs select-text space-y-0.5 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+          <div className="flex-1 overflow-y-auto p-4 font-mono text-xs select-text space-y-0.5 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
             {filteredLogs.length === 0 ? (
-              <div className="text-center py-8 text-slate-600 text-xs font-mono">
+              <div className="text-center py-8 text-zinc-600 text-xs font-mono">
                 검색 조건과 일치하는 콘솔 로그가 없습니다.
               </div>
             ) : (
