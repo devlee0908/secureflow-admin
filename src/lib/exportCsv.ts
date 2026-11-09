@@ -3,7 +3,11 @@
  */
 export function exportToCsv(filename: string, headers: string[], rows: (string | number)[][]) {
   const escapeCell = (cell: string | number): string => {
-    const str = String(cell ?? '');
+    let str = String(cell ?? '');
+    // Prevent OWASP CSV Formula Injection in spreadsheet viewers
+    if (/^[=+\-@\t\r]/.test(str)) {
+      str = `'${str}`;
+    }
     if (str.includes(',') || str.includes('"') || str.includes('\n')) {
       return `"${str.replace(/"/g, '""')}"`;
     }

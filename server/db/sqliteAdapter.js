@@ -1078,8 +1078,12 @@ export class SqliteDatabaseAdapter {
     };
   }
 
-  rotateVaultMasterKey() {
-    const rotation = vaultService.rotateKmsMasterKey();
+  deleteCredential(key) {
+    this.db.prepare('DELETE FROM credentials_vault WHERE key = ?').run(key);
+    return { deleted: true, key, configured: false, maskedHint: null, updatedAt: null };
+  }
+
+  reWrapAllCredentials() {
     const rows = this.db.prepare('SELECT * FROM credentials_vault').all();
     let reWrappedCount = 0;
 
@@ -1101,15 +1105,22 @@ export class SqliteDatabaseAdapter {
           `).run(newWrappedDek, newKekId, newProvider, new Date().toISOString(), row.key);
           reWrappedCount++;
         } catch (err) {
-          console.warn(`[Vault KEK Rotation] Failed to re-wrap DEK for key [${row.key}]:`, err.message);
+          console.warn(`[Vault Re-Wrap] Failed to re-wrap DEK for key [${row.key}]:`, err.message);
         }
       }
     }
 
+    return { reWrappedCount, totalCredentials: rows.length };
+  }
+
+  rotateVaultMasterKey() {
+    const rotation = vaultService.rotateKmsMasterKey();
+    const { reWrappedCount, totalCredentials } = this.reWrapAllCredentials();
+
     return {
       ...rotation,
       reWrappedCount,
-      totalCredentials: rows.length,
+      totalCredentials,
     };
   }
 
@@ -1126,7 +1137,7 @@ export class SqliteDatabaseAdapter {
     const id = channel.id || `chan-${Date.now()}`;
     const now = new Date().toISOString();
     const eventsJson = JSON.stringify(channel.events || ['GATE_BLOCK', 'OVERRIDE_APPROVED']);
-    const isActive = channel.isActive !== false ? 1 : 0;
+    const isActive = channel.isActive !== false && channel.is_active !== false ? 1 : 0;
 
     this.db.prepare(`
       INSERT INTO notification_channels (id, name, channel_type, webhook_url, events_json, is_active, created_at, updated_at)
@@ -1140,7 +1151,13 @@ export class SqliteDatabaseAdapter {
         updated_at = excluded.updated_at
     `).run(id, channel.name, channel.channel_type || 'slack', channel.webhook_url, eventsJson, isActive, channel.created_at || now, now);
 
-    return this.db.prepare('SELECT * FROM notification_channels WHERE id = ?').get(id);
+    const row = this.db.prepare('SELECT * FROM notification_channels WHERE id = ?').get(id);
+    if (!row) return null;
+    return {
+      ...row,
+      events: JSON.parse(row.events_json || '[]'),
+      isActive: !!row.is_active,
+    };
   }
 
   deleteNotificationChannel(id) {

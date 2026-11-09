@@ -896,12 +896,28 @@ export function apiMiddleware(req, res, next) {
         return sendJson(res, 200, masked);
       }
 
-      if (pathname === '/api/credentials/github' && req.method === 'POST') {
+      if (pathname === '/api/credentials/github' && (req.method === 'POST' || req.method === 'DELETE')) {
         const rbac = enforceRbac(req, res, pathname, ['group_admin', 'entity_manager']);
         if (!rbac) return;
         const { token, actorName, actorId } = parsedBody;
-        if (!token) {
-          return sendJson(res, 400, { error: '토큰이 제공되지 않았습니다.' });
+        if (req.method === 'DELETE' || !token) {
+          const cleared = dbService.deleteCredential('github_pat');
+          const audit = dbService.saveAuditLog({
+            actorId: rbac.user?.id || actorId || 'admin',
+            actorName: rbac.user?.name || actorName || 'Security Administrator',
+            actorRole: rbac.user?.roleLabel || '보안 관리자',
+            actionType: 'CREDENTIAL_VAULT_CLEAR',
+            category: 'INTEGRATION',
+            targetResource: 'GitHub PAT Vault',
+            details: { key: 'github_pat', action: 'deleted' },
+            resultStatus: '성공',
+          });
+          sseService.broadcast('audit_logged', { log: audit });
+          return sendJson(res, 200, {
+            success: true,
+            message: 'GitHub PAT가 보안 금고(Vault)에서 안전하게 영구 삭제되었습니다.',
+            ...cleared,
+          });
         }
         const saved = dbService.saveCredential('github_pat', token);
 
@@ -978,6 +994,7 @@ export function apiMiddleware(req, res, next) {
         const { provider } = parsedBody;
         try {
           const info = vaultService.setKmsProvider(provider);
+          const reWrapResult = dbService.reWrapAllCredentials ? dbService.reWrapAllCredentials() : { reWrappedCount: 0 };
           const audit = dbService.saveAuditLog({
             actorId: rbac.user?.id || parsedBody.actorId || 'ciso-admin',
             actorName: rbac.user?.name || parsedBody.actorName || '강태우 (CISO)',
@@ -985,13 +1002,13 @@ export function apiMiddleware(req, res, next) {
             actionType: 'KMS_PROVIDER_SWITCH',
             category: 'GOVERNANCE',
             targetResource: info.providerName,
-            details: { provider, activeKeyId: info.activeKeyId },
+            details: { provider, activeKeyId: info.activeKeyId, reWrappedCount: reWrapResult.reWrappedCount },
             resultStatus: '성공',
           });
           sseService.broadcast('audit_logged', { log: audit });
           return sendJson(res, 200, {
             success: true,
-            message: `KMS 제공자가 [${info.providerName}]로 변경되었습니다.`,
+            message: `KMS 제공자가 [${info.providerName}]로 변경되었습니다. (${reWrapResult.reWrappedCount}건 DEK 자동 마이그레이션 완료)`,
             kmsInfo: info,
           });
         } catch (err) {

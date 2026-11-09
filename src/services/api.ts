@@ -101,6 +101,16 @@ function getAuthHeaders(extra: Record<string, string> = {}): Record<string, stri
   return headers;
 }
 
+async function throwIfNotOk(res: Response, fallbackMsg: string): Promise<void> {
+  if (res.ok) return;
+  let errPayload: any = null;
+  try {
+    errPayload = await res.json();
+  } catch {}
+  const msg = errPayload?.message || errPayload?.error || `${fallbackMsg} (HTTP ${res.status})`;
+  throw new Error(msg);
+}
+
 export const api = {
   async loginSession(params: { email?: string; role: string; provider?: string }): Promise<{
     success: boolean;
@@ -183,7 +193,7 @@ export const api = {
         headers: getAuthHeaders(),
         body: JSON.stringify({ engine }),
       });
-      if (!res.ok) throw new Error('Failed to switch database engine');
+      await throwIfNotOk(res, '데이터베이스 엔진 전환 실패');
       return await res.json();
     } catch (e) {
       console.warn('Failed to switch database engine:', e);
@@ -292,7 +302,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Failed to submit override');
+    await throwIfNotOk(res, '긴급 보안 예외 승인 등록 실패');
     return await res.json();
   },
 
@@ -357,7 +367,17 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify({ token, actorName, actorId }),
     });
-    if (!res.ok) throw new Error('Failed to save PAT to secure vault');
+    await throwIfNotOk(res, '보안 금고(Vault) PAT 저장 실패');
+    return await res.json();
+  },
+
+  async clearGithubPatFromVault(actorName?: string, actorId?: string) {
+    const res = await fetch('/api/credentials/github', {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ actorName, actorId }),
+    });
+    await throwIfNotOk(res, '보안 금고(Vault) PAT 삭제 실패');
     return await res.json();
   },
 
@@ -574,7 +594,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify({ actorName, actorId }),
     });
-    if (!res.ok) throw new Error('KMS KEK Key Rotation Failed');
+    await throwIfNotOk(res, 'KMS 마스터 키 로테이션 실패');
     return await res.json();
   },
 
@@ -584,7 +604,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify({ provider }),
     });
-    if (!res.ok) throw new Error('Failed to switch KMS Provider');
+    await throwIfNotOk(res, 'KMS 제공자 전환 실패');
     return await res.json();
   },
 

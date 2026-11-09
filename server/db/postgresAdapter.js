@@ -433,8 +433,12 @@ export class PostgresDatabaseAdapter {
     };
   }
 
-  rotateVaultMasterKey() {
-    const rotation = vaultService.rotateKmsMasterKey();
+  deleteCredential(key) {
+    this.mockStore.credentials.delete(key);
+    return { deleted: true, key, configured: false, maskedHint: null, updatedAt: null };
+  }
+
+  reWrapAllCredentials() {
     let reWrappedCount = 0;
     for (const [key, record] of this.mockStore.credentials.entries()) {
       if (record.wrappedDek) {
@@ -455,10 +459,16 @@ export class PostgresDatabaseAdapter {
         } catch (e) {}
       }
     }
+    return { reWrappedCount, totalCredentials: this.mockStore.credentials.size };
+  }
+
+  rotateVaultMasterKey() {
+    const rotation = vaultService.rotateKmsMasterKey();
+    const { reWrappedCount, totalCredentials } = this.reWrapAllCredentials();
     return {
       ...rotation,
       reWrappedCount,
-      totalCredentials: this.mockStore.credentials.size,
+      totalCredentials,
     };
   }
 

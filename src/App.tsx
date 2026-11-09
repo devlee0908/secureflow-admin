@@ -29,6 +29,65 @@ const ViewFallback: React.FC = () => (
   </div>
 );
 
+interface ErrorBoundaryState {
+  hasError: boolean;
+  errorMessage: string | null;
+}
+
+class ViewErrorBoundary extends React.Component<
+  { children: React.ReactNode; resetKey?: string },
+  ErrorBoundaryState
+> {
+  constructor(props: { children: React.ReactNode; resetKey?: string }) {
+    super(props);
+    this.state = { hasError: false, errorMessage: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return {
+      hasError: true,
+      errorMessage: error?.message || '예기치 않은 화면 렌더링 오류가 발생했습니다.',
+    };
+  }
+
+  componentDidUpdate(prevProps: { resetKey?: string }) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false, errorMessage: null });
+    }
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('[ViewErrorBoundary Caught Error]:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full min-h-[380px] flex flex-col items-center justify-center p-8 text-center rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#0f0f11]">
+          <div className="w-11 h-11 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-3">
+            <AlertCircle className="w-5 h-5" />
+          </div>
+          <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-50 mb-1">
+            화면 모듈 렌더링 중 예외가 감지되었습니다
+          </h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mb-4 font-mono">
+            {this.state.errorMessage}
+          </p>
+          <Button
+            size="sm"
+            onClick={() => this.setState({ hasError: false, errorMessage: null })}
+            className="h-8 text-xs bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 font-semibold"
+          >
+            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+            화면 복구 및 다시 시도
+          </Button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const AppContent: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<ActiveMenu>('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -126,39 +185,41 @@ const AppContent: React.FC = () => {
         />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full space-y-6">
-          <Suspense fallback={<ViewFallback />}>
-            {activeMenu === 'dashboard' && (
-              <DashboardView onNavigate={handleNavigate} />
-            )}
-            {activeMenu === 'projects' && (
-              <ProjectsView
-                onNavigate={handleNavigate}
-                initialFilter={navigationFilter}
-              />
-            )}
-            {activeMenu === 'scans' && (
-              <ScansView initialFilter={navigationFilter} />
-            )}
-            {activeMenu === 'findings' && (
-              <FindingsView initialFilter={navigationFilter} />
-            )}
-            {activeMenu === 'reviews' && (
-              <DeploymentReviewsView
-                initialReviewId={navigationFilter?.reviewId}
-                onNavigate={handleNavigate}
-              />
-            )}
-            {activeMenu === 'policies' && (
-              <PoliciesView
-                initialTab={navigationFilter?.tab}
-                onNavigate={handleNavigate}
-              />
-            )}
-            {activeMenu === 'audit' && <AuditLogsView />}
-            {activeMenu === 'settings' && (
-              <SettingsView initialTab={navigationFilter?.tab} />
-            )}
-          </Suspense>
+          <ViewErrorBoundary resetKey={activeMenu}>
+            <Suspense fallback={<ViewFallback />}>
+              {activeMenu === 'dashboard' && (
+                <DashboardView onNavigate={handleNavigate} />
+              )}
+              {activeMenu === 'projects' && (
+                <ProjectsView
+                  onNavigate={handleNavigate}
+                  initialFilter={navigationFilter}
+                />
+              )}
+              {activeMenu === 'scans' && (
+                <ScansView initialFilter={navigationFilter} />
+              )}
+              {activeMenu === 'findings' && (
+                <FindingsView initialFilter={navigationFilter} />
+              )}
+              {activeMenu === 'reviews' && (
+                <DeploymentReviewsView
+                  initialReviewId={navigationFilter?.reviewId}
+                  onNavigate={handleNavigate}
+                />
+              )}
+              {activeMenu === 'policies' && (
+                <PoliciesView
+                  initialTab={navigationFilter?.tab}
+                  onNavigate={handleNavigate}
+                />
+              )}
+              {activeMenu === 'audit' && <AuditLogsView />}
+              {activeMenu === 'settings' && (
+                <SettingsView initialTab={navigationFilter?.tab} />
+              )}
+            </Suspense>
+          </ViewErrorBoundary>
         </main>
 
         <footer className="border-t border-zinc-200/80 dark:border-white/[0.08] bg-white dark:bg-[#09090b] py-3.5 px-4 sm:px-6 lg:px-8 transition-colors">

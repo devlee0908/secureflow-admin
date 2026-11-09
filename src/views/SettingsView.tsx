@@ -228,10 +228,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
       setGithubPat('');
       setPatDiagnosticResult({ status: null });
       try {
-        await api.saveGithubPatToVault('', currentUser.name, currentUser.id);
+        await api.clearGithubPatFromVault(currentUser.name, currentUser.id);
         await refreshVaultStatus();
       } catch {}
-      toast.info('저장된 GitHub PAT가 초기화되었습니다.');
+      toast.info('저장된 GitHub PAT가 보안 금고(Vault)에서 초기화되었습니다.');
     } catch {}
   };
 
@@ -535,8 +535,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
 
       {/* Permission simulation alert */}
       {!isGroupAdmin && (
-        <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+        <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl text-amber-800 dark:text-amber-300 text-xs flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span>
             현재 역할({currentUser.roleTitle})에서는 설정이 <strong>조회 전용(Read-only)</strong> 모드로 동작합니다.
             설정을 수정하려면 우측 상단 프로필에서 <strong>[그룹 보안관리자]</strong>로 전환해주세요.

@@ -228,8 +228,8 @@ export const PoliciesView: React.FC<PoliciesViewProps> = ({
 
       {/* Permission simulation alert */}
       {!isGroupAdmin && (
-        <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+        <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl text-amber-800 dark:text-amber-300 text-xs flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span>
             현재 역할({currentUser.roleTitle})에서는 정책이 <strong>조회 전용(Read-only)</strong> 모드로 동작합니다.
             정책을 수정하려면 우측 상단 프로필에서 <strong>[그룹 보안관리자]</strong>로 전환해주세요.
