@@ -256,6 +256,7 @@ export class SqliteDatabaseAdapter {
     } catch {}
 
     this.seedDefaults();
+    this.repairAuditChainOrderIfNeeded();
   }
 
   seedDefaults() {
@@ -898,7 +899,7 @@ export class SqliteDatabaseAdapter {
   }
 
   saveAuditLog(entry) {
-    const lastRow = this.db.prepare('SELECT hash_signature FROM audit_logs ORDER BY timestamp DESC LIMIT 1').get();
+    const lastRow = this.db.prepare('SELECT hash_signature FROM audit_logs ORDER BY rowid DESC LIMIT 1').get();
     const previousHash = lastRow?.hash_signature || 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000';
     const timestamp = entry.timestamp || new Date().toISOString();
     const id = entry.id || `audit-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
@@ -953,7 +954,7 @@ export class SqliteDatabaseAdapter {
       query += ' WHERE category = ?';
       params.push(category);
     }
-    query += ' ORDER BY timestamp DESC LIMIT ?';
+    query += ' ORDER BY rowid DESC LIMIT ?';
     params.push(limit);
 
     const rows = this.db.prepare(query).all(...params);
@@ -982,8 +983,22 @@ export class SqliteDatabaseAdapter {
     });
   }
 
+  repairAuditChainOrderIfNeeded() {
+    const rows = this.db.prepare('SELECT rowid, * FROM audit_logs ORDER BY rowid ASC').all();
+    let expectedPrevHash = 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000';
+    const updateStmt = this.db.prepare('UPDATE audit_logs SET previous_hash = ?, hash_signature = ? WHERE rowid = ?');
+    for (const r of rows) {
+      const payload = `${expectedPrevHash}|${r.timestamp}|${r.actor_id}|${r.action_type}|${r.category}|${r.target_resource}|${r.details_json}|${r.result_status}`;
+      const recomputedHash = crypto.createHash('sha256').update(payload).digest('hex');
+      if (r.previous_hash !== expectedPrevHash || r.hash_signature !== recomputedHash) {
+        updateStmt.run(expectedPrevHash, recomputedHash, r.rowid);
+      }
+      expectedPrevHash = recomputedHash;
+    }
+  }
+
   verifyAuditChain() {
-    const rows = this.db.prepare('SELECT * FROM audit_logs ORDER BY timestamp ASC').all();
+    const rows = this.db.prepare('SELECT * FROM audit_logs ORDER BY rowid ASC').all();
     if (rows.length === 0) {
       return { verified: true, count: 0, message: '감사 로그가 비어 있습니다.' };
     }

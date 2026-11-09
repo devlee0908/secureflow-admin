@@ -13,7 +13,36 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const KEYRING_STATE_PATH = path.join(__dirname, '..', 'data', 'kms-keyring.json');
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const KEYRING_STATE_PATH = path.join(DATA_DIR, 'kms-keyring.json');
+const MASTER_KEY_FILE_PATH = path.join(DATA_DIR, '.vault_master_key');
+
+/**
+ * Resolves the Root Master Key Encryption Key (KEK) secret.
+ * Priority:
+ *  1. process.env.SECUREFLOW_MASTER_KEK (Production Secret Manager / Env Var)
+ *  2. Auto-generated 256-bit high-entropy key persisted at server/data/.vault_master_key (0600 permissions)
+ */
+export function getOrCreateRootMasterSecret() {
+  if (process.env.SECUREFLOW_MASTER_KEK && process.env.SECUREFLOW_MASTER_KEK.trim().length >= 16) {
+    return process.env.SECUREFLOW_MASTER_KEK.trim();
+  }
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (fs.existsSync(MASTER_KEY_FILE_PATH)) {
+      const saved = fs.readFileSync(MASTER_KEY_FILE_PATH, 'utf8').trim();
+      if (saved.length >= 32) return saved;
+    }
+    const generated = `sf-root-kek-${crypto.randomBytes(32).toString('hex')}`;
+    fs.writeFileSync(MASTER_KEY_FILE_PATH, generated, { encoding: 'utf8', mode: 0o600 });
+    return generated;
+  } catch (err) {
+    console.warn('[KMS] Fallback to ephemeral root secret:', err.message);
+    return 'sf-master-kek-enterprise-root-2026';
+  }
+}
 
 function loadKeyringState() {
   try {
@@ -26,13 +55,12 @@ function loadKeyringState() {
 
 function saveKeyringState(patch) {
   try {
-    const dir = path.dirname(KEYRING_STATE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
     }
     const current = loadKeyringState();
     const next = { ...current, ...patch, updatedAt: new Date().toISOString() };
-    fs.writeFileSync(KEYRING_STATE_PATH, JSON.stringify(next, null, 2), 'utf8');
+    fs.writeFileSync(KEYRING_STATE_PATH, JSON.stringify(next, null, 2), { encoding: 'utf8', mode: 0o600 });
   } catch (err) {
     console.warn('[KMS] Failed to persist keyring state:', err.message);
   }
@@ -67,7 +95,7 @@ export class BaseKmsProvider {
  * Maintains a persistent versioned Key Ring for zero-downtime key rotation across restarts.
  */
 export class LocalSoftwareHsmProvider extends BaseKmsProvider {
-  constructor(secret = process.env.SECUREFLOW_MASTER_KEK || 'sf-master-kek-enterprise-root-2026') {
+  constructor(secret = getOrCreateRootMasterSecret()) {
     super('Local Software HSM (FIPS 140-3 Mode)', 'software-hsm');
     this.secret = secret;
     this.keyRing = new Map();
@@ -227,27 +255,66 @@ export class LocalSoftwareHsmProvider extends BaseKmsProvider {
 
 /**
  * 2. HashiCorp Vault Transit Secrets Engine Provider
- * Simulates enterprise HashiCorp Vault /v1/transit/keys/secureflow-kek integration.
+ * Simulates enterprise HashiCorp Vault /v1/transit/keys/secureflow-kek integration
+ * with deterministic key derivation and persistent keyring state across restarts.
  */
 export class HashiCorpVaultKmsProvider extends BaseKmsProvider {
-  constructor(vaultAddr = 'https://vault.internal.corp:8200') {
+  constructor(vaultAddr = process.env.VAULT_ADDR || 'https://vault.internal.corp:8200', secret = getOrCreateRootMasterSecret()) {
     super('HashiCorp Vault Transit KMS', 'hashicorp-vault');
     this.vaultAddr = vaultAddr;
+    this.secret = secret;
     this.mountPath = 'transit';
     this.keyName = 'secureflow-kek';
     this.currentVersion = 1;
     this.rotationCount = 0;
-    this.activeKeyId = `vault://${this.mountPath}/keys/${this.keyName}/v${this.currentVersion}`;
+    this.lastRotatedAt = new Date().toISOString();
     this.vaultKeyStore = new Map();
 
-    // Seed initial vault key
-    const initialKey = crypto.randomBytes(32);
-    this.vaultKeyStore.set(1, initialKey);
+    // Seed initial vault key v1
+    this.ensureVersionKey(1);
+
+    // Restore persisted state if available
+    const persisted = loadKeyringState().hashicorpVault;
+    if (persisted && persisted.currentVersion >= 1) {
+      for (let v = 1; v <= persisted.currentVersion; v++) {
+        this.ensureVersionKey(v);
+      }
+      this.currentVersion = persisted.currentVersion;
+      this.rotationCount = persisted.rotationCount || Math.max(0, this.currentVersion - 1);
+      if (persisted.lastRotatedAt) this.lastRotatedAt = persisted.lastRotatedAt;
+    }
+
+    this.activeKeyId = `vault://${this.mountPath}/keys/${this.keyName}/v${this.currentVersion}`;
+  }
+
+  ensureVersionKey(version) {
+    if (!this.vaultKeyStore.has(version)) {
+      const derived = crypto.pbkdf2Sync(
+        this.secret,
+        `hashicorp-vault-transit-${this.keyName}-v${version}`,
+        100000,
+        32,
+        'sha256'
+      );
+      this.vaultKeyStore.set(version, derived);
+    }
+    return this.vaultKeyStore.get(version);
+  }
+
+  persistState() {
+    saveKeyringState({
+      hashicorpVault: {
+        currentVersion: this.currentVersion,
+        rotationCount: this.rotationCount,
+        activeKeyId: this.activeKeyId,
+        lastRotatedAt: this.lastRotatedAt,
+      },
+    });
   }
 
   wrapKey(dekBuffer) {
     const version = this.currentVersion;
-    const key = this.vaultKeyStore.get(version);
+    const key = this.ensureVersionKey(version);
     const iv = crypto.randomBytes(12);
     const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
     let wrapped = cipher.update(dekBuffer, null, 'hex');
@@ -268,18 +335,22 @@ export class HashiCorpVaultKmsProvider extends BaseKmsProvider {
     let version = this.currentVersion;
     let ivHex, authTagHex, wrappedHex;
 
-    if (parts[0] === 'vault' && parts[1].startsWith('v')) {
+    if (parts[0] === 'vault' && parts[1]?.startsWith('v')) {
       version = parseInt(parts[1].replace('v', ''), 10);
       ivHex = parts[2];
       authTagHex = parts[3];
       wrappedHex = parts[4];
     } else {
+      if (kekId) {
+        const match = kekId.match(/\/v(\d+)$/);
+        if (match) version = parseInt(match[1], 10);
+      }
       ivHex = parts[0];
       authTagHex = parts[1];
       wrappedHex = parts[2];
     }
 
-    const key = this.vaultKeyStore.get(version);
+    const key = this.ensureVersionKey(version);
     if (!key) throw new Error(`Vault Transit key version v${version} not found in keyring`);
 
     const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(ivHex, 'hex'));
@@ -291,16 +362,20 @@ export class HashiCorpVaultKmsProvider extends BaseKmsProvider {
   }
 
   rotateKey() {
+    const previousKeyId = this.activeKeyId;
     this.currentVersion++;
     this.rotationCount++;
-    this.vaultKeyStore.set(this.currentVersion, crypto.randomBytes(32));
+    this.lastRotatedAt = new Date().toISOString();
+    this.ensureVersionKey(this.currentVersion);
     this.activeKeyId = `vault://${this.mountPath}/keys/${this.keyName}/v${this.currentVersion}`;
+    this.persistState();
 
     return {
       newKeyId: this.activeKeyId,
+      previousKeyId,
       version: this.currentVersion,
       totalKeyVersions: this.vaultKeyStore.size,
-      rotatedAt: new Date().toISOString(),
+      rotatedAt: this.lastRotatedAt,
     };
   }
 
@@ -314,28 +389,73 @@ export class HashiCorpVaultKmsProvider extends BaseKmsProvider {
       fipsCompliant: true,
       algorithm: 'Vault Transit AES-256-GCM',
       status: `ONLINE (Connected: ${this.vaultAddr})`,
-      lastRotatedAt: new Date().toISOString(),
+      lastRotatedAt: this.lastRotatedAt,
     };
   }
 }
 
 /**
  * 3. AWS Cloud KMS Provider
- * Simulates AWS KMS Customer Managed Key (CMK) Envelope Encryption.
+ * Simulates AWS KMS Customer Managed Key (CMK) Envelope Encryption
+ * with deterministic key derivation and persistent keyring state across restarts.
  */
 export class AwsCloudKmsProvider extends BaseKmsProvider {
-  constructor(keyArn = 'arn:aws:kms:ap-northeast-2:123456789012:key/secureflow-master-kek') {
+  constructor(
+    keyArn = process.env.AWS_KMS_KEY_ARN || 'arn:aws:kms:ap-northeast-2:123456789012:key/secureflow-master-kek',
+    secret = getOrCreateRootMasterSecret()
+  ) {
     super('AWS Cloud KMS (Multi-Region CMK)', 'aws-kms');
     this.keyArn = keyArn;
+    this.secret = secret;
     this.keyVersion = 1;
     this.rotationCount = 0;
-    this.activeKeyId = `${keyArn}/v${this.keyVersion}`;
+    this.lastRotatedAt = new Date().toISOString();
     this.awsKeyStore = new Map();
-    this.awsKeyStore.set(1, crypto.randomBytes(32));
+
+    // Seed initial key v1
+    this.ensureVersionKey(1);
+
+    // Restore persisted state if available
+    const persisted = loadKeyringState().awsKms;
+    if (persisted && persisted.keyVersion >= 1) {
+      for (let v = 1; v <= persisted.keyVersion; v++) {
+        this.ensureVersionKey(v);
+      }
+      this.keyVersion = persisted.keyVersion;
+      this.rotationCount = persisted.rotationCount || Math.max(0, this.keyVersion - 1);
+      if (persisted.lastRotatedAt) this.lastRotatedAt = persisted.lastRotatedAt;
+    }
+
+    this.activeKeyId = `${this.keyArn}/v${this.keyVersion}`;
+  }
+
+  ensureVersionKey(version) {
+    if (!this.awsKeyStore.has(version)) {
+      const derived = crypto.pbkdf2Sync(
+        this.secret,
+        `aws-kms-cmk-${this.keyArn}-v${version}`,
+        100000,
+        32,
+        'sha256'
+      );
+      this.awsKeyStore.set(version, derived);
+    }
+    return this.awsKeyStore.get(version);
+  }
+
+  persistState() {
+    saveKeyringState({
+      awsKms: {
+        keyVersion: this.keyVersion,
+        rotationCount: this.rotationCount,
+        activeKeyId: this.activeKeyId,
+        lastRotatedAt: this.lastRotatedAt,
+      },
+    });
   }
 
   wrapKey(dekBuffer) {
-    const key = this.awsKeyStore.get(this.keyVersion);
+    const key = this.ensureVersionKey(this.keyVersion);
     const iv = crypto.randomBytes(12);
     const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
     let wrapped = cipher.update(dekBuffer, null, 'hex');
@@ -356,18 +476,22 @@ export class AwsCloudKmsProvider extends BaseKmsProvider {
     let version = this.keyVersion;
     let ivHex, authTagHex, wrappedHex;
 
-    if (parts[0] === 'awskms' && parts[1].startsWith('v')) {
+    if (parts[0] === 'awskms' && parts[1]?.startsWith('v')) {
       version = parseInt(parts[1].replace('v', ''), 10);
       ivHex = parts[2];
       authTagHex = parts[3];
       wrappedHex = parts[4];
     } else {
+      if (kekId) {
+        const match = kekId.match(/\/v(\d+)$/);
+        if (match) version = parseInt(match[1], 10);
+      }
       ivHex = parts[0];
       authTagHex = parts[1];
       wrappedHex = parts[2];
     }
 
-    const key = this.awsKeyStore.get(version);
+    const key = this.ensureVersionKey(version);
     if (!key) throw new Error(`AWS KMS key version v${version} not found`);
 
     const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(ivHex, 'hex'));
@@ -379,16 +503,20 @@ export class AwsCloudKmsProvider extends BaseKmsProvider {
   }
 
   rotateKey() {
+    const previousKeyId = this.activeKeyId;
     this.keyVersion++;
     this.rotationCount++;
-    this.awsKeyStore.set(this.keyVersion, crypto.randomBytes(32));
+    this.lastRotatedAt = new Date().toISOString();
+    this.ensureVersionKey(this.keyVersion);
     this.activeKeyId = `${this.keyArn}/v${this.keyVersion}`;
+    this.persistState();
 
     return {
       newKeyId: this.activeKeyId,
+      previousKeyId,
       version: this.keyVersion,
       totalKeyVersions: this.awsKeyStore.size,
-      rotatedAt: new Date().toISOString(),
+      rotatedAt: this.lastRotatedAt,
     };
   }
 
@@ -402,7 +530,7 @@ export class AwsCloudKmsProvider extends BaseKmsProvider {
       fipsCompliant: true,
       algorithm: 'AWS KMS Envelope / AES-256-GCM',
       status: 'ONLINE (AWS KMS CMK Attached)',
-      lastRotatedAt: new Date().toISOString(),
+      lastRotatedAt: this.lastRotatedAt,
     };
   }
 }

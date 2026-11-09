@@ -7,8 +7,38 @@ import { notificationService } from './notifications.js';
 import { vaultService } from './vault.js';
 import { securityGuard } from './securityGuard.js';
 import { sbomGenerator } from './sbomGenerator.js';
+import { authService } from './auth.js';
 
 const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET || 'secureflow-secret-key-2026';
+
+function enforceRbac(req, res, pathname, allowedRoles) {
+  const rbac = authService.authorize(req, allowedRoles);
+  if (!rbac.allowed) {
+    try {
+      const audit = dbService.saveAuditLog({
+        actorId: rbac.user?.id || 'anonymous',
+        actorName: rbac.user?.name || 'Unauthenticated Client',
+        actorRole: rbac.user?.roleLabel || '권한 없음',
+        actionType: 'RBAC_ACCESS_DENIED',
+        category: 'SECURITY_GATE',
+        targetResource: pathname,
+        details: {
+          requiredRoles: allowedRoles,
+          attemptedRole: rbac.user?.role || 'none',
+          statusCode: rbac.statusCode,
+        },
+        resultStatus: '차단',
+      });
+      sseService.broadcast('audit_logged', { log: audit });
+    } catch {}
+    sendJson(res, rbac.statusCode, {
+      error: rbac.error,
+      message: rbac.message,
+    });
+    return null;
+  }
+  return rbac;
+}
 
 function sendJson(res, statusCode, data) {
   const secHeaders = securityGuard.getSecurityHeaders(res._rateLimit);
@@ -112,6 +142,52 @@ export function apiMiddleware(req, res, next) {
     }
 
     try {
+      // 0. Zero-Trust JWT / OIDC Authentication & Session Verification Endpoints
+      if ((pathname === '/api/auth/login' || pathname === '/api/auth/sso') && req.method === 'POST') {
+        const { email, role = 'group_admin', provider = pathname.endsWith('/sso') ? 'oidc-sso' : 'credentials' } = parsedBody;
+        const session = authService.authenticate({ email, role, provider });
+
+        const audit = dbService.saveAuditLog({
+          actorId: session.user.id,
+          actorName: session.user.name,
+          actorRole: session.user.roleLabel,
+          actionType: provider === 'oidc-sso' ? 'AUTH_OIDC_SSO_LOGIN' : 'AUTH_JWT_LOGIN',
+          category: 'GOVERNANCE',
+          targetResource: `JWT Session (${session.sessionId})`,
+          details: {
+            email: session.user.email,
+            role: session.user.role,
+            provider,
+            expiresAt: session.expiresAt,
+            ip: clientIp,
+          },
+          resultStatus: '성공',
+        });
+        sseService.broadcast('audit_logged', { log: audit });
+
+        return sendJson(res, 200, {
+          success: true,
+          token: session.token,
+          expiresAt: session.expiresAt,
+          sessionId: session.sessionId,
+          user: session.user,
+        });
+      }
+
+      if (pathname === '/api/auth/session' && req.method === 'GET') {
+        const extracted = authService.extractRequestUser(req);
+        if (!extracted.authenticated) {
+          return sendJson(res, 401, {
+            authenticated: false,
+            error: extracted.error || 'No active bearer token',
+          });
+        }
+        return sendJson(res, 200, {
+          authenticated: true,
+          user: extracted.user,
+        });
+      }
+
       // 1. Health check & Pluggable Database Engine Info & Scanner Worker Pool Telemetry
       if (pathname === '/api/health' && req.method === 'GET') {
         const stats = dbService.getStats();
@@ -216,6 +292,7 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/database/switch' && req.method === 'POST') {
+        if (!enforceRbac(req, res, pathname, ['group_admin'])) return;
         const { engine } = parsedBody;
         const switched = dbService.switchEngine(engine);
         sseService.broadcast('database_engine_changed', { engineInfo: switched });
@@ -285,12 +362,14 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/policy' && (req.method === 'POST' || req.method === 'PUT')) {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin']);
+        if (!rbac) return;
         const { policy, actor } = parsedBody;
         const saved = dbService.savePolicy(policy || parsedBody);
         const auditLog = dbService.saveAuditLog({
-          actorId: actor?.id || 'ciso-admin',
-          actorName: actor?.name || '강태우 (CISO)',
-          actorRole: actor?.role || '그룹 보안총괄',
+          actorId: rbac.user?.id || actor?.id || 'ciso-admin',
+          actorName: rbac.user?.name || actor?.name || '강태우 (CISO)',
+          actorRole: rbac.user?.roleLabel || actor?.role || '그룹 보안총괄',
           actionType: 'SECURITY_POLICY_UPDATED',
           category: 'GOVERNANCE',
           targetResource: '전사 배포 게이트 보안 정책',
@@ -307,12 +386,14 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/git-config' && (req.method === 'POST' || req.method === 'PUT')) {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin', 'entity_manager']);
+        if (!rbac) return;
         const { gitConfig, actor } = parsedBody;
         const saved = dbService.saveGitConfig(gitConfig || parsedBody);
         const auditLog = dbService.saveAuditLog({
-          actorId: actor?.id || 'ciso-admin',
-          actorName: actor?.name || '강태우 (CISO)',
-          actorRole: actor?.role || '그룹 보안총괄',
+          actorId: rbac.user?.id || actor?.id || 'ciso-admin',
+          actorName: rbac.user?.name || actor?.name || '강태우 (CISO)',
+          actorRole: rbac.user?.roleLabel || actor?.role || '그룹 보안총괄',
           actionType: 'GIT_ADAPTER_CONFIG_UPDATED',
           category: 'INTEGRATION',
           targetResource: `${saved.serverType} (${saved.serverUrl})`,
@@ -715,6 +796,8 @@ export function apiMiddleware(req, res, next) {
 
       // 8. Emergency Security Override
       if (pathname === '/api/overrides' && req.method === 'POST') {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin']);
+        if (!rbac) return;
         const { runId, projectId, approver, reason, detail, slaHours } = parsedBody;
         const run = dbService.getRunById(runId);
         const targetProjectId = projectId || run?.projectId || 'PRJ-AGENTGATE';
@@ -814,6 +897,8 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/credentials/github' && req.method === 'POST') {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin', 'entity_manager']);
+        if (!rbac) return;
         const { token, actorName, actorId } = parsedBody;
         if (!token) {
           return sendJson(res, 400, { error: '토큰이 제공되지 않았습니다.' });
@@ -821,9 +906,9 @@ export function apiMiddleware(req, res, next) {
         const saved = dbService.saveCredential('github_pat', token);
 
         const audit = dbService.saveAuditLog({
-          actorId: actorId || 'admin',
-          actorName: actorName || 'Security Administrator',
-          actorRole: '보안 관리자',
+          actorId: rbac.user?.id || actorId || 'admin',
+          actorName: rbac.user?.name || actorName || 'Security Administrator',
+          actorRole: rbac.user?.roleLabel || '보안 관리자',
           actionType: 'CREDENTIAL_VAULT_SAVE',
           category: 'INTEGRATION',
           targetResource: 'GitHub PAT Vault',
@@ -854,11 +939,13 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/vault/kms/rotate' && req.method === 'POST') {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin']);
+        if (!rbac) return;
         const rotationResult = dbService.rotateVaultMasterKey();
         const audit = dbService.saveAuditLog({
-          actorId: parsedBody.actorId || 'ciso-admin',
-          actorName: parsedBody.actorName || '강태우 (CISO)',
-          actorRole: '그룹 보안총괄(CISO)',
+          actorId: rbac.user?.id || parsedBody.actorId || 'ciso-admin',
+          actorName: rbac.user?.name || parsedBody.actorName || '강태우 (CISO)',
+          actorRole: rbac.user?.roleLabel || '그룹 보안총괄(CISO)',
           actionType: 'KMS_KEK_ROTATED',
           category: 'AUDIT',
           targetResource: `KMS KEK: ${rotationResult.newKeyId}`,
@@ -886,13 +973,15 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/vault/kms/provider' && req.method === 'POST') {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin']);
+        if (!rbac) return;
         const { provider } = parsedBody;
         try {
           const info = vaultService.setKmsProvider(provider);
           const audit = dbService.saveAuditLog({
-            actorId: parsedBody.actorId || 'ciso-admin',
-            actorName: parsedBody.actorName || '강태우 (CISO)',
-            actorRole: '그룹 보안총괄',
+            actorId: rbac.user?.id || parsedBody.actorId || 'ciso-admin',
+            actorName: rbac.user?.name || parsedBody.actorName || '강태우 (CISO)',
+            actorRole: rbac.user?.roleLabel || '그룹 보안총괄',
             actionType: 'KMS_PROVIDER_SWITCH',
             category: 'GOVERNANCE',
             targetResource: info.providerName,

@@ -528,21 +528,24 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [theme]);
 
   const login = (role?: UserRole) => {
+    const resolvedRole = role || currentUserRole;
     if (role) {
       setCurrentUserRole(role);
     }
     setIsAuthenticated(true);
     localStorage.setItem('secureflow_auth', 'true');
+    api.loginSession({ role: resolvedRole, provider: 'oidc-sso' }).catch(() => {});
     toast.success('보안 인증이 완료되었습니다', {
-      description: 'SecureFlow DevSecOps 통합 관리 대시보드에 접속했습니다.',
+      description: 'RFC 7519 JWT 보안 세션이 발급되어 SecureFlow 대시보드에 접속했습니다.',
     });
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('secureflow_auth');
+    api.clearSessionToken();
     toast.info('로그아웃되었습니다', {
-      description: '보안 세션이 안전하게 종료되었습니다.',
+      description: '보안 세션 및 JWT 토큰이 안전하게 파기되었습니다.',
     });
   };
 
@@ -551,12 +554,15 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return DEMO_USERS[currentUserRole];
   }, [currentUserRole]);
 
-  // Adjust entity selector when role changes
+  // Adjust entity selector and re-issue role-scoped JWT token when role changes while authenticated
   useEffect(() => {
     if (currentUser.role === 'entity_manager' && currentUser.entityId) {
       setSelectedEntityId(currentUser.entityId);
     }
-  }, [currentUser]);
+    if (isAuthenticated) {
+      api.loginSession({ role: currentUser.role, email: currentUser.email, provider: 'role-switch' }).catch(() => {});
+    }
+  }, [currentUser, isAuthenticated]);
 
   // 1. O(1) Indexed Lookups via useMemo (Eliminates O(N*M) repeated filtering & sorting on table renders)
   const latestScanByProjectMap = useMemo(() => {

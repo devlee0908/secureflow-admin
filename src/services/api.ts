@@ -87,7 +87,64 @@ export interface BackendHealth {
   time?: string;
 }
 
+function getAuthHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...extra,
+  };
+  try {
+    const token = localStorage.getItem('secureflow_jwt_token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  } catch {}
+  return headers;
+}
+
 export const api = {
+  async loginSession(params: { email?: string; role: string; provider?: string }): Promise<{
+    success: boolean;
+    token: string;
+    expiresAt: string;
+    sessionId: string;
+    user: any;
+  } | null> {
+    try {
+      const endpoint = params.provider === 'oidc-sso' ? '/api/auth/sso' : '/api/auth/login';
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem('secureflow_jwt_token', data.token);
+      }
+      return data;
+    } catch {
+      return null;
+    }
+  },
+
+  async verifySession(): Promise<{ authenticated: boolean; user?: any } | null> {
+    try {
+      const res = await fetch('/api/auth/session', {
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) return { authenticated: false };
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  clearSessionToken() {
+    try {
+      localStorage.removeItem('secureflow_jwt_token');
+    } catch {}
+  },
+
   async getHealth(): Promise<BackendHealth | null> {
     try {
       const res = await fetch('/api/health');
@@ -123,7 +180,7 @@ export const api = {
     try {
       const res = await fetch('/api/database/switch', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ engine }),
       });
       if (!res.ok) throw new Error('Failed to switch database engine');
@@ -232,7 +289,7 @@ export const api = {
   }) {
     const res = await fetch('/api/overrides', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error('Failed to submit override');
@@ -297,7 +354,7 @@ export const api = {
   async saveGithubPatToVault(token: string, actorName?: string, actorId?: string) {
     const res = await fetch('/api/credentials/github', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ token, actorName, actorId }),
     });
     if (!res.ok) throw new Error('Failed to save PAT to secure vault');
@@ -514,7 +571,7 @@ export const api = {
   async rotateKmsKey(actorName?: string, actorId?: string): Promise<KmsRotationResult> {
     const res = await fetch('/api/vault/kms/rotate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ actorName, actorId }),
     });
     if (!res.ok) throw new Error('KMS KEK Key Rotation Failed');
@@ -524,7 +581,7 @@ export const api = {
   async switchKmsProvider(provider: string): Promise<any> {
     const res = await fetch('/api/vault/kms/provider', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ provider }),
     });
     if (!res.ok) throw new Error('Failed to switch KMS Provider');
@@ -646,7 +703,7 @@ export const api = {
     try {
       const res = await fetch('/api/policy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ policy, actor }),
       });
       if (!res.ok) return null;
@@ -660,7 +717,7 @@ export const api = {
     try {
       const res = await fetch('/api/git-config', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ gitConfig, actor }),
       });
       if (!res.ok) return null;
