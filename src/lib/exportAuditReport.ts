@@ -30,12 +30,25 @@ export interface AuditReportData {
 export function downloadAuditReportHtml(data: AuditReportData) {
   const docId = `SF-AUDIT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
   const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  const safeProjectName = escapeHtml(data.projectName || '');
+  const safeRepository = escapeHtml(data.repository || '');
+  const safeSourceBranch = escapeHtml(data.sourceBranch || '');
+  const safeTargetBranch = escapeHtml(data.targetBranch || '');
+  const safeCommitId = escapeHtml(data.commitId || '');
+  const safeAuthor = escapeHtml(data.author || '');
+  const safeReviewer = escapeHtml(data.reviewer || 'SECUREFLOW 보안 통제 게이트 (자동)');
+  const safeSecurityVerdict = escapeHtml(data.securityVerdict || '');
+  const safeApprovalStatus = escapeHtml(data.approvalStatus || '');
+  const safeReviewComment = escapeHtml(
+    data.reviewComment ||
+      '보안 점검 결함 3건에 대해 파라미터화 쿼리 및 패키지 보안 버전 업그레이드가 원격 브랜치에 정상 반영되었으며, 재검증 통과(Checks Green)를 확인하여 프로덕션 배포를 최종 승인함.'
+  );
 
   const html = `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>ISMS-P & ISO 27001 보안성 심사 감사 증적 보고서 - ${data.projectName}</title>
+  <title>ISMS-P & ISO 27001 보안성 심사 감사 증적 보고서 - ${safeProjectName}</title>
   <style>
     @page { size: A4; margin: 18mm; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; color: #1e293b; line-height: 1.5; font-size: 12px; margin: 0; padding: 24px; background: #fff; }
@@ -48,7 +61,7 @@ export function downloadAuditReportHtml(data: AuditReportData) {
     table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 16px; font-size: 11px; }
     th, td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left; }
     th { background: #f8fafc; font-weight: 700; color: #334155; }
-    .section-title { font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 18px; margin-bottom: 6px; border-left: 3px solid #4f46e5; padding-left: 8px; }
+    .section-title { font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 18px; margin-bottom: 6px; border-left: 3px solid #18181b; padding-left: 8px; }
     .code-box { font-family: "SFMono-Regular", Consolas, Menlo, monospace; font-size: 10.5px; padding: 8px; border-radius: 4px; overflow-x: auto; margin: 4px 0; }
     .code-bad { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
     .code-good { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
@@ -77,27 +90,27 @@ export function downloadAuditReportHtml(data: AuditReportData) {
   <table>
     <tr>
       <th style="width: 20%;">프로젝트명</th>
-      <td style="width: 30%;"><strong>${data.projectName}</strong></td>
+      <td style="width: 30%;"><strong>${safeProjectName}</strong></td>
       <th style="width: 20%;">형상 저장소 (Git)</th>
-      <td style="width: 30%;"><code>${data.repository}</code></td>
+      <td style="width: 30%;"><code>${safeRepository}</code></td>
     </tr>
     <tr>
       <th>점검 브랜치</th>
-      <td><code>${data.sourceBranch}</code> &rarr; <code>${data.targetBranch}</code></td>
+      <td><code>${safeSourceBranch}</code> &rarr; <code>${safeTargetBranch}</code></td>
       <th>배포 요청 커밋 SHA</th>
-      <td><code style="font-weight: bold;">@${data.commitId}</code></td>
+      <td><code style="font-weight: bold;">@${safeCommitId}</code></td>
     </tr>
     <tr>
       <th>개발/요청자</th>
-      <td>${data.author}</td>
+      <td>${safeAuthor}</td>
       <th>보안 심사관</th>
-      <td>${data.reviewer || 'SECUREFLOW 보안 통제 게이트 (자동)'}</td>
+      <td>${safeReviewer}</td>
     </tr>
     <tr>
       <th>보안 정책 판정</th>
-      <td><span class="badge ${data.securityVerdict === '통과' ? 'badge-pass' : 'badge-crit'}">${data.securityVerdict}</span></td>
+      <td><span class="badge ${data.securityVerdict === '통과' ? 'badge-pass' : 'badge-crit'}">${safeSecurityVerdict}</span></td>
       <th>배포 승인 상태</th>
-      <td><span class="badge ${data.approvalStatus === '승인' ? 'badge-pass' : 'badge-crit'}">${data.approvalStatus}</span></td>
+      <td><span class="badge ${data.approvalStatus === '승인' ? 'badge-pass' : 'badge-crit'}">${safeApprovalStatus}</span></td>
     </tr>
   </table>
 
@@ -137,16 +150,16 @@ export function downloadAuditReportHtml(data: AuditReportData) {
   ${data.issues.map((issue, idx) => `
     <div style="margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
       <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 11.5px;">
-        <span>#${idx + 1}. [${issue.severity}] ${issue.rule} (${issue.tool})</span>
-        <span style="font-family: monospace; color: #475569;">${issue.filePath}:${issue.lineNumber}</span>
+        <span>#${idx + 1}. [${escapeHtml(String(issue.severity || ''))}] ${escapeHtml(String(issue.rule || ''))} (${escapeHtml(String(issue.tool || ''))})</span>
+        <span style="font-family: monospace; color: #475569;">${escapeHtml(String(issue.filePath || ''))}:${escapeHtml(String(issue.lineNumber || ''))}</span>
       </div>
       <div style="margin-top: 6px;">
         <span style="font-size: 10px; color: #dc2626; font-weight: bold;">[조치 전] 취약한 원본 코드:</span>
-        <div class="code-box code-bad">${escapeHtml(issue.badCode)}</div>
+        <div class="code-box code-bad">${escapeHtml(String(issue.badCode || ''))}</div>
       </div>
       <div style="margin-top: 4px;">
         <span style="font-size: 10px; color: #16a34a; font-weight: bold;">[조치 후] 권장 패치 및 시큐어 코딩 적용 증적:</span>
-        <div class="code-box code-good">${escapeHtml(issue.goodCode)}</div>
+        <div class="code-box code-good">${escapeHtml(String(issue.goodCode || ''))}</div>
       </div>
     </div>
   `).join('')}
@@ -155,7 +168,7 @@ export function downloadAuditReportHtml(data: AuditReportData) {
   <div style="padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 12px;">
     <strong>심사관 검토 의견:</strong>
     <p style="margin: 4px 0 0 0; font-size: 11.5px; color: #334155;">
-      "${data.reviewComment || '보안 점검 결함 3건에 대해 파라미터화 쿼리 및 패키지 보안 버전 업그레이드가 원격 브랜치에 정상 반영되었으며, 재검증 통과(Checks Green)를 확인하여 프로덕션 배포를 최종 승인함.'}"
+      "${safeReviewComment}"
     </p>
   </div>
 
@@ -163,12 +176,12 @@ export function downloadAuditReportHtml(data: AuditReportData) {
     <div class="sig-item">
       <strong>개발/배포 요청자 (Dev Team)</strong>
       <div class="sig-line"></div>
-      <span style="font-size: 10.5px; color: #64748b;">${data.author} (인)</span>
+      <span style="font-size: 10.5px; color: #64748b;">${safeAuthor} (인)</span>
     </div>
     <div class="sig-item">
       <strong>보안 통제 책임관 / CISO (Sec Team)</strong>
       <div class="sig-line"></div>
-      <span style="font-size: 10.5px; color: #64748b;">${data.reviewer || 'SECUREFLOW 보안 통제 위원회'} (인)</span>
+      <span style="font-size: 10.5px; color: #64748b;">${safeReviewer} (인)</span>
     </div>
   </div>
 

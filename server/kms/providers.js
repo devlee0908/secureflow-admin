@@ -7,6 +7,36 @@
  */
 
 import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const KEYRING_STATE_PATH = path.join(__dirname, '..', 'data', 'kms-keyring.json');
+
+function loadKeyringState() {
+  try {
+    if (fs.existsSync(KEYRING_STATE_PATH)) {
+      return JSON.parse(fs.readFileSync(KEYRING_STATE_PATH, 'utf8'));
+    }
+  } catch {}
+  return {};
+}
+
+function saveKeyringState(patch) {
+  try {
+    const dir = path.dirname(KEYRING_STATE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const current = loadKeyringState();
+    const next = { ...current, ...patch, updatedAt: new Date().toISOString() };
+    fs.writeFileSync(KEYRING_STATE_PATH, JSON.stringify(next, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('[KMS] Failed to persist keyring state:', err.message);
+  }
+}
 
 export class BaseKmsProvider {
   constructor(name, type) {
@@ -34,27 +64,71 @@ export class BaseKmsProvider {
 /**
  * 1. Local Software HSM Provider
  * Uses AES-256-GCM / Key Wrap with PBKDF2 derived Master KEKs.
- * Maintains an internal versioned Key Ring for zero-downtime key rotation.
+ * Maintains a persistent versioned Key Ring for zero-downtime key rotation across restarts.
  */
 export class LocalSoftwareHsmProvider extends BaseKmsProvider {
   constructor(secret = process.env.SECUREFLOW_MASTER_KEK || 'sf-master-kek-enterprise-root-2026') {
     super('Local Software HSM (FIPS 140-3 Mode)', 'software-hsm');
+    this.secret = secret;
     this.keyRing = new Map();
     this.keyVersions = [];
     this.rotationCount = 0;
 
     // Initialize root key version 1
-    const rootKek = crypto.pbkdf2Sync(secret, 'secureflow-kek-salt-v1', 100000, 32, 'sha256');
     const initialKeyId = 'sf-kek-v1-2026-prod';
-    this.keyRing.set(initialKeyId, {
-      keyId: initialKeyId,
-      keyBuffer: rootKek,
-      version: 1,
-      createdAt: new Date().toISOString(),
-      algorithm: 'AES-256-KW (RFC 3394)',
-    });
-    this.keyVersions.push(initialKeyId);
+    this.ensureVersionKey(1, initialKeyId);
     this.activeKeyId = initialKeyId;
+
+    // Restore persisted rotated keys if any exist on disk
+    const persisted = loadKeyringState().softwareHsm;
+    if (persisted && Array.isArray(persisted.keys)) {
+      for (const k of persisted.keys) {
+        if (k.keyId && k.version) {
+          this.ensureVersionKey(k.version, k.keyId, k.createdAt);
+        }
+      }
+      if (persisted.activeKeyId && this.keyRing.has(persisted.activeKeyId)) {
+        this.activeKeyId = persisted.activeKeyId;
+      }
+      this.rotationCount = persisted.rotationCount || Math.max(0, this.keyVersions.length - 1);
+    }
+  }
+
+  deriveVersionKeyBuffer(version) {
+    return crypto.pbkdf2Sync(this.secret, `secureflow-kek-salt-v${version}`, 100000, 32, 'sha256');
+  }
+
+  ensureVersionKey(version, keyId, createdAt = new Date().toISOString()) {
+    const resolvedKeyId = keyId || `sf-kek-v${version}-2026-prod`;
+    if (!this.keyRing.has(resolvedKeyId)) {
+      const keyBuffer = this.deriveVersionKeyBuffer(version);
+      this.keyRing.set(resolvedKeyId, {
+        keyId: resolvedKeyId,
+        keyBuffer,
+        version,
+        createdAt,
+        algorithm: 'AES-256-KW (RFC 3394)',
+      });
+      if (!this.keyVersions.includes(resolvedKeyId)) {
+        this.keyVersions.push(resolvedKeyId);
+      }
+    }
+    return this.keyRing.get(resolvedKeyId);
+  }
+
+  persistState() {
+    const keys = Array.from(this.keyRing.values()).map((k) => ({
+      keyId: k.keyId,
+      version: k.version,
+      createdAt: k.createdAt,
+    }));
+    saveKeyringState({
+      softwareHsm: {
+        activeKeyId: this.activeKeyId,
+        rotationCount: this.rotationCount,
+        keys,
+      },
+    });
   }
 
   getActiveKey() {
@@ -85,7 +159,17 @@ export class LocalSoftwareHsmProvider extends BaseKmsProvider {
 
   unwrapKey(wrappedPayload, kekId) {
     const targetKeyId = kekId || this.activeKeyId;
-    const kekObj = this.keyRing.get(targetKeyId);
+    let kekObj = this.keyRing.get(targetKeyId);
+
+    // Deterministic recovery if keyId follows sf-kek-v{N}-... pattern
+    if (!kekObj && targetKeyId) {
+      const match = targetKeyId.match(/sf-kek-v(\d+)/);
+      if (match) {
+        const version = parseInt(match[1], 10);
+        kekObj = this.ensureVersionKey(version, targetKeyId);
+      }
+    }
+
     if (!kekObj) {
       throw new Error(`KEK [${targetKeyId}] not found in Software HSM Key Ring`);
     }
@@ -113,17 +197,9 @@ export class LocalSoftwareHsmProvider extends BaseKmsProvider {
     this.rotationCount++;
     const nextVersion = this.keyVersions.length + 1;
     const nextKeyId = `sf-kek-v${nextVersion}-${Date.now().toString(36)}-prod`;
-    const newKek = crypto.randomBytes(32);
-
-    this.keyRing.set(nextKeyId, {
-      keyId: nextKeyId,
-      keyBuffer: newKek,
-      version: nextVersion,
-      createdAt: new Date().toISOString(),
-      algorithm: 'AES-256-KW (RFC 3394)',
-    });
-    this.keyVersions.push(nextKeyId);
+    this.ensureVersionKey(nextVersion, nextKeyId, new Date().toISOString());
     this.activeKeyId = nextKeyId;
+    this.persistState();
 
     return {
       newKeyId: nextKeyId,

@@ -83,12 +83,25 @@ export function apiMiddleware(req, res, next) {
     });
   }
 
+  const MAX_BODY_SIZE = 2 * 1024 * 1024; // 2MB payload limit for DoS protection
   let rawBody = '';
+  let bodyTooLarge = false;
+
   req.on('data', (chunk) => {
+    if (bodyTooLarge) return;
     rawBody += chunk;
+    if (Buffer.byteLength(rawBody, 'utf8') > MAX_BODY_SIZE) {
+      bodyTooLarge = true;
+      sendJson(res, 413, {
+        error: 'Payload Too Large',
+        message: '요청 본문 크기가 최대 허용치(2MB)를 초과하여 차단되었습니다.',
+      });
+      req.destroy();
+    }
   });
 
   req.on('end', async () => {
+    if (bodyTooLarge) return;
     let parsedBody = {};
     if (rawBody) {
       try {
@@ -402,6 +415,17 @@ export function apiMiddleware(req, res, next) {
         const signature = req.headers['x-hub-signature-256'];
 
         if (signature && !verifyGitHubSignature(rawBody, signature)) {
+          securityGuard.recordSignatureBlock();
+          dbService.saveAuditLog({
+            actorId: 'webhook-guard',
+            actorName: 'GitHub Webhook Verifier',
+            actorRole: 'API 방화벽',
+            actionType: 'WEBHOOK_INVALID_SIGNATURE',
+            category: 'SECURITY_GATE',
+            targetResource: '/api/webhooks/github',
+            details: { ip: clientIp, eventType },
+            resultStatus: '차단',
+          });
           return sendJson(res, 401, { error: 'Invalid HMAC signature' });
         }
 
