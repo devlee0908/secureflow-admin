@@ -30,11 +30,11 @@ export const UnsavedChangesDialog: React.FC<UnsavedChangesDialogProps> = ({
     <AlertDialog open={open} onOpenChange={(v) => !v && onCancel()}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <div className="flex items-center gap-2 text-amber-600 mb-1">
+          <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-1">
             <AlertCircle className="w-5 h-5" />
             <AlertDialogTitle>{title}</AlertDialogTitle>
           </div>
-          <AlertDialogDescription className="text-slate-600">
+          <AlertDialogDescription className="text-zinc-600 dark:text-zinc-400">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>

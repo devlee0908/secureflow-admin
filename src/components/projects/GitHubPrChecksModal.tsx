@@ -1199,13 +1199,13 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                       </div>
 
                       {/* Remediation Action Banner in Bot Review Comment */}
-                      <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-indigo-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+                      <div className="p-3.5 rounded-lg bg-emerald-500/[0.08] border border-emerald-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                         <div className="space-y-0.5">
-                          <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                          <span className="font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
                             <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
                             <span>위 3건 보안 패치 코드 원격 저장소로 즉시 커밋 &amp; 푸시</span>
                           </span>
-                          <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                          <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
                             {isFixing
                               ? (patchProgressText || '원격 저장소에 보안 패치 커밋 푸시 진행 중...')
                               : `클릭 시 위 3개 파일(src/auth/session.ts, src/auth/jwt.ts, package.json)의 수정 코드를 ${cleanRepo} (${sourceBranch}) 브랜치로 즉시 푸시합니다.`}
@@ -1215,7 +1215,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                           size="sm"
                           onClick={handlePushFix}
                           disabled={isFixing}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-8 gap-1.5 shrink-0 shadow-sm"
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-8 gap-1.5 shrink-0"
                         >
                           {isFixing ? (
                             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -1225,13 +1225,13 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                           <span>
                             {isFixing
                               ? '원격 커밋 푸시 중...'
-                              : '3건 패치 코드 원격 푸시 🚀'}
+                              : '3건 패치 코드 원격 푸시'}
                           </span>
                         </Button>
                       </div>
 
                       {isPatchPushedToGithub && (
-                        <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs flex items-center gap-2">
+                        <div className="p-3 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs flex items-center gap-2">
                           <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                           <div>
                             <strong>GitHub 원격 브랜치 푸시 완료!</strong> <code>src/auth/session.ts</code>, <code>src/auth/jwt.ts</code>, <code>package.json</code> 3개 파일이 커밋되었으며, PR Checks가 성공(Green)으로 전환되었습니다.
@@ -1239,8 +1239,8 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/[0.06] text-xs">
-                        <span className="text-[11px] text-slate-500">
+                      <div className="flex items-center justify-between pt-2 border-t border-zinc-200 dark:border-white/[0.06] text-xs">
+                        <span className="text-[11px] text-zinc-500">
                           또는 로컬 터미널에서 소스코드를 수정한 뒤 <code>git commit && git push</code> 하셔도 자동 재검증됩니다.
                         </span>
                         <div className="flex items-center gap-2">
@@ -1262,11 +1262,11 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
 
               {/* 3. Security Team Gate Review Rejection Comment (Changes Requested) */}
               {rejectionInfo && (
-                <div className="p-4 rounded-xl border border-rose-300 dark:border-rose-500/50 bg-rose-50/70 dark:bg-rose-950/20 shadow-xs relative overflow-hidden space-y-2.5 animate-in fade-in">
+                <div className="p-4 rounded-xl border border-rose-300 dark:border-rose-500/40 bg-rose-50/70 dark:bg-rose-950/20 relative overflow-hidden space-y-2.5 animate-in fade-in">
                   <div className="absolute top-0 left-0 bottom-0 w-1 bg-rose-600" />
                   <div className="flex items-center justify-between pb-2 border-b border-rose-200/80 dark:border-rose-900/50 text-xs">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-[10px] shadow-2xs">
+                      <div className="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-[10px]">
                         <ShieldAlert className="w-3.5 h-3.5" />
                       </div>
                       <span className="font-bold text-rose-900 dark:text-rose-200">
@@ -1276,7 +1276,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                         Changes requested (반려됨)
                       </span>
                       {rejectionInfo.reviewedAt && (
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-zinc-400 font-mono">
                           {rejectionInfo.reviewedAt}
                         </span>
                       )}
@@ -1291,18 +1291,18 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                       <MessageSquare className="w-3.5 h-3.5 text-rose-600" />
                       <span>보안팀 심사 의견 / 반려 사유:</span>
                     </div>
-                    <p className="p-3 rounded-lg bg-white dark:bg-[#0d1117] border border-rose-200 dark:border-rose-900/60 text-slate-800 dark:text-slate-200 font-medium leading-relaxed shadow-2xs">
+                    <p className="p-3 rounded-lg bg-white dark:bg-[#09090b] border border-rose-200 dark:border-rose-900/60 text-zinc-800 dark:text-zinc-200 font-medium leading-relaxed">
                       "{rejectionInfo.comment}"
                     </p>
-                    <div className="p-2.5 rounded-lg bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/50 text-[11px] text-indigo-900 dark:text-indigo-300 flex items-center justify-between">
-                      <span>💡 <strong>개발자 후속 조치</strong>: 로컬 IDE에서 코드를 수정한 뒤 <code>git commit && git push</code>를 실행하면 자동 재검증 파이프라인이 가동됩니다.</span>
+                    <div className="p-2.5 rounded-lg bg-zinc-100 dark:bg-white/[0.04] border border-zinc-200 dark:border-white/[0.08] text-[11px] text-zinc-800 dark:text-zinc-300 flex items-center justify-between">
+                      <span><strong>개발자 후속 조치</strong>: 로컬 IDE에서 코드를 수정한 뒤 <code>git commit && git push</code>를 실행하면 자동 재검증 파이프라인이 가동됩니다.</span>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* 4. GitHub Checks summary box at the bottom of Conversation */}
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#161b22] space-y-3">
+              <div className="p-4 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] space-y-3">
                 <div className="flex items-center justify-between text-xs font-semibold">
                   <div className="flex items-center gap-2">
                     {currentStatus === 'passed' ? (
@@ -1312,7 +1312,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                     ) : (
                       <XCircle className="w-4 h-4 text-rose-500" />
                     )}
-                    <span className="text-slate-900 dark:text-white font-bold">
+                    <span className="text-zinc-900 dark:text-white font-bold">
                       {currentStatus === 'passed'
                         ? 'All checks have passed'
                         : currentStatus === 'running'
@@ -1320,13 +1320,13 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                         : 'All checks have failed'}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-500 font-mono">
+                  <span className="text-[11px] text-zinc-500 font-mono">
                     1 required check
                   </span>
                 </div>
 
-                <div className="space-y-2 text-xs border-t border-slate-100 dark:border-white/[0.06] pt-2.5">
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-white/[0.02]">
+                <div className="space-y-2 text-xs border-t border-zinc-100 dark:border-white/[0.06] pt-2.5">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 dark:bg-white/[0.02]">
                     <div className="flex items-center gap-2">
                       {currentStatus === 'passed' ? (
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
@@ -1335,7 +1335,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                       ) : (
                         <XCircle className="w-3.5 h-3.5 text-rose-500" />
                       )}
-                      <span className="font-mono font-bold text-slate-900 dark:text-white">
+                      <span className="font-mono font-bold text-zinc-900 dark:text-white">
                         SecureFlow / Security Gate (SAST, SCA, Secret, IaC)
                       </span>
                     </div>
@@ -1347,10 +1347,10 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-white/[0.02]">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 dark:bg-white/[0.02]">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                      <span className="font-mono text-slate-700 dark:text-slate-300">
+                      <span className="font-mono text-zinc-700 dark:text-zinc-300">
                         build / compile & unit-test
                       </span>
                     </div>
@@ -1373,19 +1373,19 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                 </div>
 
                 {/* Compliance & Audit Report Bar */}
-                <div className="pt-2.5 border-t border-slate-100 dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-sans flex items-center gap-1.5">
-                    <FileCheck2 className="w-3.5 h-3.5 text-indigo-500" />
+                <div className="pt-2.5 border-t border-zinc-100 dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-sans flex items-center gap-1.5">
+                    <FileCheck2 className="w-3.5 h-3.5 text-zinc-400" />
                     ISMS-P 2.10 (개발 보안) &amp; 전자금융감독규정 제21조 준거 감사 증적
                   </span>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handleExportAuditReport}
-                    className="h-7 text-xs font-semibold border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 gap-1.5 shadow-2xs"
+                    className="h-7 text-xs font-semibold border-zinc-200 dark:border-white/[0.12] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/[0.06] gap-1.5"
                     title="ISMS-P & 전자금융감독규정 준수 공식 보안 감사 보고서(HTML)를 다운로드합니다"
                   >
-                    <FileCheck2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <FileCheck2 className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
                     <span>ISMS-P 감사 증적 다운로드</span>
                   </Button>
                 </div>
@@ -1397,27 +1397,27 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                   className={cn(
                     'p-4 rounded-xl border space-y-3 transition-all',
                     isPrMerged
-                      ? 'border-purple-300 dark:border-purple-800/80 bg-purple-50/70 dark:bg-purple-950/20'
-                      : 'border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/20'
+                      ? 'border-zinc-300 dark:border-white/[0.15] bg-zinc-50/70 dark:bg-white/[0.03]'
+                      : 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50/70 dark:bg-emerald-500/[0.08]'
                   )}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
                       <div
                         className={cn(
-                          'w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-2xs',
-                          isPrMerged ? 'bg-purple-600 text-white' : 'bg-emerald-600 text-white'
+                          'w-7 h-7 rounded-lg flex items-center justify-center shrink-0',
+                          isPrMerged ? 'bg-zinc-800 text-white' : 'bg-emerald-600 text-white'
                         )}
                       >
                         <GitMerge className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                        <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
                           {isPrMerged
                             ? 'Pull request successfully merged and closed'
                             : 'This branch has no conflicts with the base branch'}
                         </h4>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                        <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
                           {isPrMerged
                             ? `보안 게이트 검증 통과 후 '${targetBranch}' 브랜치로 자동 머지되었습니다. 운영 릴리즈가 진행됩니다.`
                             : `모든 보안 검사(Security Gate Checks)가 성공(Green)하여 '${targetBranch}' 브랜치로 즉시 안전하게 머지할 수 있습니다.`}
@@ -1427,7 +1427,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
 
                     <div className="shrink-0">
                       {isPrMerged ? (
-                        <Badge className="bg-purple-600 hover:bg-purple-600 text-white font-mono text-xs px-2.5 py-1">
+                        <Badge className="bg-zinc-800 text-white font-mono text-xs px-2.5 py-1">
                           MERGED INTO {targetBranch.toUpperCase()}
                         </Badge>
                       ) : (
@@ -1435,7 +1435,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                           size="sm"
                           onClick={handleAutoMergePr}
                           disabled={isMergingPr}
-                          className="h-8 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-sm"
+                          className="h-8 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white gap-1.5"
                         >
                           {isMergingPr ? (
                             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -1445,7 +1445,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                           <span>
                             {isMergingPr
                               ? 'GitHub 머지 처리 중...'
-                              : '🚀 실제 GitHub PR 자동 머지(Merge) & 배포 완료'}
+                              : '실제 GitHub PR 자동 머지(Merge) & 배포 완료'}
                           </span>
                         </Button>
                       )}
@@ -1457,66 +1457,66 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
           )}
 
           {activeTab === 'checks' && (
-            <div className="p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#161b22] space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/[0.06] pb-3">
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] space-y-4">
+              <div className="flex items-center justify-between border-b border-zinc-200 dark:border-white/[0.06] pb-3">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-indigo-500" />
+                  <ShieldCheck className="w-5 h-5 text-zinc-400" />
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                    <h4 className="text-sm font-bold text-zinc-900 dark:text-white">
                       SecureFlow Security Gate Enforcement
                     </h4>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-zinc-500">
                       Commit: @{commitId} · Branch: {sourceBranch}
                     </p>
                   </div>
                 </div>
                 <Badge className={cn(
                   'font-mono text-xs',
-                  currentStatus === 'passed' ? 'bg-emerald-600' : 'bg-rose-600'
+                  currentStatus === 'passed' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
                 )}>
                   {currentStatus === 'passed' ? 'CHECKS PASSED' : 'CHECKS FAILED'}
                 </Badge>
               </div>
 
               <div className="space-y-2 text-xs font-mono">
-                <div className="p-3 rounded-xl bg-slate-900 text-slate-200 space-y-2">
+                <div className="p-3 rounded-lg bg-[#09090b] border border-white/[0.08] text-zinc-200 space-y-2">
                   <div className={currentStatus === 'passed' ? 'text-emerald-400 flex items-center justify-between' : 'text-amber-400 font-bold flex items-center justify-between'}>
                     <span>1. SonarQube SAST Engine: {currentStatus === 'passed' ? '0 Findings (PASS)' : '1 Critical SQL Injection (FAIL)'}</span>
-                    <span className="text-slate-400 text-[10px]">28s</span>
+                    <span className="text-zinc-400 text-[10px]">28s</span>
                   </div>
                   <div className={currentStatus === 'passed' ? 'text-emerald-400 flex items-center justify-between' : 'text-amber-400 flex items-center justify-between'}>
                     <span>2. Trivy SCA Engine: {currentStatus === 'passed' ? '0 Findings (PASS)' : '1 ReDoS Vulnerability (CVE-2024-21538)'}</span>
-                    <span className="text-slate-400 text-[10px]">18s</span>
+                    <span className="text-zinc-400 text-[10px]">18s</span>
                   </div>
                   <div className="text-emerald-400 flex items-center justify-between">
                     <span>3. Gitleaks Secret Engine: Clean 0 Leaks (PASS)</span>
-                    <span className="text-slate-400 text-[10px]">8s</span>
+                    <span className="text-zinc-400 text-[10px]">8s</span>
                   </div>
                   <div className="text-emerald-400 flex items-center justify-between">
                     <span>4. Checkov IaC Engine: Clean (PASS)</span>
-                    <span className="text-slate-400 text-[10px]">12s</span>
+                    <span className="text-zinc-400 text-[10px]">12s</span>
                   </div>
                   {rejectionInfo && (
-                    <div className="text-rose-400 flex items-center justify-between border-t border-slate-800 pt-1.5 font-bold">
+                    <div className="text-rose-400 flex items-center justify-between border-t border-white/[0.08] pt-1.5 font-bold">
                       <span className="flex items-center gap-1.5">
                         <XCircle className="w-3.5 h-3.5 text-rose-500" />
                         5. SecureFlow Deployment Gate: REJECTED (반려됨)
                       </span>
-                      <span className="text-slate-400 text-[10px] font-normal">심사자: {rejectionInfo.reviewer}</span>
+                      <span className="text-zinc-400 text-[10px] font-normal">심사자: {rejectionInfo.reviewer}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs flex items-center justify-between">
-                <span className="text-indigo-400 font-sans">
+              <div className="p-3 rounded-lg bg-zinc-100 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08] text-xs flex items-center justify-between">
+                <span className="text-zinc-600 dark:text-zinc-300 font-sans">
                   조치 완료 후 푸시하면 GitHub Checks 상태가 실시간으로 재평가됩니다.
                 </span>
                 <Button
                   size="sm"
                   onClick={handleSimulatePushFix}
                   disabled={isFixing || currentStatus === 'passed'}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs h-7"
+                  className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white font-semibold text-xs h-7"
                 >
                   수정 커밋 푸시 시뮬레이션
                 </Button>
@@ -1526,7 +1526,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
 
           {activeTab === 'files' && (
             <div className="space-y-4">
-              <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between">
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center justify-between">
                 <span>점검에서 탐지된 보안 결함 수정 대상 파일 ({issuesList.length}개):</span>
                 <span className="font-mono text-emerald-500 font-semibold">
                   Showing {issuesList.length} changed files with security diffs
@@ -1536,13 +1536,13 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               {issuesList.map((issue, idx) => (
                 <div
                   key={issue.id || idx}
-                  className="rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#161b22] overflow-hidden shadow-xs"
+                  className="rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] overflow-hidden"
                 >
-                  <div className="px-4 py-2.5 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between text-xs font-mono">
+                  <div className="px-4 py-2.5 bg-zinc-50 dark:bg-[#09090b] border-b border-zinc-200 dark:border-white/[0.06] flex items-center justify-between text-xs font-mono">
                     <div className="flex items-center gap-2">
-                      <FileCode className="w-4 h-4 text-indigo-500" />
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{issue.filePath}</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-white/[0.08] text-slate-500">
+                      <FileCode className="w-4 h-4 text-zinc-400" />
+                      <span className="font-bold text-zinc-800 dark:text-zinc-200">{issue.filePath}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-200 dark:bg-white/[0.08] text-zinc-500">
                         {issue.tool}
                       </span>
                     </div>
@@ -1554,13 +1554,13 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                           setExploitTargetIssue(issue);
                           setIsExploitModalOpen(true);
                         }}
-                        className="h-6 px-2 text-[10.5px] font-bold text-indigo-400 hover:text-indigo-300 hover:bg-indigo-950/50 gap-1"
+                        className="h-6 px-2 text-[10.5px] font-bold text-zinc-400 hover:text-white hover:bg-white/[0.06] gap-1"
                         title="이 결함의 공격 PoC 및 방어 시뮬레이터 열기"
                       >
-                        <Sparkles className="w-3 h-3 text-indigo-400" />
+                        <Sparkles className="w-3 h-3 text-zinc-400" />
                         <span>PoC 시뮬레이터</span>
                       </Button>
-                      <span className="text-slate-400 text-[11px]">{issue.lineNumber}</span>
+                      <span className="text-zinc-400 text-[11px]">{issue.lineNumber}</span>
                       <Badge
                         variant="outline"
                         className={cn(
@@ -1573,14 +1573,14 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                     </div>
                   </div>
 
-                  <div className="p-4 bg-slate-950 font-mono text-xs space-y-1.5 overflow-x-auto">
-                    <div className="text-slate-500 select-none text-[11px]">
+                  <div className="p-4 bg-[#09090b] font-mono text-xs space-y-1.5 overflow-x-auto">
+                    <div className="text-zinc-500 select-none text-[11px]">
                       @@ -32,7 +32,7 @@ {issue.rule} @@
                     </div>
-                    <div className="bg-rose-500/20 text-rose-300 p-2 rounded leading-relaxed border border-rose-500/30">
+                    <div className="bg-rose-500/15 text-rose-300 p-2 rounded leading-relaxed border border-rose-500/25">
                       - {issue.badCode}
                     </div>
-                    <div className="bg-emerald-500/20 text-emerald-300 p-2 rounded leading-relaxed border border-emerald-500/30">
+                    <div className="bg-emerald-500/15 text-emerald-300 p-2 rounded leading-relaxed border border-emerald-500/25">
                       + {issue.goodCode}
                     </div>
                   </div>
@@ -1592,7 +1592,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
           {activeTab === 'publish' && (
             <div className="space-y-4 animate-in fade-in duration-200">
               {/* Introduction Card */}
-              <div className="p-4 rounded-xl border border-emerald-300 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-xs space-y-2">
+              <div className="p-4 rounded-xl border border-emerald-300 dark:border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-500/[0.06] text-xs space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold">
                     <Send className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -1600,22 +1600,22 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                   </div>
                   <Badge className="bg-emerald-600 text-white text-[10px]">GitHub API v3 / 2022-11-28</Badge>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                   점검에서 발견된 <strong>총 {issuesList.length}건의 보안 결함 조치 코드 및 분석 리포트</strong>를 실제 GitHub 저장소(<strong>{cleanRepo}</strong>)로 자동 Pull Request를 발행합니다. 개발자는 깃허브 PR에서 바로 변경 사항을 리뷰하고 머지할 수 있습니다.
                 </p>
               </div>
 
               {/* SUCCESS BANNER: Real GitHub PR Created */}
               {realPrUrl && (
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 border-2 border-emerald-500 text-emerald-950 dark:text-emerald-100 shadow-md space-y-3 animate-in fade-in">
+                <div className="p-4 rounded-xl bg-emerald-500/[0.08] border border-emerald-500/40 text-emerald-950 dark:text-emerald-100 space-y-3 animate-in fade-in">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
-                        🎉
+                      <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
+                        <CheckCircle2 className="w-5 h-5" />
                       </div>
                       <div>
                         <h4 className="font-bold text-sm sm:text-base text-emerald-900 dark:text-emerald-200">
-                          실제 GitHub 저장소에 에러 PR이 성공적으로 생성되었습니다!
+                          실제 GitHub 저장소에 에러 PR이 성공적으로 생성되었습니다
                         </h4>
                         <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80 mt-0.5">
                           PR #{realPrNumber} · {cleanRepo} · {sourceBranch} ➔ {targetBranch}
@@ -1625,9 +1625,9 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                     <Badge className="bg-emerald-600 text-white font-mono text-[10px] shrink-0">LIVE ON GITHUB</Badge>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-white/80 dark:bg-[#161b22]/90 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="p-3 rounded-lg bg-white/80 dark:bg-[#09090b] border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div className="space-y-0.5 overflow-hidden">
-                      <span className="text-slate-500 text-[11px]">생성된 GitHub PR 링크:</span>
+                      <span className="text-zinc-500 text-[11px]">생성된 GitHub PR 링크:</span>
                       <div className="font-mono font-bold text-emerald-700 dark:text-emerald-400 truncate">
                         {realPrUrl}
                       </div>
@@ -1636,9 +1636,9 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                       href={realPrUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-transform hover:scale-[1.02] shrink-0"
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shrink-0"
                     >
-                      <span>🚀 생성된 실제 GitHub PR 바로가기 (#{realPrNumber})</span>
+                      <span>생성된 실제 GitHub PR 바로가기 (#{realPrNumber})</span>
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   </div>
@@ -1647,7 +1647,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
 
               {/* ERROR DIAGNOSIS BANNER */}
               {publishError && (
-                <div className="p-4 rounded-2xl bg-rose-50/90 dark:bg-rose-950/40 border-2 border-rose-500 text-rose-950 dark:text-rose-100 shadow-md space-y-3 animate-in fade-in">
+                <div className="p-4 rounded-xl bg-rose-50/90 dark:bg-rose-950/30 border border-rose-500/40 text-rose-950 dark:text-rose-100 space-y-3 animate-in fade-in">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2.5 text-rose-600 dark:text-rose-400 font-bold text-sm">
                       <AlertTriangle className="w-5 h-5 shrink-0" />
@@ -1658,12 +1658,12 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                     </Badge>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-white dark:bg-[#161b22] border border-rose-200 dark:border-rose-900/60 text-xs text-slate-800 dark:text-slate-200 space-y-2">
+                  <div className="p-3 rounded-lg bg-white dark:bg-[#09090b] border border-rose-200 dark:border-rose-900/60 text-xs text-zinc-800 dark:text-zinc-200 space-y-2">
                     <div className="font-semibold text-rose-700 dark:text-rose-400">
                       오류 메시지: {publishError.message}
                     </div>
-                    <div className="text-slate-700 dark:text-slate-300 leading-relaxed font-sans bg-rose-50/60 dark:bg-rose-950/30 p-2.5 rounded-lg border border-rose-200/60 dark:border-rose-900/40">
-                      💡 <strong>원인 분석 및 해결 조치 방법</strong>:
+                    <div className="text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans bg-rose-50/60 dark:bg-rose-950/30 p-2.5 rounded-lg border border-rose-200/60 dark:border-rose-900/40">
+                      <strong>원인 분석 및 해결 조치 방법</strong>:
                       <p className="mt-1 font-normal leading-relaxed">{publishError.suggestion}</p>
                     </div>
                   </div>
@@ -1693,13 +1693,13 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
 
               {/* 4-STEP LIVE PROGRESS BOX */}
               {isSendingToGithub && (
-                <div className="p-4 rounded-2xl bg-indigo-50/90 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-xs space-y-3 animate-in fade-in">
+                <div className="p-4 rounded-xl bg-zinc-100 dark:bg-[#141417] border border-zinc-200 dark:border-white/[0.1] text-xs space-y-3 animate-in fade-in">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 font-bold text-indigo-900 dark:text-indigo-200">
-                      <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" />
+                    <div className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100">
+                      <RefreshCw className="w-4 h-4 animate-spin text-zinc-400" />
                       <span>GitHub API 자동 전송 및 PR 생성 진행 중...</span>
                     </div>
-                    <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">
+                    <span className="font-mono text-zinc-600 dark:text-zinc-400 font-bold">
                       {publishStepText}
                     </span>
                   </div>
@@ -1722,8 +1722,8 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                             isDone
                               ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-700 dark:text-emerald-300'
                               : isCurrent
-                              ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs animate-pulse'
-                              : 'bg-slate-100 dark:bg-white/[0.04] border-slate-200 dark:border-white/[0.08] text-slate-400'
+                              ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100'
+                              : 'bg-zinc-100 dark:bg-white/[0.04] border-zinc-200 dark:border-white/[0.08] text-zinc-400'
                           )}
                         >
                           {isDone && <Check className="w-3 h-3 text-emerald-600" />}
@@ -1736,14 +1736,14 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               )}
 
               {/* PR Target Metadata Box */}
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5 text-xs">
-                <div className="font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+              <div className="p-4 rounded-xl bg-zinc-50 dark:bg-[#141417] border border-zinc-200 dark:border-white/[0.08] space-y-2.5 text-xs">
+                <div className="font-bold text-zinc-800 dark:text-zinc-200 flex items-center justify-between border-b border-zinc-200 dark:border-white/[0.06] pb-2">
                   <span>발행 대상 PR 정보</span>
                   <a
                     href={`https://github.com/${cleanRepo}/pulls`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
+                    className="text-zinc-600 dark:text-zinc-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
                   >
                     <span>{cleanRepo}</span>
                     <ExternalLink className="w-3 h-3" />
@@ -1751,35 +1751,35 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11.5px]">
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
-                    <span className="text-slate-500">PR 브랜치:</span>
-                    <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">{sourceBranch} ➔ {targetBranch}</span>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-[#09090b] border border-zinc-200/80 dark:border-white/[0.06]">
+                    <span className="text-zinc-500">PR 브랜치:</span>
+                    <span className="font-mono text-zinc-800 dark:text-zinc-200 font-bold">{sourceBranch} ➔ {targetBranch}</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
-                    <span className="text-slate-500">조치 취약점:</span>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-[#09090b] border border-zinc-200/80 dark:border-white/[0.06]">
+                    <span className="text-zinc-500">조치 취약점:</span>
                     <span className="font-bold text-rose-600 dark:text-rose-400 font-mono">{issuesList.length}건 (치명적 1, 중간 2)</span>
                   </div>
                 </div>
 
-                <div className="p-2 rounded-lg bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06] flex items-center justify-between">
-                  <span className="text-slate-500 shrink-0 mr-2">PR 제목:</span>
-                  <span className="font-semibold text-slate-900 dark:text-slate-100 font-mono truncate">{displayTitle}</span>
+                <div className="p-2 rounded-lg bg-white dark:bg-[#09090b] border border-zinc-200/80 dark:border-white/[0.06] flex items-center justify-between">
+                  <span className="text-zinc-500 shrink-0 mr-2">PR 제목:</span>
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono truncate">{displayTitle}</span>
                 </div>
               </div>
 
               {/* Method 1: Webhook / API Dispatch */}
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#161b22] space-y-3.5">
+              <div className="p-4 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] space-y-3.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-xs">
                       1
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <h4 className="text-xs font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
                         방법 1. GitHub API 원클릭 자동 발행
                         <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/30">권장</Badge>
                       </h4>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-zinc-500">
                         원격 브랜치 생성부터 보안 패치 파일 커밋 및 PR 생성까지 전체 4단계가 자동으로 진행됩니다.
                       </p>
                     </div>
@@ -1791,7 +1791,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                       className={cn(
                         'text-[10px] font-mono',
                         patTokenType === 'fine_grained'
-                          ? 'border-indigo-500/40 text-indigo-600 dark:text-indigo-400 bg-indigo-500/10'
+                          ? 'border-white/[0.2] text-zinc-700 dark:text-zinc-300 bg-white/[0.04]'
                           : 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
                       )}
                     >
@@ -1802,14 +1802,14 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold flex items-center gap-1.5">
-                      <KeyRound className="w-3.5 h-3.5 text-indigo-500" />
+                    <Label className="text-[11px] text-zinc-700 dark:text-zinc-300 font-semibold flex items-center gap-1.5">
+                      <KeyRound className="w-3.5 h-3.5 text-zinc-400" />
                       <span>GitHub Personal Access Token (PAT)</span>
                     </Label>
                     <button
                       type="button"
                       onClick={() => setShowPatPlaintext((prev) => !prev)}
-                      className="text-[11px] text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1"
+                      className="text-[11px] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 flex items-center gap-1"
                     >
                       {showPatPlaintext ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                       <span>{showPatPlaintext ? '토큰 숨기기' : '토큰 표시'}</span>
@@ -1828,13 +1828,13 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                       <button
                         type="button"
                         onClick={() => setGithubPat('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 hover:text-zinc-600"
                       >
                         지우기
                       </button>
                     )}
                   </div>
-                  <p className="text-[10.5px] text-slate-500">
+                  <p className="text-[10.5px] text-zinc-500">
                     * 입력하신 토큰은 브라우저 로컬 저장소에만 안전하게 보관되며 GitHub API 직접 호출에만 사용됩니다.
                   </p>
                 </div>
@@ -1842,45 +1842,45 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                 <Button
                   onClick={handleSendToRealGithub}
                   disabled={isSendingToGithub}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-9 gap-2 shadow-xs transition-all"
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs h-9 gap-2 transition-all"
                 >
                   <Send className={cn('w-3.5 h-3.5', isSendingToGithub && 'animate-spin')} />
                   <span>
                     {isSendingToGithub
                       ? publishStepText || 'GitHub로 PR 생성 중...'
-                      : '지금 GitHub로 에러 PR 자동 발행하기 🚀'}
+                      : '지금 GitHub로 에러 PR 자동 발행하기'}
                   </span>
                 </Button>
 
                 {/* PAT Setup Guide Accordion */}
-                <div className="rounded-xl border border-slate-200 dark:border-white/[0.08] overflow-hidden bg-slate-50 dark:bg-white/[0.02]">
+                <div className="rounded-xl border border-zinc-200 dark:border-white/[0.08] overflow-hidden bg-zinc-50 dark:bg-white/[0.02]">
                   <button
                     type="button"
                     onClick={() => setShowPatGuide((prev) => !prev)}
-                    className="w-full px-3.5 py-2.5 flex items-center justify-between text-left text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors"
+                    className="w-full px-3.5 py-2.5 flex items-center justify-between text-left text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.04] transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
+                      <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
                       <span>PAT를 생성했는데도 실패하는 경우 확인 가이드 (필수 권한 설정)</span>
                     </div>
                     {showPatGuide ? (
-                      <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronUp className="w-3.5 h-3.5 text-zinc-400" />
                     ) : (
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
                     )}
                   </button>
 
                   {showPatGuide && (
-                    <div className="p-3.5 border-t border-slate-200 dark:border-white/[0.06] text-[11px] text-slate-600 dark:text-slate-400 space-y-3 bg-white dark:bg-[#0d1117]">
+                    <div className="p-3.5 border-t border-zinc-200 dark:border-white/[0.06] text-[11px] text-zinc-600 dark:text-zinc-400 space-y-3 bg-white dark:bg-[#09090b]">
                       {/* Fine-grained Guide */}
-                      <div className="space-y-1.5 p-2.5 rounded-lg bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/70 dark:border-indigo-900/40">
-                        <div className="font-bold text-indigo-950 dark:text-indigo-200 flex items-center gap-1.5">
-                          <Badge className="bg-indigo-600 text-white text-[9px] px-1 py-0">권장</Badge>
+                      <div className="space-y-1.5 p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.08]">
+                        <div className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                          <Badge className="bg-zinc-800 text-white text-[9px] px-1 py-0">권장</Badge>
                           <span>Fine-grained Personal Access Token (github_pat_...) 3대 필수 설정</span>
                         </div>
-                        <ul className="list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300 ml-1">
+                        <ul className="list-disc list-inside space-y-1 text-zinc-700 dark:text-zinc-300 ml-1">
                           <li>
-                            <strong>Repository access (가장 중요)</strong>: 반드시 <u>'Only select repositories'</u>를 선택하고 목록에서 <strong className="text-indigo-600 dark:text-indigo-400">{cleanRepo}</strong> 저장소를 추가해야 합니다. (Public repositories만 선택하면 비공개 저장소 또는 쓰기 권한이 404로 차단됩니다.)
+                            <strong>Repository access (가장 중요)</strong>: 반드시 <u>'Only select repositories'</u>를 선택하고 목록에서 <strong className="text-zinc-900 dark:text-white">{cleanRepo}</strong> 저장소를 추가해야 합니다. (Public repositories만 선택하면 비공개 저장소 또는 쓰기 권한이 404로 차단됩니다.)
                           </li>
                           <li>
                             <strong>Contents 권한</strong>: <code>Repository permissions &gt; Contents</code>를 <strong className="text-emerald-600 dark:text-emerald-400">'Read and write'</strong>로 설정해야 원격 브랜치 생성 및 패치 파일 커밋이 가능합니다.
@@ -1892,11 +1892,11 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                       </div>
 
                       {/* Classic Guide */}
-                      <div className="space-y-1.5 p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.06]">
-                        <div className="font-bold text-slate-900 dark:text-slate-200">
+                      <div className="space-y-1.5 p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200 dark:border-white/[0.06]">
+                        <div className="font-bold text-zinc-900 dark:text-zinc-200">
                           Tokens (classic) (ghp_...) 필수 설정
                         </div>
-                        <ul className="list-disc list-inside space-y-0.5 text-slate-700 dark:text-slate-300 ml-1">
+                        <ul className="list-disc list-inside space-y-0.5 text-zinc-700 dark:text-zinc-300 ml-1">
                           <li>
                             <strong>Select scopes</strong>: <strong className="text-emerald-600 dark:text-emerald-400">'repo'</strong> 체크박스(Full control of private repositories)를 반드시 체크해야 합니다.
                           </li>
@@ -1908,7 +1908,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                           href="https://github.com/settings/personal-access-tokens/new"
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-[10.5px]"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold text-[10.5px]"
                         >
                           <span>Fine-grained 토큰 신규 발급 ↗</span>
                         </a>
@@ -1916,7 +1916,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                           href="https://github.com/settings/tokens/new"
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-200 dark:bg-white/[0.1] hover:bg-slate-300 text-slate-800 dark:text-slate-200 font-semibold text-[10.5px]"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-zinc-200 dark:bg-white/[0.1] hover:bg-zinc-300 text-zinc-800 dark:text-zinc-200 font-semibold text-[10.5px]"
                         >
                           <span>Classic 토큰 신규 발급 ↗</span>
                         </a>
@@ -1927,17 +1927,17 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               </div>
 
               {/* Method 2: Terminal CLI Manual Push */}
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#161b22] space-y-2.5">
+              <div className="p-4 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center font-bold text-xs">
+                    <div className="w-6 h-6 rounded-lg bg-white/[0.06] text-zinc-600 dark:text-zinc-300 flex items-center justify-center font-bold text-xs">
                       2
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <h4 className="text-xs font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
                         방법 2. Git CLI 터미널에서 직접 생성하기
                       </h4>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-zinc-500">
                         로컬 터미널에서 아래 명령어를 실행하여 보안 패치 브랜치를 푸시하고 PR을 생성할 수 있습니다.
                       </p>
                     </div>
@@ -1954,7 +1954,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                   </Button>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-950 font-mono text-xs text-slate-200 leading-relaxed overflow-x-auto border border-slate-800 shadow-inner">
+                <div className="p-3.5 rounded-lg bg-[#09090b] font-mono text-xs text-zinc-200 leading-relaxed overflow-x-auto border border-white/[0.08]">
                   <pre>{cliCommands}</pre>
                 </div>
               </div>
@@ -1965,7 +1965,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                   variant="ghost"
                   size="sm"
                   onClick={() => setActiveTab('conversation')}
-                  className="text-xs gap-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                  className="text-xs gap-1.5 text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
                 >
                   <span>← Conversation 탭으로 돌아가기</span>
                 </Button>
@@ -1975,9 +1975,9 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
         </div>
 
         {/* Modal Footer */}
-        <div className="px-5 py-3 bg-slate-100 dark:bg-[#161b22] border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between shrink-0 text-xs">
-          <span className="text-slate-500 dark:text-slate-400 font-mono text-[11px] flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+        <div className="px-5 py-3 bg-zinc-50 dark:bg-[#141417] border-t border-zinc-200 dark:border-white/[0.08] flex items-center justify-between shrink-0 text-xs">
+          <span className="text-zinc-500 dark:text-zinc-400 font-mono text-[11px] flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             Git Integration: Webhook &amp; GitHub Checks API Connected
           </span>
           <div className="flex items-center gap-2">
@@ -1985,11 +1985,11 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               size="sm"
               variant="outline"
               onClick={handleExportAuditReport}
-              className="h-8 text-xs font-semibold border-indigo-300 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 gap-1.5 shadow-2xs"
+              className="h-8 text-xs font-semibold border-zinc-300 dark:border-white/[0.12] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06] gap-1.5"
               title="ISMS-P 2.10 및 전자금융감독규정 제21조 준수 보안 감사 증적 보고서(HTML)를 다운로드합니다"
             >
-              <FileCheck2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-              <span>📄 ISMS-P 감사 보고서</span>
+              <FileCheck2 className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
+              <span>ISMS-P 감사 보고서</span>
             </Button>
 
             <Button
@@ -1999,8 +1999,8 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               className={cn(
                 'h-8 text-xs font-semibold gap-1.5 transition-all',
                 activeTab === 'publish'
-                  ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-2xs'
-                  : 'text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-50'
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-500'
+                  : 'text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/30 hover:bg-emerald-500/10'
               )}
             >
               <Send className="w-3.5 h-3.5" />
@@ -2011,7 +2011,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
               <Button
                 size="sm"
                 onClick={onClose}
-                className="h-8 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-xs"
+                className="h-8 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white gap-1.5"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>모달 닫고 배포 승인 확인</span>
@@ -2024,7 +2024,7 @@ gh pr create --repo ${cleanRepo} --title "${displayTitle}" --body "SecureFlow �
                     onClose();
                     onNavigateToReviews();
                   }}
-                  className="h-8 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white gap-1.5 shadow-xs"
+                  className="h-8 text-xs font-semibold bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-950 gap-1.5"
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>우리 사이트 [배포 게이트 심사]로 이동</span>

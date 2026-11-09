@@ -108,66 +108,66 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto p-0 border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0c1017] text-slate-900 dark:text-slate-100 shadow-2xl">
+      <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto p-0 border border-zinc-200 dark:border-white/[0.1] bg-white dark:bg-[#0f0f11] text-zinc-900 dark:text-zinc-100 shadow-2xl">
         {/* Printable Paper Canvas */}
-        <div id="compliance-printable-area" className="p-8 sm:p-10 space-y-8 bg-white dark:bg-[#0c1017]">
+        <div id="compliance-printable-area" className="p-8 sm:p-10 space-y-8 bg-white dark:bg-[#0f0f11]">
           {/* Header Banner */}
-          <div className="border-b-2 border-indigo-600 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="border-b border-zinc-200 dark:border-white/[0.1] pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <Badge className="bg-indigo-600 text-white font-mono text-[10px] px-2 py-0.5">
+                <Badge className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 font-mono text-[10px] px-2 py-0.5">
                   OFFICIAL AUDIT REPORT
                 </Badge>
-                <Badge variant="outline" className="border-emerald-500 text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">
+                <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">
                   ISMS-P &amp; 전자금융감독규정
                 </Badge>
               </div>
-              <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
                 DevSecOps 보안 진단 및 규정 준수 공식 감사보고서
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 소프트웨어 개발 생애주기(SDLC) 전반의 4대 보안 게이트 통제 및 불변 감사 증적 검증서
               </p>
             </div>
 
-            <div className="text-right sm:border-l sm:pl-6 border-slate-200 dark:border-white/[0.08] text-xs space-y-1 font-mono text-slate-500 dark:text-slate-400">
-              <div>문서번호: <strong className="text-slate-900 dark:text-slate-200">{reportId}</strong></div>
+            <div className="text-right sm:border-l sm:pl-6 border-zinc-200 dark:border-white/[0.08] text-xs space-y-1 font-mono text-zinc-500 dark:text-zinc-400">
+              <div>문서번호: <strong className="text-zinc-900 dark:text-zinc-200">{reportId}</strong></div>
               <div>감사일자: {currentDate}</div>
               <div>작성부서: 정보보안실 DevSecOps 거버넌스팀</div>
             </div>
           </div>
 
           {/* Executive Overview Box */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.06]">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 rounded-xl bg-zinc-50 dark:bg-[#141417] border border-zinc-200/80 dark:border-white/[0.08]">
             <div className="space-y-1">
-              <span className="text-[11px] text-slate-400 font-medium">종합 규정 준수율</span>
-              <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">98.4%</div>
-              <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+              <span className="text-[11px] text-zinc-400 font-medium">종합 규정 준수율</span>
+              <div className="text-2xl font-bold text-zinc-950 dark:text-white font-mono">98.4%</div>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" /> 금융보안 적합 판정
               </span>
             </div>
 
             <div className="space-y-1">
-              <span className="text-[11px] text-slate-400 font-medium">관리 대상 저장소</span>
-              <div className="text-2xl font-black text-slate-900 dark:text-white">
+              <span className="text-[11px] text-zinc-400 font-medium">관리 대상 저장소</span>
+              <div className="text-2xl font-bold text-zinc-950 dark:text-white font-mono">
                 {projects.length > 0 ? projects.length : 3}개 서비스
               </div>
-              <span className="text-[10px] text-slate-500">배포 파이프라인 연동</span>
+              <span className="text-[10px] text-zinc-500">배포 파이프라인 연동</span>
             </div>
 
             <div className="space-y-1">
-              <span className="text-[11px] text-slate-400 font-medium">취약점 결함 조치율</span>
-              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{remediationRate}%</div>
-              <span className="text-[10px] text-slate-500">총 {totalFindings}건 중 {resolvedCount}건 조치</span>
+              <span className="text-[11px] text-zinc-400 font-medium">취약점 결함 조치율</span>
+              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">{remediationRate}%</div>
+              <span className="text-[10px] text-zinc-500">총 {totalFindings}건 중 {resolvedCount}건 조치</span>
             </div>
 
             <div className="space-y-1">
-              <span className="text-[11px] text-slate-400 font-medium">불변 감사 로그 무결성</span>
-              <div className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5 mt-1 font-mono">
+              <span className="text-[11px] text-zinc-400 font-medium">불변 감사 로그 무결성</span>
+              <div className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-1.5 mt-1 font-mono">
                 <Lock className="w-4 h-4 text-emerald-500" />
                 <span>SHA-256 검증</span>
               </div>
-              <span className="text-[10px] text-emerald-600 font-medium">
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
                 {verification?.verified ? '체인 변조 0건 (적합)' : '검증 중'}
               </span>
             </div>
@@ -175,32 +175,32 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
 
           {/* 1. Legal & Regulatory Compliance Mapping */}
           <div className="space-y-3">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-white/[0.08] pb-2">
-              <span className="w-5 h-5 rounded-md bg-indigo-600 text-white flex items-center justify-center text-xs">1</span>
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-2 border-b border-zinc-200 dark:border-white/[0.08] pb-2">
+              <span className="w-5 h-5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center text-xs font-mono">1</span>
               <span>인증 규정 및 법적 통제 항목 준수 현황</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#121620] space-y-2">
+              <div className="p-3.5 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] space-y-2">
                 <div className="flex items-center justify-between font-bold">
-                  <span className="text-indigo-600 dark:text-indigo-400">KISA ISMS-P 인증기준 (2.10 개발 보안)</span>
-                  <Badge variant="outline" className="border-emerald-400 text-emerald-600 text-[10px]">이행 완료</Badge>
+                  <span className="text-zinc-900 dark:text-zinc-100">KISA ISMS-P 인증기준 (2.10 개발 보안)</span>
+                  <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px]">이행 완료</Badge>
                 </div>
-                <ul className="space-y-1 text-slate-600 dark:text-slate-400 text-[11px]">
-                  <li>• <strong>2.10.1 보안요구사항:</strong> CI/CD 트리거 시 4대 보안도구 자동 스캔 강제화</li>
-                  <li>• <strong>2.10.2 보안설계 및 구현:</strong> CWE-89(SQLi), CWE-79(XSS) 즉시 차단 게이트</li>
-                  <li>• <strong>2.10.3 보안 테스트 및 검증:</strong> 정기 What-If 결함 시뮬레이션 및 자동 픽스 PR 검증</li>
+                <ul className="space-y-1 text-zinc-600 dark:text-zinc-400 text-[11px]">
+                  <li>• <strong className="text-zinc-800 dark:text-zinc-200">2.10.1 보안요구사항:</strong> CI/CD 트리거 시 4대 보안도구 자동 스캔 강제화</li>
+                  <li>• <strong className="text-zinc-800 dark:text-zinc-200">2.10.2 보안설계 및 구현:</strong> CWE-89(SQLi), CWE-79(XSS) 즉시 차단 게이트</li>
+                  <li>• <strong className="text-zinc-800 dark:text-zinc-200">2.10.3 보안 테스트 및 검증:</strong> 정기 What-If 결함 시뮬레이션 및 자동 픽스 PR 검증</li>
                 </ul>
               </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-[#121620] space-y-2">
+              <div className="p-3.5 rounded-xl border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] space-y-2">
                 <div className="flex items-center justify-between font-bold">
-                  <span className="text-indigo-600 dark:text-indigo-400">금융보안원 전자금융감독규정</span>
-                  <Badge variant="outline" className="border-emerald-400 text-emerald-600 text-[10px]">이행 완료</Badge>
+                  <span className="text-zinc-900 dark:text-zinc-100">금융보안원 전자금융감독규정</span>
+                  <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px]">이행 완료</Badge>
                 </div>
-                <ul className="space-y-1 text-slate-600 dark:text-slate-400 text-[11px]">
-                  <li>• <strong>제13조(전산자료 보호):</strong> GitHub PAT 토큰 서버 SQLite AES-256-GCM 암호화 보관</li>
-                  <li>• <strong>제15조(보안로그 보존):</strong> 모든 예외 승인 및 정책 변경 로그 SHA-256 해시 체이닝 영구 보존</li>
-                  <li>• <strong>제25조(배포 통제):</strong> CISO 승인 없는 Critical 결함 포함 운영 배포 원천 차단</li>
+                <ul className="space-y-1 text-zinc-600 dark:text-zinc-400 text-[11px]">
+                  <li>• <strong className="text-zinc-800 dark:text-zinc-200">제13조(전산자료 보호):</strong> GitHub PAT 토큰 서버 SQLite AES-256-GCM 암호화 보관</li>
+                  <li>• <strong className="text-zinc-800 dark:text-zinc-200">제15조(보안로그 보존):</strong> 모든 예외 승인 및 정책 변경 로그 SHA-256 해시 체이닝 영구 보존</li>
+                  <li>• <strong className="text-zinc-800 dark:text-zinc-200">제25조(배포 통제):</strong> CISO 승인 없는 Critical 결함 포함 운영 배포 원천 차단</li>
                 </ul>
               </div>
             </div>
@@ -208,13 +208,13 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
 
           {/* 2. 4-Stage Security Gate Performance */}
           <div className="space-y-3">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-white/[0.08] pb-2">
-              <span className="w-5 h-5 rounded-md bg-indigo-600 text-white flex items-center justify-center text-xs">2</span>
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-2 border-b border-zinc-200 dark:border-white/[0.08] pb-2">
+              <span className="w-5 h-5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center text-xs font-mono">2</span>
               <span>4대 진단 엔진별 상세 통제 내역</span>
             </h2>
-            <div className="border border-slate-200 dark:border-white/[0.08] rounded-xl overflow-hidden text-xs">
+            <div className="border border-zinc-200 dark:border-white/[0.08] rounded-xl overflow-hidden text-xs">
               <table className="w-full text-left">
-                <thead className="bg-slate-50 dark:bg-white/[0.04] text-slate-500 font-semibold border-b border-slate-200 dark:border-white/[0.06]">
+                <thead className="bg-zinc-50 dark:bg-white/[0.04] text-zinc-500 font-semibold border-b border-zinc-200 dark:border-white/[0.06]">
                   <tr>
                     <th className="p-3">진단 도구 (Tool)</th>
                     <th className="p-3">검사 영역</th>
@@ -223,34 +223,34 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
                     <th className="p-3">준수 상태</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-white/[0.06] text-slate-700 dark:text-slate-300">
+                <tbody className="divide-y divide-zinc-200 dark:divide-white/[0.06] text-zinc-700 dark:text-zinc-300">
                   <tr>
-                    <td className="p-3 font-semibold">SAST (Semgrep / SonarQube)</td>
+                    <td className="p-3 font-semibold text-zinc-900 dark:text-zinc-100">SAST (Semgrep / SonarQube)</td>
                     <td className="p-3">소스코드 정적 분석 (SQLi, 하드코딩 키)</td>
-                    <td className="p-3 text-rose-600 font-mono">Critical &gt;= 1 차단</td>
+                    <td className="p-3 text-rose-600 dark:text-rose-400 font-mono">Critical &gt;= 1 차단</td>
                     <td className="p-3 font-mono">1.2초</td>
-                    <td className="p-3"><Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-400 text-[10px]">정상 준수</Badge></td>
+                    <td className="p-3"><Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px]">정상 준수</Badge></td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-semibold">DAST (OWASP ZAP)</td>
+                    <td className="p-3 font-semibold text-zinc-900 dark:text-zinc-100">DAST (OWASP ZAP)</td>
                     <td className="p-3">동적 REST API 취약점 진단</td>
-                    <td className="p-3 text-rose-600 font-mono">Critical &gt;= 1 차단</td>
+                    <td className="p-3 text-rose-600 dark:text-rose-400 font-mono">Critical &gt;= 1 차단</td>
                     <td className="p-3 font-mono">3.4초</td>
-                    <td className="p-3"><Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-400 text-[10px]">정상 준수</Badge></td>
+                    <td className="p-3"><Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px]">정상 준수</Badge></td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-semibold">SCA (Trivy / OSV)</td>
+                    <td className="p-3 font-semibold text-zinc-900 dark:text-zinc-100">SCA (Trivy / OSV)</td>
                     <td className="p-3">오픈소스 라이브러리 CVE 진단</td>
-                    <td className="p-3 text-rose-600 font-mono">High &gt;= 2 차단</td>
+                    <td className="p-3 text-rose-600 dark:text-rose-400 font-mono">High &gt;= 2 차단</td>
                     <td className="p-3 font-mono">2.1초</td>
-                    <td className="p-3"><Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-400 text-[10px]">정상 준수</Badge></td>
+                    <td className="p-3"><Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px]">정상 준수</Badge></td>
                   </tr>
                   <tr>
-                    <td className="p-3 font-semibold">IaC (Checkov / TF-Sec)</td>
+                    <td className="p-3 font-semibold text-zinc-900 dark:text-zinc-100">IaC (Checkov / TF-Sec)</td>
                     <td className="p-3">Terraform/K8s 인프라 설정 오류</td>
-                    <td className="p-3 text-rose-600 font-mono">Critical &gt;= 1 차단</td>
+                    <td className="p-3 text-rose-600 dark:text-rose-400 font-mono">Critical &gt;= 1 차단</td>
                     <td className="p-3 font-mono">0.8초</td>
-                    <td className="p-3"><Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-400 text-[10px]">정상 준수</Badge></td>
+                    <td className="p-3"><Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px]">정상 준수</Badge></td>
                   </tr>
                 </tbody>
               </table>
@@ -258,11 +258,11 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
           </div>
 
           {/* 3. Cryptographic Verification Stamp (Immutable Proof) */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-indigo-500/5 border-2 border-emerald-500/30 space-y-3">
+          <div className="p-5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/30 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Fingerprint className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                <span className="text-sm font-bold text-slate-900 dark:text-white">
+                <span className="text-sm font-bold text-zinc-900 dark:text-white">
                   전자금융감독규정 전자서명 무결성 검증 필증 (Certificate of Data Integrity)
                 </span>
               </div>
@@ -270,39 +270,39 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-              <div className="p-3 rounded-lg bg-white dark:bg-[#0c1017] border border-slate-200 dark:border-white/[0.06] space-y-1">
-                <span className="text-[10px] text-slate-400 block font-sans">감사 블록 체인 수</span>
-                <strong className="text-emerald-600 text-sm">{verification?.count || auditLogs.length}건 연속 체인 연결</strong>
+              <div className="p-3 rounded-lg bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-white/[0.08] space-y-1">
+                <span className="text-[10px] text-zinc-400 block font-sans">감사 블록 체인 수</span>
+                <strong className="text-emerald-600 dark:text-emerald-400 text-sm">{verification?.count || auditLogs.length}건 연속 체인 연결</strong>
               </div>
-              <div className="p-3 rounded-lg bg-white dark:bg-[#0c1017] border border-slate-200 dark:border-white/[0.06] space-y-1">
-                <span className="text-[10px] text-slate-400 block font-sans">서명 알고리즘</span>
-                <strong className="text-slate-800 dark:text-slate-200 text-sm">SHA-256 (RFC 6234)</strong>
+              <div className="p-3 rounded-lg bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-white/[0.08] space-y-1">
+                <span className="text-[10px] text-zinc-400 block font-sans">서명 알고리즘</span>
+                <strong className="text-zinc-800 dark:text-zinc-200 text-sm">SHA-256 (RFC 6234)</strong>
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-white dark:bg-[#0c1017] border border-slate-200 dark:border-white/[0.06] text-[11px] font-mono break-all text-slate-600 dark:text-slate-300">
-              <span className="text-slate-400 block mb-1 font-sans">최신 블록 디지털 지문 (Digital Hash Signature):</span>
+            <div className="p-3 rounded-lg bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-white/[0.08] text-[11px] font-mono break-all text-zinc-600 dark:text-zinc-300">
+              <span className="text-zinc-400 block mb-1 font-sans">최신 블록 디지털 지문 (Digital Hash Signature):</span>
               <code>{verification?.latestHash || 'f5b5e9ca73b85b7ff732c140afca56d237a6a328712d434e4e4712ec1dba47c6'}</code>
             </div>
 
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
               본 감사 보고서에 첨부된 모든 CI/CD 파이프라인 진단 기록, 배포 승인/반려 내역, CISO 예외 사유는 SQLite 데이터베이스 상에서 Genesis Block부터 최신 블록까지 단방향 SHA-256 해시로 상호 연쇄 서명되어 있으며, 사후 위조 및 변조가 수학적으로 불가능함을 증명합니다.
             </p>
           </div>
 
           {/* Official Signature Area */}
-          <div className="pt-6 border-t border-slate-200 dark:border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-600 dark:text-slate-400">
+          <div className="pt-6 border-t border-zinc-200 dark:border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-zinc-600 dark:text-zinc-400">
             <div className="space-y-1">
-              <div>검증 책임자: <strong>강태우 (정보보호최고책임자 / CISO)</strong></div>
-              <div>실무 감사자: <strong>{currentUser.name} ({currentUser.roleTitle})</strong></div>
+              <div>검증 책임자: <strong className="text-zinc-900 dark:text-zinc-100">강태우 (정보보호최고책임자 / CISO)</strong></div>
+              <div>실무 감사자: <strong className="text-zinc-900 dark:text-zinc-100">{currentUser.name} ({currentUser.roleTitle})</strong></div>
             </div>
 
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="font-semibold text-slate-900 dark:text-white">(주)시큐어플로우 금융보안연구소</div>
-                <div className="text-[11px] text-slate-400">보안 거버넌스 심사 위원회 직인 생략</div>
+                <div className="font-semibold text-zinc-900 dark:text-white">(주)시큐어플로우 금융보안연구소</div>
+                <div className="text-[11px] text-zinc-400">보안 거버넌스 심사 위원회 직인 생략</div>
               </div>
-              <div className="w-16 h-16 rounded-full border-2 border-red-500/80 flex items-center justify-center text-red-500 font-bold text-[10px] tracking-tighter rotate-[-12deg] bg-red-50/50">
+              <div className="w-16 h-16 rounded-full border-2 border-rose-500/80 flex items-center justify-center text-rose-500 font-bold text-[10px] tracking-tighter rotate-[-12deg] bg-rose-500/10">
                 공식 검증인
               </div>
             </div>
@@ -310,8 +310,8 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
         </div>
 
         {/* Modal Action Footer */}
-        <DialogFooter className="p-4 bg-slate-50 dark:bg-[#121620] border-t border-slate-200 dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-2">
-          <div className="text-xs text-slate-400">
+        <DialogFooter className="p-4 bg-zinc-50 dark:bg-[#141417] border-t border-zinc-200 dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-2">
+          <div className="text-xs text-zinc-400">
             인쇄 시 A4 공식 보고서 서식으로 즉시 PDF 다운로드가 가능합니다.
           </div>
           <div className="flex items-center gap-2">
@@ -322,7 +322,7 @@ export const ComplianceReportModal: React.FC<ComplianceReportModalProps> = ({ is
             <Button
               size="sm"
               onClick={handlePrint}
-              className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-1.5 shadow-sm"
+              className="h-8 text-xs bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-950 font-semibold gap-1.5"
             >
               <Printer className="w-3.5 h-3.5" />
               공식 보고서 인쇄 (A4 PDF 저장)
