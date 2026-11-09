@@ -343,24 +343,32 @@ export class PostgresDatabaseAdapter {
     const lastRow = this.mockStore.auditLogs[this.mockStore.auditLogs.length - 1];
     const previousHash = lastRow?.hashSignature || 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000';
     const timestamp = entry.timestamp || new Date().toISOString();
-    const id = entry.id || `audit-pg-${Date.now()}`;
-    const details = typeof entry.details === 'object' ? entry.details : JSON.parse(entry.details || '{}');
+    const id = entry.id || `audit-pg-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const actorId = entry.actorId || entry.actor_id || 'system';
+    const actorName = entry.actorName || entry.actor_name || '시스템';
+    const actorRole = entry.actorRole || entry.actor_role || '자동화';
+    const actionType = entry.actionType || entry.action_type || 'SYSTEM_EVENT';
+    const category = entry.category || 'GOVERNANCE';
+    const targetResource = entry.targetResource || entry.target_resource || 'GLOBAL';
+    const resultStatus = entry.resultStatus || entry.result_status || '성공';
+    const ipAddress = entry.ipAddress || entry.ip_address || '10.240.1.1';
+    const details = typeof entry.details === 'object' && entry.details !== null ? entry.details : JSON.parse(entry.details || '{}');
 
-    const payload = `${previousHash}|${timestamp}|${entry.actorId}|${entry.actionType}|${entry.category}|${entry.targetResource}|${JSON.stringify(details)}|${entry.resultStatus || '성공'}`;
+    const payload = `${previousHash}|${timestamp}|${actorId}|${actionType}|${category}|${targetResource}|${JSON.stringify(details)}|${resultStatus}`;
     const hash = crypto.createHash('sha256').update(payload).digest('hex');
 
     const newLog = {
       id,
       timestamp,
-      actorId: entry.actorId || 'system',
-      actorName: entry.actorName || '시스템',
-      actorRole: entry.actorRole || '자동화',
-      actionType: entry.actionType,
-      category: entry.category || 'GOVERNANCE',
-      targetResource: entry.targetResource,
+      actorId,
+      actorName,
+      actorRole,
+      actionType,
+      category,
+      targetResource,
       details,
-      ipAddress: entry.ipAddress || '10.240.1.1',
-      resultStatus: entry.resultStatus || '성공',
+      ipAddress,
+      resultStatus,
       previousHash,
       hashSignature: hash,
     };
@@ -385,7 +393,24 @@ export class PostgresDatabaseAdapter {
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       if (r.previousHash !== expectedPrevHash) {
-        return { verified: false, brokenIndex: i, message: '무결성 체인 불일치 감지' };
+        return {
+          verified: false,
+          brokenIndex: i,
+          brokenId: r.id,
+          message: `무결성 체인 불일치 감지: ${r.id} 레코드의 이전 해시값이 조작되었습니다.`,
+        };
+      }
+
+      const detailsJson = typeof r.details === 'string' ? r.details : JSON.stringify(r.details || {});
+      const payload = `${r.previousHash}|${r.timestamp}|${r.actorId}|${r.actionType}|${r.category}|${r.targetResource}|${detailsJson}|${r.resultStatus}`;
+      const recomputedHash = crypto.createHash('sha256').update(payload).digest('hex');
+      if (recomputedHash !== r.hashSignature) {
+        return {
+          verified: false,
+          brokenIndex: i,
+          brokenId: r.id,
+          message: `서명 검증 실패: ${r.id} 레코드 본문 데이터가 위변조되었습니다.`,
+        };
       }
       expectedPrevHash = r.hashSignature;
     }
@@ -393,6 +418,8 @@ export class PostgresDatabaseAdapter {
     return {
       verified: true,
       count: rows.length,
+      firstTimestamp: rows[0].timestamp,
+      latestTimestamp: rows[rows.length - 1].timestamp,
       latestHash: expectedPrevHash,
       message: `PostgreSQL 클러스터 전체 ${rows.length}건 감사 로그의 SHA-256 전자서명 무결성이 검증되었습니다.`,
     };

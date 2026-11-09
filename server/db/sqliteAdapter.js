@@ -903,9 +903,17 @@ export class SqliteDatabaseAdapter {
     const previousHash = lastRow?.hash_signature || 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000';
     const timestamp = entry.timestamp || new Date().toISOString();
     const id = entry.id || `audit-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const actorId = entry.actorId || entry.actor_id || 'system';
+    const actorName = entry.actorName || entry.actor_name || '시스템';
+    const actorRole = entry.actorRole || entry.actor_role || '자동화';
+    const actionType = entry.actionType || entry.action_type || 'SYSTEM_EVENT';
+    const category = entry.category || 'GOVERNANCE';
+    const targetResource = entry.targetResource || entry.target_resource || 'GLOBAL';
+    const resultStatus = entry.resultStatus || entry.result_status || '성공';
+    const ipAddress = entry.ipAddress || entry.ip_address || '127.0.0.1';
     const detailsJson = typeof entry.details === 'string' ? entry.details : JSON.stringify(entry.details || {});
 
-    const payload = `${previousHash}|${timestamp}|${entry.actorId || entry.actor_id}|${entry.actionType || entry.action_type}|${entry.category}|${entry.targetResource || entry.target_resource}|${detailsJson}|${entry.resultStatus || entry.result_status || '성공'}`;
+    const payload = `${previousHash}|${timestamp}|${actorId}|${actionType}|${category}|${targetResource}|${detailsJson}|${resultStatus}`;
     const hash = crypto.createHash('sha256').update(payload).digest('hex');
 
     this.db.prepare(`
@@ -917,15 +925,15 @@ export class SqliteDatabaseAdapter {
     `).run(
       id,
       timestamp,
-      entry.actorId || entry.actor_id || 'system',
-      entry.actorName || entry.actor_name || '시스템',
-      entry.actorRole || entry.actor_role || '자동화',
-      entry.actionType || entry.action_type,
-      entry.category || 'GOVERNANCE',
-      entry.targetResource || entry.target_resource,
+      actorId,
+      actorName,
+      actorRole,
+      actionType,
+      category,
+      targetResource,
       detailsJson,
-      entry.ipAddress || entry.ip_address || '127.0.0.1',
-      entry.resultStatus || entry.result_status || '성공',
+      ipAddress,
+      resultStatus,
       previousHash,
       hash
     );
@@ -933,15 +941,15 @@ export class SqliteDatabaseAdapter {
     return {
       id,
       timestamp,
-      actorId: entry.actorId || entry.actor_id || 'system',
-      actorName: entry.actorName || entry.actor_name || '시스템',
-      actorRole: entry.actorRole || entry.actor_role || '자동화',
-      actionType: entry.actionType || entry.action_type,
-      category: entry.category || 'GOVERNANCE',
-      targetResource: entry.targetResource || entry.target_resource,
-      details: typeof entry.details === 'object' ? entry.details : JSON.parse(detailsJson),
-      ipAddress: entry.ipAddress || entry.ip_address || '127.0.0.1',
-      resultStatus: entry.resultStatus || entry.result_status || '성공',
+      actorId,
+      actorName,
+      actorRole,
+      actionType,
+      category,
+      targetResource,
+      details: typeof entry.details === 'object' && entry.details !== null ? entry.details : JSON.parse(detailsJson),
+      ipAddress,
+      resultStatus,
       previousHash,
       hashSignature: hash,
     };

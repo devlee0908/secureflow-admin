@@ -6,9 +6,21 @@
 class SSEBroadcaster {
   constructor() {
     this.clients = new Set();
+    this.maxClientsPerIp = 25;
   }
 
   addClient(req, res) {
+    const clientIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+    let ipCount = 0;
+    for (const c of this.clients) {
+      if (c.ip === clientIp) ipCount++;
+    }
+    if (ipCount >= this.maxClientsPerIp) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+      res.end(JSON.stringify({ error: 'Too Many SSE Connections', message: '동일 IP당 최대 실시간 이벤트 스트림 연결 수를 초과했습니다.' }));
+      return;
+    }
+
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
@@ -18,7 +30,7 @@ class SSEBroadcaster {
     });
 
     const clientId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-    const client = { id: clientId, res };
+    const client = { id: clientId, ip: clientIp, res };
     this.clients.add(client);
 
     // Initial handshake event

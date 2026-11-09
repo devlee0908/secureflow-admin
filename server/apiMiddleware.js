@@ -53,12 +53,17 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
-function verifyGitHubSignature(body, signatureHeader) {
-  if (!signatureHeader || !GITHUB_WEBHOOK_SECRET) return true;
+export function verifyGitHubSignature(body, signatureHeader, secret = GITHUB_WEBHOOK_SECRET) {
+  if (!secret) return true;
+  if (!signatureHeader || typeof signatureHeader !== 'string') return false;
   try {
-    const hmac = crypto.createHmac('sha256', GITHUB_WEBHOOK_SECRET);
-    const digest = `sha256=${hmac.update(body).digest('hex')}`;
-    return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signatureHeader));
+    const hmac = crypto.createHmac('sha256', secret);
+    const payloadStr = typeof body === 'string' ? body : Buffer.isBuffer(body) ? body.toString('utf8') : JSON.stringify(body || {});
+    const digest = `sha256=${hmac.update(payloadStr, 'utf8').digest('hex')}`;
+    const digestBuf = Buffer.from(digest, 'utf8');
+    const sigBuf = Buffer.from(signatureHeader.trim(), 'utf8');
+    if (digestBuf.length !== sigBuf.length) return false;
+    return crypto.timingSafeEqual(digestBuf, sigBuf);
   } catch (err) {
     return false;
   }
@@ -494,8 +499,12 @@ export function apiMiddleware(req, res, next) {
       if (pathname === '/api/webhooks/github' && req.method === 'POST') {
         const eventType = req.headers['x-github-event'] || 'push';
         const signature = req.headers['x-hub-signature-256'];
+        const allowUnsigned = process.env.WEBHOOK_ALLOW_UNSIGNED === 'true';
+        const hasValidInternalJwt =
+          Boolean(req.headers['authorization']) &&
+          authService.authorize(req, ['group_admin', 'entity_manager', 'developer']).allowed;
 
-        if (signature && !verifyGitHubSignature(rawBody, signature)) {
+        if (!allowUnsigned && !hasValidInternalJwt && !verifyGitHubSignature(rawBody, signature)) {
           securityGuard.recordSignatureBlock();
           dbService.saveAuditLog({
             actorId: 'webhook-guard',
@@ -504,10 +513,19 @@ export function apiMiddleware(req, res, next) {
             actionType: 'WEBHOOK_INVALID_SIGNATURE',
             category: 'SECURITY_GATE',
             targetResource: '/api/webhooks/github',
-            details: { ip: clientIp, eventType },
+            details: {
+              ip: clientIp,
+              eventType,
+              reason: signature ? 'HMAC signature mismatch' : 'Missing X-Hub-Signature-256 header',
+            },
             resultStatus: '차단',
           });
-          return sendJson(res, 401, { error: 'Invalid HMAC signature' });
+          return sendJson(res, 401, {
+            error: 'Invalid HMAC signature',
+            message: signature
+              ? 'X-Hub-Signature-256 HMAC-SHA256 서명이 일치하지 않아 요청이 차단되었습니다.'
+              : 'X-Hub-Signature-256 서명 헤더가 누락되어 외부 웹훅 요청이 차단되었습니다.',
+          });
         }
 
         const deliveryId = `wh-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;

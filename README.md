@@ -31,10 +31,17 @@ npm run dev -- --host 0.0.0.0 --port 3000
   npm run server
   ```
 
-### Step 3. 프로덕션 빌드 검증
+### Step 3. 프로덕션 빌드 및 보안 테스트 검증
 ```bash
+npm test
 npm run build
 ```
+
+### Step 4. Docker 컨테이너 원클릭 배포 (선택)
+```bash
+docker compose up -d --build
+```
+- 컨테이너 헬스체크 및 영구 볼륨(`secureflow_data:/app/server/data`)이 자동 마운트되며 `http://localhost:3001`에서 단독 실행됩니다.
 
 ---
 
@@ -58,3 +65,6 @@ npm run build
    - `server/sbomGenerator.js` & `src/components/common/SbomInspectorModal.tsx`: PURL/라이선스/VEX 매핑 및 KMS 전자서명 증명서 발급
 7. **Zero-Trust API Security Guard & Rate Limiter**:
    - `server/securityGuard.js`: 버킷별(`webhook`, `vault`, `general`) 슬라이딩 윈도우 Rate Limiting + OWASP 보안 헤더 강제 주입
+8. **Zero-Trust RFC 7519 JWT/OIDC 인증 & RBAC 및 자동화 보안 테스트**:
+   - `server/auth.js`: HS256 상수 시간 서명 검증, 역할 기반 접근 통제(`group_admin`, `entity_manager`, `developer`)
+   - `server/tests/security.test.js`: Node 22 내장 `node:test` 기반 5대 핵심 보안 엔진 무설치 자동 검증 스위트 (`npm test`)

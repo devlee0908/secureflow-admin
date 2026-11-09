@@ -29,6 +29,12 @@ export class ScannerWorkerPool {
       poolSize: this.poolSize,
     };
 
+    this.initialized = false;
+  }
+
+  ensureInitialized() {
+    if (this.initialized) return;
+    this.initialized = true;
     this.init();
   }
 
@@ -46,6 +52,9 @@ export class ScannerWorkerPool {
   spawnWorker(id) {
     try {
       const worker = new Worker(WORKER_SCRIPT);
+      if (typeof worker.unref === 'function') {
+        worker.unref();
+      }
       const workerEntry = {
         id,
         worker,
@@ -87,6 +96,9 @@ export class ScannerWorkerPool {
 
     workerEntry.isBusy = false;
     workerEntry.currentJobId = null;
+    if (typeof workerEntry.worker.unref === 'function') {
+      workerEntry.worker.unref();
+    }
 
     if (success) {
       this.stats.totalCompleted += 1;
@@ -114,6 +126,9 @@ export class ScannerWorkerPool {
     }
     workerEntry.isBusy = false;
     workerEntry.currentJobId = null;
+    if (typeof workerEntry.worker.unref === 'function') {
+      workerEntry.worker.unref();
+    }
     this.processQueue();
   }
 
@@ -130,6 +145,7 @@ export class ScannerWorkerPool {
    * Returns a Promise that resolves with the evaluated run and execution metrics.
    */
   dispatch(eventData, timeoutMs = 15000) {
+    this.ensureInitialized();
     this.stats.totalDispatched += 1;
 
     // Fallback to inline sync execution if pool is degraded or unavailable
@@ -179,6 +195,9 @@ export class ScannerWorkerPool {
 
     idleWorker.isBusy = true;
     idleWorker.currentJobId = jobId;
+    if (typeof idleWorker.worker.ref === 'function') {
+      idleWorker.worker.ref();
+    }
 
     // Guard against runaway worker hangs
     const timer = setTimeout(() => {
@@ -200,11 +219,12 @@ export class ScannerWorkerPool {
   }
 
   getStats() {
+    const effectivePoolSize = this.initialized ? this.workers.length : this.poolSize;
     const activeWorkers = this.workers.filter((w) => w.isBusy).length;
-    const idleWorkers = this.workers.length - activeWorkers;
+    const idleWorkers = Math.max(0, effectivePoolSize - activeWorkers);
 
     return {
-      poolSize: this.workers.length,
+      poolSize: effectivePoolSize,
       activeWorkers,
       idleWorkers,
       queueDepth: this.queue.length,
