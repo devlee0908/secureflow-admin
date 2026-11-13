@@ -1261,7 +1261,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                           'p-4 rounded-xl border transition-all space-y-3',
                           chan.isActive
                             ? 'bg-white dark:bg-[#121620] border-slate-200 dark:border-white/[0.08] shadow-xs'
-                            : 'bg-slate-50 dark:bg-white/[0.01] border-slate-200/60 opacity-60'
+                            : 'bg-slate-50 dark:bg-white/[0.01] border-slate-200/60 dark:border-white/[0.04] opacity-60'
                         )}
                       >
                         <div className="flex items-center justify-between">
@@ -1273,7 +1273,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                                   ? 'bg-violet-100 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300'
                                   : chan.channel_type === 'teams'
                                   ? 'bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300'
-                                  : 'bg-slate-100 text-slate-700'
+                                  : 'bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
                               )}
                             >
                               {chan.channel_type}
@@ -1288,8 +1288,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                               className={cn(
                                 'text-[10px] cursor-pointer font-mono',
                                 chan.isActive
-                                  ? 'border-emerald-300 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20'
-                                  : 'border-slate-300 text-slate-500'
+                                  ? 'border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20'
+                                  : 'border-slate-300 dark:border-white/[0.12] text-slate-500 dark:text-slate-400'
                               )}
                             >
                               {chan.isActive ? '● 활성' : '○ 비활성'}
@@ -1812,7 +1812,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                       <div>
                         <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
                           다크 모드
-                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                             2026 추천
                           </span>
                         </h4>
@@ -1872,7 +1872,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                       <div>
                         <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
                           라이트 모드
-                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-white/[0.1] text-slate-700 dark:text-slate-300">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-white/[0.1] text-slate-700 dark:text-slate-300">
                             Daylight
                           </span>
                         </h4>

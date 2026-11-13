@@ -893,7 +893,7 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                     size="sm"
                     variant="outline"
                     onClick={() => handleOpenReviewAction('반려')}
-                    className="border-rose-300 text-rose-700 hover:bg-rose-50 text-xs font-semibold"
+                    className="border-rose-300 dark:border-rose-500/30 text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-xs font-semibold"
                   >
                     <XCircle className="w-4 h-4 mr-1.5" />
                     배포 반려 처리
@@ -902,10 +902,10 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                     size="sm"
                     variant="outline"
                     onClick={() => handleDownloadAudit(detailReview)}
-                    className="border-indigo-300 text-indigo-700 hover:bg-indigo-50 text-xs font-semibold ml-auto gap-1.5 shadow-2xs"
+                    className="border-zinc-300 dark:border-white/[0.12] text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.06] text-xs font-semibold ml-auto gap-1.5 shadow-2xs"
                     title="해당 심사 건의 공식 ISMS-P 감사 증적 보고서 다운로드"
                   >
-                    <FileCheck2 className="w-3.5 h-3.5 text-indigo-600" />
+                    <FileCheck2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                     <span>ISMS-P 감사 증적 다운로드</span>
                   </Button>
                 </div>

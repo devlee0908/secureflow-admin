@@ -64,6 +64,14 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xs: "2px",
+      },
+      backdropBlur: {
+        xs: "2px",
+      },
+      boxShadow: {
+        xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "2xs": "0 1px 1px 0 rgb(0 0 0 / 0.04)",
       },
       fontFamily: {
         sans: [

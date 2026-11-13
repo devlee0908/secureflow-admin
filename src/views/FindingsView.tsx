@@ -532,7 +532,7 @@ ${selectedData.map((f, i) => `${i + 1}. **[${f.severity}]** ${f.title} (${f.id})
                   setIsExploitModalOpen(true);
                 }}
                 title="AI 공격 PoC 시뮬레이터 실행"
-                className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
               >
                 <Sparkles className="w-3.5 h-3.5" />
               </Button>

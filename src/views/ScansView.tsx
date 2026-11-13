@@ -383,7 +383,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                   setIsDetailOpen(true);
                 }}
                 title="점검 상세 로그 보기"
-                className="text-indigo-600 hover:bg-indigo-50"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
               >
                 <Eye className="w-3.5 h-3.5" />
               </Button>
@@ -393,7 +393,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                   size="iconSm"
                   onClick={() => retryScan(s.id)}
                   title="재시도"
-                  className="text-amber-600 hover:bg-amber-50"
+                  className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                 </Button>
@@ -657,9 +657,9 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                         setSbomProjectId(detailScan.projectId);
                         setIsSbomModalOpen(true);
                       }}
-                      className="h-7 text-xs border-indigo-200 bg-indigo-50/70 text-indigo-700 hover:bg-indigo-100"
+                      className="h-7 text-xs border-zinc-200 dark:border-white/[0.12] bg-zinc-50 dark:bg-white/[0.04] text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-white/[0.08]"
                     >
-                      <Package className="w-3.5 h-3.5 mr-1 text-indigo-600" />
+                      <Package className="w-3.5 h-3.5 mr-1 text-emerald-600 dark:text-emerald-400" />
                       SBOM & SLSA 증명서
                     </Button>
                     {detailScan.status === '실패' && (

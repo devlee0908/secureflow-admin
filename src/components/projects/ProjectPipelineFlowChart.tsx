@@ -514,14 +514,14 @@ export const ProjectPipelineFlowChart: React.FC<ProjectPipelineFlowChartProps> =
       </div>
 
       {/* 3. Detailed Stage Callout Footnote */}
-      <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-100/70 text-[11px] text-slate-600">
+      <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-zinc-100/80 dark:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.06] text-[11px] text-zinc-600 dark:text-zinc-400">
         <div className="flex items-center gap-1.5">
           {finalDeployStatus === '배포 완료' ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           ) : finalDeployStatus === '배포 차단' ? (
-            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
           ) : (
-            <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           )}
           <span>
             {finalDeployStatus === '배포 완료'
@@ -536,7 +536,7 @@ export const ProjectPipelineFlowChart: React.FC<ProjectPipelineFlowChartProps> =
           {onNavigateFindings && findings.length > 0 && (
             <button
               onClick={() => onNavigateFindings({ projectId: project.id })}
-              className="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 hover:underline"
+              className="text-zinc-900 dark:text-zinc-200 hover:text-zinc-700 dark:hover:text-white font-semibold flex items-center gap-1 hover:underline"
             >
               결함 {findings.length}건 바로보기
               <ChevronRight className="w-3 h-3" />
