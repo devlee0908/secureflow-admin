@@ -284,56 +284,10 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       ];
     }
 
-    // 1. Real Project (AgentGate) or when dummy data is disabled:
-    // Display ONLY authentic owner runs, matching the actual TypeScript gateway architecture
-    if (isAgentGate || !hasDummyData) {
-      // Project baseline scanned: return 3 authentic AgentGate runs (synced with live remediation state)
+    // 1. Real Project (AgentGate):
+    // Show the single authentic scan track matching the actual scan result (3 findings: 1 Critical SQLi, 2 Medium -> Blocked at Stage 3)
+    if (isAgentGate) {
       return [
-        {
-          id: 'run-agentgate-main',
-          author: project.owner,
-          authorEmail: project.ownerEmail,
-          authorRole: '프로젝트 담당자',
-          department: project.department,
-          avatarColor: 'from-indigo-600 to-indigo-400',
-          branch: 'main',
-          targetBranch: 'main',
-          trigger: 'Push',
-          commitId: 'e81a3d9',
-          commitMessage: 'feat(core): AgentGate reverse proxy and JWT authentication engine',
-          startedAt: latestScan?.startedAt || '2026-10-05 16:30:00',
-          currentStage: 5,
-          scanStatus: 'completed',
-          scanDuration: 85,
-          toolStatuses: {
-            sast: { count: 1, duration: 38, status: '경고' },
-            sca: { count: 1, duration: 24, status: '경고' },
-            secret: { count: 0, duration: 11, status: '성공' },
-            iac: { count: 0, duration: 12, status: '성공' },
-          },
-          executionLogs: [
-            `[16:30:00] [INFO] Runner container spawned for ${project.repository} (main @e81a3d9) by ${project.owner}`,
-            '[16:30:38] [WARN] [SonarQube SAST] JWT algorithms option missing in src/auth/jwt.ts:28 (CWE-327, Medium)',
-            '[16:31:02] [WARN] [Trivy SCA] cross-spawn v7.0.3 ReDoS vulnerability detected (CVE-2024-21538, Medium)',
-            '[16:31:25] [INFO] Full Baseline Scan finished (Security Score: 88, B+).',
-            '[16:31:30] [INFO] Quality Gate: 통과 (Medium 2건 기술부채 등록 / 치명·높음 0건)',
-            '[16:31:45] [INFO] Production cluster rolling update completed successfully.',
-          ],
-          gateStatus: 'passed',
-          critCount: 0,
-          highCount: 0,
-          medCount: 2,
-          policyNotes: '치명적/높음 결함 0건 - 베이스라인 기준선 통과 (중간 2건 보안 부채 등록)',
-          reviewStatus: 'approved',
-          reviewer: '시스템 자동 승인 (베이스라인 통과)',
-          reviewComment: '최초 전체 점검 무결점 기준 충족으로 정상 등록 승인',
-          targetEnvironment: '운영',
-          commitMatch: true,
-          deployStatus: 'deployed',
-          cluster: 'k8s-prod-seoul',
-          namespace: 'agentgate-svc',
-          replicas: '4 / 4 Active',
-        },
         {
           id: 'run-agentgate-pr1',
           author: project.owner,
@@ -341,44 +295,55 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           authorRole: '프로젝트 담당자',
           department: project.department,
           avatarColor: isAgentGateRemediated ? 'from-emerald-600 to-teal-400' : 'from-rose-600 to-amber-500',
-          branch: 'feat/session-auth',
+          branch: isAgentGateRemediated ? 'fix/security-remediation' : 'main',
           targetBranch: 'main',
           trigger: 'PR/MR',
           prNumber: 1,
-          commitId: isAgentGateRemediated ? '7d4e91a' : 'f9c2a10',
+          commitId: isAgentGateRemediated ? '7d4e91a' : 'e81a3d9',
           commitMessage: isAgentGateRemediated
-            ? 'fix(security): Prepared Statement 파라미터 바인딩 적용으로 SQLi 조치 완료'
-            : 'feat: 세션 캐시 Redis 연동 및 쿼리 파라미터 핸들러 추가',
-          startedAt: '2026-10-05 17:00:00',
+            ? 'fix(security): SQLi 파라미터 바인딩, JWT 알고리즘 고정 및 cross-spawn 패치 완료'
+            : '최초 전체 소스코드 점검 (Full Baseline Scan) 및 보안 에러 PR #1',
+          startedAt: latestScan?.startedAt || '2026-10-05 16:30:00',
           currentStage: isAgentGateRemediated ? 5 : 3,
           scanStatus: 'completed',
-          scanDuration: 72,
+          scanDuration: latestScan?.durationSeconds || 142,
           toolStatuses: {
-            sast: { count: isAgentGateRemediated ? 0 : 1, duration: 32, status: isAgentGateRemediated ? '성공' : '경고' },
-            sca: { count: 0, duration: 18, status: '성공' },
-            secret: { count: 0, duration: 10, status: '성공' },
-            iac: { count: 0, duration: 12, status: '성공' },
+            sast: {
+              count: isAgentGateRemediated ? 0 : 2,
+              duration: 52,
+              status: isAgentGateRemediated ? '성공' : '경고',
+            },
+            sca: {
+              count: isAgentGateRemediated ? 0 : 1,
+              duration: 38,
+              status: isAgentGateRemediated ? '성공' : '경고',
+            },
+            secret: { count: 0, duration: 18, status: '성공' },
+            iac: { count: 0, duration: 34, status: '성공' },
           },
           executionLogs: isAgentGateRemediated
             ? [
-                `[17:00:00] [INFO] PR #1 webhook received: feat/session-auth -> main by ${project.owner}`,
-                '[17:05:12] [INFO] [PR BOT] 개발자 시큐어 코딩 패치 커밋(@7d4e91a) 수신 -> 재점검 완료(0 defects)',
-                '[17:05:40] [INFO] Quality Gate: 100% 통과 (Pass)',
-                '[17:06:00] [INFO] 배포 심사 승인 완료 및 프로덕션 클러스터 롤링 배포 성공',
+                `[16:30:00] [BASELINE] 🚀 ${project.repository} 최초 전체 점검 완료 (3건 탐지 -> PR #1 생성)`,
+                '[17:05:12] [PR BOT] 🤖 개발자 시큐어 코딩 패치 커밋(@7d4e91a) 수신 -> 4대 엔진 재점검 완료(0 defects)',
+                '[17:05:40] [GATE] ✅ 보안 정책 게이트 100% 통과 (치명적 0건, 높음 0건, 중간 0건)',
+                '[17:06:00] [DEPLOY] 🚀 배포 심사 승인 완료 및 프로덕션 클러스터(k8s-prod-seoul) 롤링 배포 성공',
               ]
             : [
-                `[17:00:00] [INFO] PR #1 webhook received: feat/session-auth -> main by ${project.owner}`,
-                '[17:00:22] [ERROR] [SonarQube SAST] SQL Injection detected in src/auth/session.ts:34 (CWE-89, Critical)',
-                '[17:00:32] [ERROR] 보안 정책 규칙 위반: 신규 치명적(Critical) 결함으로 CI/CD 게이트 차단',
-                '[17:00:32] [TERMINAL] 🚫 배포 파이프라인 차단 (GitHub PR Checks 실패 상태 리포트 전송)',
+                `[16:30:00] [BASELINE] 🚀 ${project.repository} 전체 소스코드 최초 베이스라인 풀 스캔 개시 (@e81a3d9)`,
+                '[16:30:32] [SECRET] 🔑 Gitleaks 전체 히스토리 점검: 하드코딩된 시크릿 누출 0건 (Clean Pass)',
+                '[16:31:10] [ERROR] 🔍 [SonarQube SAST] CWE-89 SQL Injection 탐지: src/auth/session.ts:34 (치명적/Critical)',
+                '[16:31:24] [WARN] 🔍 [SonarQube SAST] CWE-327 JWT 알고리즘 옵션 미지정: src/auth/jwt.ts:28 (중간/Medium)',
+                '[16:31:48] [WARN] 📦 [Trivy SCA] CVE-2024-21538 cross-spawn v7.0.3 취약점 탐지 (중간/Medium)',
+                '[16:32:22] [ERROR] 🛡️ 보안 정책 규칙 위반: 치명적(Critical) 결함 1건으로 인해 3단계 정책 게이트에서 배포 즉시 차단',
+                '[16:32:25] [PR_CREATE] 🚫 보안 에러 PR #1 자동 발행 완료 -> 패치 조치 또는 CISO 예외 승인이 필요합니다.',
               ],
           gateStatus: isAgentGateRemediated ? 'passed' : 'blocked',
           critCount: isAgentGateRemediated ? 0 : 1,
           highCount: 0,
-          medCount: 0,
+          medCount: isAgentGateRemediated ? 0 : 2,
           policyNotes: isAgentGateRemediated
-            ? '시큐어 코딩 패치 완료 - 치명적 결함 0건으로 보안 게이트 통과'
-            : '신규 치명적 SQL Injection(src/auth/session.ts:34) 결함으로 인해 배포 즉시 차단',
+            ? '3건 보안 결함 전수 패치 완료 - 치명적/높음 0건으로 보안 정책 게이트 통과'
+            : '치명적 SQL Injection(src/auth/session.ts:34) 1건 및 중간 결함 2건 탐지로 인해 배포 즉시 차단',
           reviewStatus: isAgentGateRemediated ? 'approved' : 'not_reached',
           reviewer: isAgentGateRemediated ? (projectReview?.reviewer || '보안 심사관 승인') : undefined,
           reviewComment: isAgentGateRemediated ? (projectReview?.reviewComment || '결함 조치 확인 및 배포 승인') : undefined,
@@ -389,193 +354,110 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           namespace: 'agentgate-svc',
           replicas: isAgentGateRemediated ? '4 / 4 Active' : '0 / 4 (차단됨)',
         },
-        {
-          id: 'run-agentgate-pr2',
-          author: project.owner,
-          authorEmail: project.ownerEmail,
-          authorRole: '프로젝트 담당자',
-          department: project.department,
-          avatarColor: 'from-emerald-600 to-teal-400',
-          branch: 'fix/jwt-algorithms',
-          targetBranch: 'main',
-          trigger: 'PR/MR',
-          prNumber: 2,
-          commitId: 'a31c890',
-          commitMessage: 'fix(security): jwt.verify algorithms 화이트리스트 고정 및 의존성 패치',
-          startedAt: '2026-10-05 17:15:00',
-          currentStage: 5,
-          scanStatus: 'completed',
-          scanDuration: 55,
-          toolStatuses: {
-            sast: { count: 0, duration: 22, status: '성공' },
-            sca: { count: 0, duration: 16, status: '성공' },
-            secret: { count: 0, duration: 8, status: '성공' },
-            iac: { count: 0, duration: 9, status: '성공' },
-          },
-          executionLogs: [
-            `[17:15:00] [INFO] PR #2 webhook received: fix/jwt-algorithms -> main by ${project.owner}`,
-            '[17:15:22] [INFO] SonarQube SAST: 0 vulnerabilities, 0 hotspots (Clean)',
-            '[17:15:38] [INFO] Trivy SCA: 0 vulnerabilities (cross-spawn override applied)',
-            '[17:15:55] [INFO] Quality Gate: 100% 통과 (Pass) - Zero New Vulnerabilities',
-            '[17:16:05] [INFO] Deployment Review: 클린 점검 통과 자동 승인',
-            '[17:16:25] [INFO] Kubernetes rolling update completed successfully.',
-          ],
-          gateStatus: 'passed',
-          critCount: 0,
-          highCount: 0,
-          medCount: 0,
-          policyNotes: '신규 결함 0건 - 모든 보안 게이트 통과',
-          reviewStatus: 'approved',
-          reviewer: '시스템 자동 승인 (클린 검증)',
-          reviewComment: '보안 기준 완벽 충족으로 자동 승인 배포',
-          targetEnvironment: '운영',
-          commitMatch: true,
-          deployStatus: 'deployed',
-          cluster: 'k8s-prod-seoul',
-          namespace: 'agentgate-svc',
-          replicas: '4 / 4 Active (v1.0.1)',
-        },
       ];
     }
 
-    // 2. Sample Dummy Runs (Only when hasDummyData is explicitly enabled by user and for non-AgentGate projects)
-    const ownerName = project.owner;
-    const ownerEmail = project.ownerEmail;
-    const dept = project.department;
+    // 2. Other Projects: Build authentic track directly from the project's actual latest scan & findings
+    const projFindings = findings.filter((f) => f.projectId === project.id && f.status !== '해결' && f.status !== '오탐');
+    const critCount = projFindings.filter((f) => f.severity === '치명적').length;
+    const highCount = projFindings.filter((f) => f.severity === '높음').length;
+    const medCount = projFindings.filter((f) => f.severity === '중간').length;
+
+    const sastCount = projFindings.filter((f) => f.scanType === '소스코드 정적 분석').length;
+    const scaCount = projFindings.filter((f) => f.scanType === '의존성 취약점 분석').length;
+    const secretCount = projFindings.filter((f) => f.scanType === '비밀정보 탐지').length;
+    const iacCount = projFindings.filter((f) => f.scanType === '설정 오류 분석').length;
+
+    const isBlocked =
+      (policy.blockOnCritical && critCount > 0) || highCount >= policy.highThresholdForBlock;
+    const isReviewNeeded = !isBlocked && medCount >= policy.mediumThresholdForReview;
+
+    const gateStatus: PipelineRunSample['gateStatus'] = isBlocked
+      ? 'blocked'
+      : isReviewNeeded
+      ? 'review'
+      : 'passed';
+
+    const reviewStatus: PipelineRunSample['reviewStatus'] = isBlocked
+      ? 'not_reached'
+      : projectReview?.approvalStatus === '승인'
+      ? 'approved'
+      : projectReview?.approvalStatus === '반려'
+      ? 'rejected'
+      : isReviewNeeded || projectReview?.approvalStatus === '대기'
+      ? 'pending_review'
+      : 'approved';
+
+    const deployStatus: PipelineRunSample['deployStatus'] =
+      isBlocked || reviewStatus === 'rejected'
+        ? 'blocked'
+        : reviewStatus === 'pending_review'
+        ? 'pending'
+        : 'deployed';
+
+    const currentStage: PipelineRunSample['currentStage'] = isBlocked
+      ? 3
+      : reviewStatus === 'pending_review' || reviewStatus === 'rejected'
+      ? 4
+      : 5;
 
     return [
       {
-        id: 'run-owner-1',
-        author: ownerName,
-        authorEmail: ownerEmail,
+        id: latestScan?.id || `run-${project.id.toLowerCase()}-1`,
+        author: project.owner,
+        authorEmail: project.ownerEmail,
         authorRole: '프로젝트 담당자',
-        department: dept,
+        department: project.department,
         avatarColor: 'from-indigo-600 to-indigo-400',
-        branch: 'feature/auth-token-v2',
+        branch: latestScan?.branch || project.defaultBranch || 'main',
         targetBranch: project.defaultBranch || 'main',
-        trigger: 'PR/MR',
+        trigger: latestScan?.trigger === 'PR/MR' ? 'PR/MR' : 'Push',
         prNumber: 142,
-        commitId: '8f2a1b9',
-        commitMessage: '결제 및 인증 토큰 보안 검증 로직 개선',
-        startedAt: '2026-10-01 14:15:00',
-        currentStage: 4,
+        commitId: latestScan?.commitId || '8f2a1b9',
+        commitMessage: `${project.name} 보안 점검 및 배포 파이프라인 검증`,
+        startedAt: latestScan?.startedAt || '2026-10-01 14:15:00',
+        currentStage,
         scanStatus: 'completed',
-        scanDuration: 94,
+        scanDuration: latestScan?.durationSeconds || 94,
         toolStatuses: {
-          sast: { count: 1, duration: 38, status: '경고' },
-          sca: { count: 2, duration: 24, status: '경고' },
-          secret: { count: 0, duration: 12, status: '성공' },
-          iac: { count: 0, duration: 20, status: '성공' },
+          sast: { count: sastCount, duration: 38, status: sastCount > 0 ? '경고' : '성공' },
+          sca: { count: scaCount, duration: 24, status: scaCount > 0 ? '경고' : '성공' },
+          secret: { count: secretCount, duration: 12, status: secretCount > 0 ? '경고' : '성공' },
+          iac: { count: iacCount, duration: 20, status: iacCount > 0 ? '경고' : '성공' },
         },
-        executionLogs: [
-          `[14:15:00] [INFO] Runner container spawned for PR #142 (feature/auth-token-v2) by ${ownerName}`,
-          '[14:15:08] [INFO] Cloned commit @8f2a1b9',
-          '[14:15:35] [WARN] [Snyk] 2 Medium vulnerabilities detected in dependencies',
-          '[14:15:55] [WARN] [SonarQube] 1 Security Hotspot detected in src/auth/token.ts',
-          '[14:16:34] [INFO] All scanners completed in 94s. Gate: 검토 필요 판정.',
-        ],
-        gateStatus: 'review',
-        critCount: 0,
-        highCount: 0,
-        medCount: 2,
-        policyNotes: '중간(Medium) 결함 2건으로 인해 배포 전 수동 심사 필요',
-        reviewStatus: 'pending_review',
-        reviewer: '보안팀 최수민 팀장',
-        reviewComment: '중간 결함 조치 계획서 확인 중 (심사 진행 중)',
-        targetEnvironment: '운영',
+        executionLogs: latestScan?.executionLogs?.length
+          ? latestScan.executionLogs
+          : [
+              `[14:15:00] [INFO] Runner container spawned for ${project.name} (@${latestScan?.commitId || '8f2a1b9'}) by ${project.owner}`,
+              `[14:16:34] [INFO] 4대 보안점검 완료: Critical ${critCount}건, High ${highCount}건, Medium ${medCount}건`,
+            ],
+        gateStatus,
+        critCount,
+        highCount,
+        medCount,
+        policyNotes: isBlocked
+          ? `치명적 ${critCount}건 / 높음 ${highCount}건 결함으로 인해 보안 정책 게이트 차단`
+          : isReviewNeeded
+          ? `중간(Medium) 결함 ${medCount}건으로 인해 배포 전 수동 심사 필요`
+          : '보안 정책 차단 기준 위반 없음 - 게이트 통과',
+        reviewStatus,
+        reviewer: projectReview?.reviewer || '보안팀 최수민 팀장',
+        reviewComment:
+          projectReview?.reviewComment ||
+          (reviewStatus === 'pending_review'
+            ? '보안 결함 조치 계획서 확인 및 배포 심사 대기 중'
+            : reviewStatus === 'rejected'
+            ? '보안 조치 미흡으로 인한 배포 반려'
+            : '보안 기준 충족으로 배포 승인 완료'),
+        targetEnvironment: projectReview?.targetEnvironment || '운영',
         commitMatch: true,
-        deployStatus: 'pending',
+        deployStatus,
         cluster: 'k8s-prod-seoul',
         namespace: `${project.id.toLowerCase()}-svc`,
-        replicas: '4 / 4 Active',
-      },
-      {
-        id: 'run-owner-2',
-        author: ownerName,
-        authorEmail: ownerEmail,
-        authorRole: '프로젝트 담당자',
-        department: dept,
-        avatarColor: 'from-indigo-600 to-indigo-400',
-        branch: 'hotfix/session-patch',
-        targetBranch: project.defaultBranch || 'main',
-        trigger: 'Push',
-        commitId: 'd91e4c2',
-        commitMessage: '긴급 세션 메모리 누수 핫픽스 및 보안 패치 적용',
-        startedAt: '2026-09-30 22:40:00',
-        currentStage: 5,
-        scanStatus: 'completed',
-        scanDuration: 62,
-        toolStatuses: {
-          sast: { count: 0, duration: 25, status: '성공' },
-          sca: { count: 0, duration: 18, status: '성공' },
-          secret: { count: 0, duration: 9, status: '성공' },
-          iac: { count: 0, duration: 10, status: '성공' },
-        },
-        executionLogs: [
-          `[22:40:00] [INFO] Direct push event received on main (@d91e4c2) by ${ownerName}`,
-          '[22:40:15] [INFO] Clean code analysis passed (0 defects)',
-          '[22:41:02] [INFO] Security Policy Gate: 100% 통과 (Pass)',
-          '[22:41:10] [INFO] Deployment Review: 긴급 핫픽스 패스트트랙 자동 승인',
-          '[22:41:30] [INFO] Kubernetes rolling update completed successfully.',
-        ],
-        gateStatus: 'passed',
-        critCount: 0,
-        highCount: 0,
-        medCount: 0,
-        policyNotes: '모든 점검 무결점 클린 통과 (0 defects)',
-        reviewStatus: 'approved',
-        reviewer: '시스템 자동 승인 (긴급 패스트트랙)',
-        reviewComment: '핫픽스 클린 점검 통과로 즉시 배포 승인',
-        targetEnvironment: '운영',
-        commitMatch: true,
-        deployStatus: 'deployed',
-        cluster: 'k8s-prod-seoul',
-        namespace: `${project.id.toLowerCase()}-svc`,
-        replicas: '4 / 4 Pods Serving (v2.4.1)',
-      },
-      {
-        id: 'run-owner-3',
-        author: ownerName,
-        authorEmail: ownerEmail,
-        authorRole: '프로젝트 담당자',
-        department: dept,
-        avatarColor: 'from-indigo-600 to-indigo-400',
-        branch: 'feature/service-api-v2',
-        targetBranch: project.defaultBranch || 'main',
-        trigger: 'PR/MR',
-        prNumber: 145,
-        commitId: 'b45f1a8',
-        commitMessage: '고객용 신규 마이크로서비스 연동 API v2 스펙 추가',
-        startedAt: '방금 전 (실시간 분석 중)',
-        currentStage: 2,
-        scanStatus: 'running',
-        scanDuration: 42,
-        toolStatuses: {
-          sast: { count: 0, duration: 28, status: '실행 중' },
-          sca: { count: 0, duration: 14, status: '실행 중' },
-          secret: { count: 0, duration: 0, status: '대기' },
-          iac: { count: 0, duration: 0, status: '대기' },
-        },
-        executionLogs: [
-          `[방금 전] [INFO] Runner container spawned (ID: run-7712) for ${ownerName}`,
-          '[방금 전] [INFO] Scanning AST tree with SonarQube ruleset v10.2...',
-          '[방금 전] [INFO] Dependency check worker executing in parallel...',
-          '[진행 중] [INFO] 보안점검 러너가 실시간 소스코드를 분석 중입니다...',
-        ],
-        gateStatus: 'pending',
-        critCount: 0,
-        highCount: 0,
-        medCount: 0,
-        reviewStatus: 'not_reached',
-        targetEnvironment: '운영',
-        commitMatch: true,
-        deployStatus: 'not_reached',
-        cluster: 'k8s-prod-seoul',
-        namespace: `${project.id.toLowerCase()}-svc`,
-        replicas: '4 / 4 Active',
+        replicas: deployStatus === 'deployed' ? '4 / 4 Active' : deployStatus === 'blocked' ? '0 / 4 (차단됨)' : '4 / 4 (대기)',
       },
     ];
-  }, [project, projects, findings, reviews, hasDummyData, getProjectLatestScan, getProjectDeploymentReview]);
+  }, [project, projects, policy, findings, reviews, hasDummyData, getProjectLatestScan, getProjectDeploymentReview]);
 
   // Local state for runs
   const [runs, setRuns] = useState<PipelineRunSample[]>(initialRuns);
@@ -1371,7 +1253,8 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       setSimulationStage(3);
       setSelectedNodeId('node-policy');
 
-      const isBlockCase = selectedScenario === 'hard_block' || selectedScenario === 'iac_misconfig';
+      const isAgentGateBaseline = runId.endsWith('-unscanned') && project.id === 'PRJ-AGENTGATE';
+      const isBlockCase = isAgentGateBaseline || selectedScenario === 'hard_block' || selectedScenario === 'iac_misconfig';
       const isIacCase = selectedScenario === 'iac_misconfig';
 
       setRuns((prev) =>
@@ -1382,12 +1265,21 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 currentStage: 3,
                 scanStatus: 'completed',
                 scanDuration: 85,
+                toolStatuses: isAgentGateBaseline
+                  ? {
+                      sast: { count: 2, duration: 52, status: '경고' },
+                      sca: { count: 1, duration: 38, status: '경고' },
+                      secret: { count: 0, duration: 18, status: '성공' },
+                      iac: { count: 0, duration: 34, status: '성공' },
+                    }
+                  : r.toolStatuses,
                 gateStatus: isBlockCase ? 'blocked' : 'passed',
                 critCount: isIacCase ? 0 : isBlockCase ? 1 : 0,
-                highCount: isIacCase ? 1 : isBlockCase ? 2 : 0,
+                highCount: isAgentGateBaseline ? 0 : isIacCase ? 1 : isBlockCase ? 2 : 0,
+                medCount: isAgentGateBaseline ? 2 : r.medCount,
                 executionLogs: [
                   ...r.executionLogs,
-                  `[${nowTime()}] [SCAN] 🛡️ SAST Scanner 완료 (탐지: ${isIacCase ? 0 : isBlockCase ? 1 : 0}건)`,
+                  `[${nowTime()}] [SCAN] 🛡️ SAST Scanner 완료 (탐지: ${isAgentGateBaseline ? 2 : isIacCase ? 0 : isBlockCase ? 1 : 0}건)`,
                   `[${nowTime()}] [SUPPLY-CHAIN] ✓ Cosign 이미지 서명 검증 성공 (sha256:7f9a2c1)`,
                   `[${nowTime()}] [SUPPLY-CHAIN] ✓ CycloneDX v1.5 SBOM 생성 완료 (142개 패키지 색인)`,
                   `[${nowTime()}] [STAGE 2] 보안점검 4종 전체 완료`,
@@ -1402,35 +1294,42 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
 
     // 7. Gate Result & Stage 4 / Stage 5 / Block Transition (4800ms):
     setTimeout(() => {
-      const isBlockCase = selectedScenario === 'hard_block' || selectedScenario === 'iac_misconfig';
+      const isAgentGateBaseline = runId.endsWith('-unscanned') && project.id === 'PRJ-AGENTGATE';
+      const isBlockCase = isAgentGateBaseline || selectedScenario === 'hard_block' || selectedScenario === 'iac_misconfig';
       const isIacCase = selectedScenario === 'iac_misconfig';
       const isRejectCase = selectedScenario === 'review_rejected';
       const isCanaryCase = selectedScenario === 'canary_rollback';
       const isEmergencyCase = selectedScenario === 'emergency_override';
 
       if (isBlockCase) {
-        setRuns((prev) =>
-          prev.map((r) =>
-            r.id === runId
-              ? {
-                  ...r,
-                  gateStatus: 'blocked',
-                  currentStage: 3,
-                  reviewStatus: 'not_reached',
-                  deployStatus: 'blocked',
-                  executionLogs: [
-                    ...r.executionLogs,
-                    isIacCase
-                      ? `[${nowTime()}] [STAGE 3 BLOCKED] ❌ 인프라 보안 정책 위반! (Checkov S3 버킷 공개 노출 1건 탐지) -> 보안 정책 게이트에서 배포 즉시 차단`
-                      : `[${nowTime()}] [STAGE 3 BLOCKED] ❌ 정책 차단 기준 위반! (치명적 결함: 1건 탐지) -> 보안 정책 게이트에서 배포 즉시 차단`,
-                    `[${nowTime()}] [TERMINAL] 🚫 배포 파이프라인 강제 차단됨. (인프라/코드 패치 또는 CISO 긴급 예외 승인 필요)`,
-                  ],
-                }
-              : r
-          )
-        );
+        if (isAgentGateBaseline) {
+          commitBaselineScan(project.id);
+        } else {
+          setRuns((prev) =>
+            prev.map((r) =>
+              r.id === runId
+                ? {
+                    ...r,
+                    gateStatus: 'blocked',
+                    currentStage: 3,
+                    reviewStatus: 'not_reached',
+                    deployStatus: 'blocked',
+                    executionLogs: [
+                      ...r.executionLogs,
+                      isIacCase
+                        ? `[${nowTime()}] [STAGE 3 BLOCKED] ❌ 인프라 보안 정책 위반! (Checkov S3 버킷 공개 노출 1건 탐지) -> 보안 정책 게이트에서 배포 즉시 차단`
+                        : `[${nowTime()}] [STAGE 3 BLOCKED] ❌ 정책 차단 기준 위반! (치명적 결함: 1건 탐지) -> 보안 정책 게이트에서 배포 즉시 차단`,
+                      `[${nowTime()}] [TERMINAL] 🚫 배포 파이프라인 강제 차단됨. (인프라/코드 패치 또는 CISO 긴급 예외 승인 필요)`,
+                    ],
+                  }
+                : r
+            )
+          );
+        }
         toast.error(
-          isIacCase
+          isAgentGateBaseline
+            ? `[${activeRun.branch}] 최초 전체 점검 완료: 치명적 결함 1건(SQLi) 및 중간 2건이 탐지되어 3단계 보안 정책 게이트에서 차단되었습니다!`
+            : isIacCase
             ? `[${activeRun.branch}] 3단계 정책 위반: 인프라 코드(IaC) S3 버킷 공개 노출 결함으로 배포가 즉시 차단되었습니다!`
             : `[${activeRun.branch}] 3단계 정책 위반: 치명적 결함(1건)으로 배포가 즉시 차단되었습니다!`
         );

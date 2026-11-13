@@ -301,7 +301,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 stroke={
                   isRunDeployActive
                     ? '#10b981'
-                    : isRunDeployBlocked
+                    : isRunReviewRejected
                     ? '#f43f5e'
                     : '#334155'
                 }
@@ -314,7 +314,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
         })}
       </svg>
 
-      {/* Condition Badges on Cable 3 for all tracks */}
+      {/* Condition Badges on Cable 3 for all tracks (placed cleanly above the cable so it never overlaps Node 3 & Node 4 borders) */}
       {visibleRuns.map((r, runIndex) => {
         const nodeY = runIndex * 440 + 30 + 65;
         const cableY = nodeY + 140;
@@ -328,34 +328,34 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
         return (
           <div
             key={`badge-${r.id}`}
-            className="absolute z-20 pointer-events-none -translate-x-1/2 -translate-y-1/2"
-            style={{ left: '1210px', top: `${cableY}px` }}
+            className="absolute z-20 pointer-events-none -translate-x-1/2 -translate-y-full"
+            style={{ left: '1210px', top: `${cableY - 10}px` }}
           >
             <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm ${
+              className={`px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm whitespace-nowrap ${
                 isRunOverridden
-                  ? 'bg-fuchsia-950/90 border border-fuchsia-500 text-fuchsia-300'
+                  ? 'bg-fuchsia-950/95 border border-fuchsia-500 text-fuchsia-300'
                   : isRunGateBlocked
-                  ? 'bg-rose-950/90 border border-rose-500 text-rose-300'
+                  ? 'bg-rose-950/95 border border-rose-500 text-rose-300'
                   : isRunReviewPending
-                  ? 'bg-amber-950/90 border border-amber-600 text-amber-300'
+                  ? 'bg-amber-950/95 border border-amber-600 text-amber-300'
                   : isRunReviewApproved
-                  ? 'bg-emerald-950/90 border border-emerald-600 text-emerald-300'
+                  ? 'bg-emerald-950/95 border border-emerald-600 text-emerald-300'
                   : isRunReviewRejected
-                  ? 'bg-rose-950/90 border border-rose-600 text-rose-300'
+                  ? 'bg-rose-950/95 border border-rose-600 text-rose-300'
                   : 'bg-slate-900 border border-slate-800 text-slate-500'
               }`}
             >
               {isRunOverridden
-                ? '🚨 CISO 예외 우회 통과'
+                ? '🚨 CISO 예외 우회'
                 : isRunGateBlocked
-                ? '🛑 정책 차단 (진행 중단)'
+                ? '🛑 정책 차단'
                 : isRunReviewPending
                 ? '수동 심사 대기'
                 : isRunReviewApproved
                 ? '승인 통과'
                 : isRunReviewRejected
-                ? '심사 반려 (중단)'
+                ? '심사 반려'
                 : '대기'}
             </span>
           </div>
