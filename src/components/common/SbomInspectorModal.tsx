@@ -37,11 +37,19 @@ export const SbomInspectorModal: React.FC<SbomInspectorModalProps> = ({
 }) => {
   const [bundle, setBundle] = useState<SbomBundle | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationResult, setVerificationResult] = useState<{
+    verified: boolean;
+    message: string;
+    verifiedAt?: string;
+    keyId?: string;
+  } | null>(null);
   const [activeTab, setActiveTab] = useState<'components' | 'vex' | 'slsa' | 'json'>('components');
   const [copied, setCopied] = useState(false);
 
   const loadSbom = async (recordAudit = false) => {
     setIsLoading(true);
+    setVerificationResult(null);
     try {
       const data = await api.getSbomBundle(projectId, recordAudit);
       if (data) {
@@ -51,6 +59,24 @@ export const SbomInspectorModal: React.FC<SbomInspectorModalProps> = ({
       console.warn('Failed to load SBOM bundle:', e);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleVerifyProvenance = async () => {
+    if (!bundle) return;
+    setIsVerifying(true);
+    try {
+      const res = await api.verifySbomBundle(bundle.sbom, bundle.slsaProvenance, bundle.projectId);
+      if (res) {
+        setVerificationResult(res);
+        if (res.verified) {
+          toast.success(res.message);
+        } else {
+          toast.error(res.message);
+        }
+      }
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -352,15 +378,52 @@ export const SbomInspectorModal: React.FC<SbomInspectorModalProps> = ({
               {activeTab === 'slsa' && (
                 <div className="space-y-3">
                   <div className="p-4 rounded-xl bg-[#141417] text-zinc-100 border border-white/[0.08] space-y-3 font-mono text-xs">
-                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2">
+                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 flex-wrap gap-2">
                       <span className="text-emerald-400 font-bold flex items-center gap-1.5">
                         <Key className="w-4 h-4" />
                         SLSA v1.0 Cryptographic Provenance Attestation
                       </span>
-                      <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px]">
-                        VERIFIED SIGNATURE
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleVerifyProvenance}
+                          disabled={isVerifying}
+                          className="h-7 text-[11px] bg-white/[0.04] hover:bg-white/[0.08] text-zinc-100 border-white/[0.14] gap-1.5"
+                        >
+                          <ShieldCheck className={cn('w-3.5 h-3.5 text-emerald-400', isVerifying && 'animate-spin')} />
+                          {isVerifying ? '서명 검증 중...' : 'KMS 전자서명 실시간 검증'}
+                        </Button>
+                        <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px]">
+                          VERIFIED SIGNATURE
+                        </Badge>
+                      </div>
                     </div>
+
+                    {verificationResult && (
+                      <div
+                        className={cn(
+                          'p-2.5 rounded-lg border flex items-center justify-between gap-2 text-[11px]',
+                          verificationResult.verified
+                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                            : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          {verificationResult.verified ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                          ) : (
+                            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                          )}
+                          <span>{verificationResult.message}</span>
+                        </div>
+                        {verificationResult.verifiedAt && (
+                          <span className="text-[10px] text-zinc-400 shrink-0">
+                            {new Date(verificationResult.verifiedAt).toLocaleTimeString()}
+                          </span>
+                        )}
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
                       <div>

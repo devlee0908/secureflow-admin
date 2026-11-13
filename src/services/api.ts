@@ -396,7 +396,7 @@ export const api = {
     try {
       const res = await fetch('/api/notifications/channels', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(channel),
       });
       if (!res.ok) throw new Error('Failed to save notification channel');
@@ -410,7 +410,10 @@ export const api = {
 
   async deleteNotificationChannel(id: string): Promise<boolean> {
     try {
-      const res = await fetch(`/api/notifications/channels/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/notifications/channels/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
       return res.ok;
     } catch {
       return false;
@@ -472,7 +475,7 @@ export const api = {
   async updateFinding(id: string, updates: any, actor?: any): Promise<any | null> {
     const res = await fetch(`/api/findings/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ updates, actor }),
     });
     if (!res.ok) throw new Error('Failed to update finding');
@@ -483,7 +486,7 @@ export const api = {
   async batchUpdateFindings(ids: string[], updates: any, actor?: any): Promise<boolean> {
     const res = await fetch('/api/findings/batch', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ ids, updates, actor }),
     });
     if (!res.ok) throw new Error('Failed to batch update findings');
@@ -505,10 +508,10 @@ export const api = {
   async updateReview(id: string, updates: any, actor?: any): Promise<any | null> {
     const res = await fetch(`/api/reviews/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ updates, actor }),
     });
-    if (!res.ok) throw new Error('Failed to update review');
+    await throwIfNotOk(res, '배포 게이트 심사 상태 변경 실패');
     const data = await res.json();
     return data.review;
   },
@@ -553,6 +556,7 @@ export const api = {
     try {
       const res = await fetch(`/api/notifications/dlq/${id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
       return res.ok;
     } catch {
@@ -564,6 +568,7 @@ export const api = {
     try {
       const res = await fetch('/api/notifications/dlq', {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
       return res.ok;
     } catch {
@@ -612,6 +617,33 @@ export const api = {
     try {
       const res = await fetch(`/api/sbom/${encodeURIComponent(projectId)}?audit=${recordAudit}`);
       if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async verifySbomBundle(
+    sbom: any,
+    slsaProvenance: any,
+    projectId = 'PRJ-AGENTGATE'
+  ): Promise<{
+    verified: boolean;
+    slsaLevel?: string;
+    keyId?: string;
+    kmsProvider?: string;
+    sbomDigestSha256?: string;
+    signature?: string;
+    verifiedAt?: string;
+    reason?: string;
+    message: string;
+  } | null> {
+    try {
+      const res = await fetch('/api/sbom/verify', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ sbom, slsaProvenance, projectId }),
+      });
       return await res.json();
     } catch {
       return null;
@@ -683,6 +715,7 @@ export const api = {
     try {
       const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
       if (!res.ok) return null;
       return await res.json();
@@ -695,7 +728,7 @@ export const api = {
     try {
       const res = await fetch('/api/agentgate/baseline', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ projectId }),
       });
       if (!res.ok) return null;
@@ -709,7 +742,7 @@ export const api = {
     try {
       const res = await fetch('/api/agentgate/reset', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ projectId }),
       });
       if (!res.ok) return null;

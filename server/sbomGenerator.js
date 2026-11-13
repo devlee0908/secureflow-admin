@@ -5,6 +5,15 @@
 
 import crypto from 'node:crypto';
 import { vaultService } from './vault.js';
+import { getOrCreateRootMasterSecret } from './kms/providers.js';
+
+function deriveAttestationSubkey(keyId = 'sf-kek-root') {
+  const rootSecret = getOrCreateRootMasterSecret();
+  return crypto
+    .createHmac('sha256', rootSecret)
+    .update(`secureflow-slsa-provenance-attestation-v1:${keyId}`)
+    .digest();
+}
 
 const STANDARD_COMPONENTS = [
   {
@@ -231,11 +240,12 @@ export const sbomGenerator = {
       vulnerabilities,
     };
 
-    // Compute SLSA v1.0 Provenance & Cryptographic Signature
+    // Compute SLSA v1.0 Provenance & Cryptographic Signature using Private KMS Attestation Subkey
     const canonicalString = JSON.stringify(sbomPayload);
     const sbomSha256 = crypto.createHash('sha256').update(canonicalString).digest('hex');
+    const attestationKeyId = kmsInfo.activeKeyId || 'sf-kek-root';
     const provenanceSignature = crypto
-      .createHmac('sha256', kmsInfo.activeKeyId || 'sf-kek-root')
+      .createHmac('sha256', deriveAttestationSubkey(attestationKeyId))
       .update(sbomSha256)
       .digest('hex');
 
@@ -308,6 +318,67 @@ export const sbomGenerator = {
       },
       sbom: sbomPayload,
       slsaProvenance,
+    };
+  },
+
+  verifySbomProvenance(sbomPayload, slsaProvenance) {
+    if (!sbomPayload || !slsaProvenance || !slsaProvenance.attestation) {
+      return {
+        verified: false,
+        reason: 'MISSING_ATTESTATION_PAYLOAD',
+        message: 'SBOM 명세 또는 SLSA v1.0 증명서(Attestation) 블록이 누락되었습니다.',
+      };
+    }
+
+    const { keyId = 'sf-kek-root', kmsProvider, sbomDigestSha256, signature } = slsaProvenance.attestation;
+    const subjectDigest = slsaProvenance.subject?.[0]?.digest?.sha256;
+
+    const canonicalString = typeof sbomPayload === 'string' ? sbomPayload : JSON.stringify(sbomPayload);
+    const recomputedDigest = crypto.createHash('sha256').update(canonicalString).digest('hex');
+
+    if (recomputedDigest !== sbomDigestSha256 || (subjectDigest && recomputedDigest !== subjectDigest)) {
+      return {
+        verified: false,
+        reason: 'SBOM_DIGEST_MISMATCH',
+        keyId,
+        kmsProvider,
+        expectedDigest: sbomDigestSha256,
+        recomputedDigest,
+        verifiedAt: new Date().toISOString(),
+        message: '무결성 검증 실패: SBOM 컴포넌트 또는 취약점 본문이 발급 이후 위변조되었습니다 (SHA-256 다이제스트 불일치).',
+      };
+    }
+
+    const expectedSignature = crypto
+      .createHmac('sha256', deriveAttestationSubkey(keyId))
+      .update(recomputedDigest)
+      .digest('hex');
+
+    const sigBuf = Buffer.from(String(signature || ''), 'utf8');
+    const expBuf = Buffer.from(expectedSignature, 'utf8');
+    const sigValid = sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf);
+
+    if (!sigValid) {
+      return {
+        verified: false,
+        reason: 'INVALID_KMS_SIGNATURE',
+        keyId,
+        kmsProvider,
+        recomputedDigest,
+        verifiedAt: new Date().toISOString(),
+        message: '전자서명 검증 실패: KMS 마스터 서명 키로 생성된 유효한 SLSA 증명서 서명이 아닙니다.',
+      };
+    }
+
+    return {
+      verified: true,
+      slsaLevel: 'SLSA Build L3',
+      keyId,
+      kmsProvider: kmsProvider || 'Local Software HSM',
+      sbomDigestSha256: recomputedDigest,
+      signature: expectedSignature,
+      verifiedAt: new Date().toISOString(),
+      message: `CycloneDX v1.5 SBOM 다이제스트 및 KMS(${keyId}) SLSA v1.0 전자서명 무결성이 완벽히 검증되었습니다.`,
     };
   },
 };

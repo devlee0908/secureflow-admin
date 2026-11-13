@@ -327,6 +327,7 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname.startsWith('/api/projects/') && req.method === 'DELETE') {
+        if (!enforceRbac(req, res, pathname, ['group_admin', 'entity_manager'])) return;
         const id = decodeURIComponent(pathname.replace('/api/projects/', ''));
         const result = dbService.deleteProject(id);
         return sendJson(res, 200, { success: true, ...result });
@@ -338,6 +339,7 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/agentgate/reset' && req.method === 'POST') {
+        if (!enforceRbac(req, res, pathname, ['group_admin', 'entity_manager'])) return;
         const result = dbService.resetAgentGateBaseline(parsedBody.projectId || 'PRJ-AGENTGATE');
         return sendJson(res, 200, { success: true, ...result });
       }
@@ -467,6 +469,8 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname.startsWith('/api/reviews/') && (req.method === 'PATCH' || req.method === 'PUT')) {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin', 'entity_manager']);
+        if (!rbac) return;
         const id = pathname.replace('/api/reviews/', '');
         const { updates, actor } = parsedBody;
         const reviewUpdates = updates || parsedBody;
@@ -475,9 +479,9 @@ export function apiMiddleware(req, res, next) {
           return sendJson(res, 404, { error: `Review ${id} not found` });
         }
         const auditLog = dbService.saveAuditLog({
-          actorId: actor?.id || 'admin',
-          actorName: actor?.name || '보안 심사관',
-          actorRole: actor?.role || '보안 심사관',
+          actorId: rbac.user?.id || actor?.id || 'admin',
+          actorName: rbac.user?.name || actor?.name || '보안 심사관',
+          actorRole: rbac.user?.roleLabel || actor?.role || '보안 심사관',
           actionType: 'DEPLOYMENT_REVIEW_UPDATE',
           category: 'GOVERNANCE',
           targetResource: `Deployment Review: ${id}`,
@@ -1041,11 +1045,13 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/notifications/channels' && req.method === 'POST') {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin', 'entity_manager']);
+        if (!rbac) return;
         const channel = dbService.saveNotificationChannel(parsedBody);
         const audit = dbService.saveAuditLog({
-          actorId: parsedBody.actorId || 'admin',
-          actorName: parsedBody.actorName || '보안 관리자',
-          actorRole: '보안 관리자',
+          actorId: rbac.user?.id || parsedBody.actorId || 'admin',
+          actorName: rbac.user?.name || parsedBody.actorName || '보안 관리자',
+          actorRole: rbac.user?.roleLabel || '보안 관리자',
           actionType: 'NOTIFICATION_CHANNEL_UPDATE',
           category: 'INTEGRATION',
           targetResource: channel.name,
@@ -1057,12 +1063,14 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname.startsWith('/api/notifications/channels/') && req.method === 'DELETE') {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin', 'entity_manager']);
+        if (!rbac) return;
         const id = pathname.replace('/api/notifications/channels/', '');
         dbService.deleteNotificationChannel(id);
         const audit = dbService.saveAuditLog({
-          actorId: 'admin',
-          actorName: '보안 관리자',
-          actorRole: '보안 관리자',
+          actorId: rbac.user?.id || 'admin',
+          actorName: rbac.user?.name || '보안 관리자',
+          actorRole: rbac.user?.roleLabel || '보안 관리자',
           actionType: 'NOTIFICATION_CHANNEL_DELETE',
           category: 'INTEGRATION',
           targetResource: id,
@@ -1155,12 +1163,14 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname.startsWith('/api/notifications/dlq/') && req.method === 'DELETE') {
+        const rbac = enforceRbac(req, res, pathname, ['group_admin', 'entity_manager']);
+        if (!rbac) return;
         const dlqId = pathname.replace('/api/notifications/dlq/', '');
         dbService.deleteNotificationDlq(dlqId);
         const audit = dbService.saveAuditLog({
-          actorId: 'admin',
-          actorName: '보안 관리자',
-          actorRole: '보안 관리자',
+          actorId: rbac.user?.id || 'admin',
+          actorName: rbac.user?.name || '보안 관리자',
+          actorRole: rbac.user?.roleLabel || '보안 관리자',
           actionType: 'NOTIFICATION_DLQ_DELETE',
           category: 'INTEGRATION',
           targetResource: dlqId,
@@ -1172,6 +1182,7 @@ export function apiMiddleware(req, res, next) {
       }
 
       if (pathname === '/api/notifications/dlq' && req.method === 'DELETE') {
+        if (!enforceRbac(req, res, pathname, ['group_admin', 'entity_manager'])) return;
         dbService.clearNotificationDlq();
         return sendJson(res, 200, { success: true, message: 'DLQ 전체 큐가 비워졌습니다.' });
       }
@@ -1214,7 +1225,30 @@ export function apiMiddleware(req, res, next) {
         return sendJson(res, 200, securityGuard.getStats());
       }
 
-      // 16. CycloneDX v1.5 SBOM & SLSA v1.0 Provenance Generator
+      // 16. CycloneDX v1.5 SBOM & SLSA v1.0 Provenance Generator + Cryptographic Verifier
+      if (pathname === '/api/sbom/verify' && req.method === 'POST') {
+        const { sbom, slsaProvenance, projectId = 'PRJ-AGENTGATE' } = parsedBody;
+        const verification = sbomGenerator.verifySbomProvenance(sbom, slsaProvenance);
+        const audit = dbService.saveAuditLog({
+          actorId: 'sbom-verifier',
+          actorName: 'SLSA v1.0 Attestation Verifier',
+          actorRole: '공급망 보안 검증기',
+          actionType: verification.verified ? 'SBOM_PROVENANCE_VERIFIED' : 'SBOM_TAMPER_DETECTED',
+          category: 'AUDIT',
+          targetResource: `SBOM (${projectId})`,
+          details: {
+            verified: verification.verified,
+            keyId: verification.keyId,
+            kmsProvider: verification.kmsProvider,
+            sbomDigestSha256: verification.sbomDigestSha256 || verification.recomputedDigest,
+            reason: verification.reason || 'OK',
+          },
+          resultStatus: verification.verified ? '성공' : '차단',
+        });
+        sseService.broadcast('audit_logged', { log: audit });
+        return sendJson(res, verification.verified ? 200 : 422, verification);
+      }
+
       if ((pathname === '/api/sbom' || pathname.startsWith('/api/sbom/')) && req.method === 'GET') {
         const paramProjectId = pathname.startsWith('/api/sbom/')
           ? decodeURIComponent(pathname.replace('/api/sbom/', ''))

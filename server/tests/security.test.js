@@ -9,6 +9,7 @@ import { PostgresDatabaseAdapter } from '../db/postgresAdapter.js';
 import { dbService } from '../db.js';
 import { verifyGitHubSignature } from '../apiMiddleware.js';
 import { scannerPool } from '../workers/scannerPool.js';
+import { sbomGenerator } from '../sbomGenerator.js';
 
 describe('SecureFlow Enterprise Security & Cryptographic Engine Suite', () => {
   after(() => {
@@ -178,5 +179,38 @@ describe('SecureFlow Enterprise Security & Cryptographic Engine Suite', () => {
     assert.equal(headers['X-Frame-Options'], 'DENY');
     assert.equal(headers['X-Content-Type-Options'], 'nosniff');
     assert.ok(headers['Retry-After']);
+  });
+
+  it('6. CycloneDX v1.5 SBOM & SLSA v1.0 Provenance Private KMS Attestation & Tamper Detection', () => {
+    const bundle = sbomGenerator.generateCycloneDxSbom(dbService, 'PRJ-AGENTGATE');
+    assert.equal(bundle.sbom.bomFormat, 'CycloneDX');
+    assert.equal(bundle.sbom.specVersion, '1.5');
+    assert.ok(bundle.slsaProvenance.attestation.signature);
+
+    // Verify authentic SBOM & SLSA Provenance bundle
+    const validCheck = sbomGenerator.verifySbomProvenance(bundle.sbom, bundle.slsaProvenance);
+    assert.equal(validCheck.verified, true);
+
+    // Attempt forgery using public keyId directly as HMAC key (must be rejected!)
+    const publicKeyId = bundle.slsaProvenance.attestation.keyId;
+    const digest = bundle.slsaProvenance.attestation.sbomDigestSha256;
+    const forgedPublicSig = crypto.createHmac('sha256', publicKeyId).update(digest).digest('hex');
+    const forgedProvenance = {
+      ...bundle.slsaProvenance,
+      attestation: {
+        ...bundle.slsaProvenance.attestation,
+        signature: forgedPublicSig,
+      },
+    };
+    const forgedSigCheck = sbomGenerator.verifySbomProvenance(bundle.sbom, forgedProvenance);
+    assert.equal(forgedSigCheck.verified, false, 'Public keyId HMAC forgery must be rejected');
+    assert.equal(forgedSigCheck.reason, 'INVALID_KMS_SIGNATURE');
+
+    // Attempt tampering with SBOM component version after signing (must be rejected!)
+    const tamperedSbom = JSON.parse(JSON.stringify(bundle.sbom));
+    tamperedSbom.components[0].version = '99.99.99-backdoor';
+    const tamperedDigestCheck = sbomGenerator.verifySbomProvenance(tamperedSbom, bundle.slsaProvenance);
+    assert.equal(tamperedDigestCheck.verified, false, 'Modified SBOM component must break SHA-256 digest');
+    assert.equal(tamperedDigestCheck.reason, 'SBOM_DIGEST_MISMATCH');
   });
 });
