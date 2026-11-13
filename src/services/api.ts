@@ -186,19 +186,14 @@ export const api = {
     }
   },
 
-  async switchDatabaseEngine(engine: 'postgres' | 'sqlite'): Promise<{ success: boolean; message: string; engineInfo: DatabaseEngineInfo } | null> {
-    try {
-      const res = await fetch('/api/database/switch', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ engine }),
-      });
-      await throwIfNotOk(res, '데이터베이스 엔진 전환 실패');
-      return await res.json();
-    } catch (e) {
-      console.warn('Failed to switch database engine:', e);
-      return null;
-    }
+  async switchDatabaseEngine(engine: 'postgres' | 'sqlite'): Promise<{ success: boolean; message: string; engineInfo: DatabaseEngineInfo }> {
+    const res = await fetch('/api/database/switch', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ engine }),
+    });
+    await throwIfNotOk(res, '데이터베이스 엔진 전환 실패');
+    return await res.json();
   },
 
   async getProjects() {
@@ -392,32 +387,24 @@ export const api = {
     }
   },
 
-  async saveNotificationChannel(channel: Partial<NotificationChannel>): Promise<NotificationChannel | null> {
-    try {
-      const res = await fetch('/api/notifications/channels', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(channel),
-      });
-      if (!res.ok) throw new Error('Failed to save notification channel');
-      const data = await res.json();
-      return data.channel;
-    } catch (e) {
-      console.warn('saveNotificationChannel error:', e);
-      return null;
-    }
+  async saveNotificationChannel(channel: Partial<NotificationChannel>): Promise<NotificationChannel> {
+    const res = await fetch('/api/notifications/channels', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(channel),
+    });
+    await throwIfNotOk(res, '알림 채널 저장 실패');
+    const data = await res.json();
+    return data.channel;
   },
 
   async deleteNotificationChannel(id: string): Promise<boolean> {
-    try {
-      const res = await fetch(`/api/notifications/channels/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-      });
-      return res.ok;
-    } catch {
-      return false;
-    }
+    const res = await fetch(`/api/notifications/channels/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    await throwIfNotOk(res, '알림 채널 삭제 실패');
+    return true;
   },
 
   async getNotificationHistory(): Promise<NotificationHistoryEntry[]> {
@@ -712,72 +699,52 @@ export const api = {
   },
 
   async deleteProject(id: string): Promise<any> {
-    try {
-      const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch {
-      return null;
-    }
+    const res = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    await throwIfNotOk(res, '프로젝트 삭제 실패');
+    return await res.json();
   },
 
   async commitAgentGateBaseline(projectId = 'PRJ-AGENTGATE'): Promise<any> {
-    try {
-      const res = await fetch('/api/agentgate/baseline', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ projectId }),
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch {
-      return null;
-    }
+    const res = await fetch('/api/agentgate/baseline', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ projectId }),
+    });
+    await throwIfNotOk(res, '베이스라인 커밋 실패');
+    return await res.json();
   },
 
   async resetAgentGateBaseline(projectId = 'PRJ-AGENTGATE'): Promise<any> {
-    try {
-      const res = await fetch('/api/agentgate/reset', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ projectId }),
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch {
-      return null;
-    }
+    const res = await fetch('/api/agentgate/reset', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ projectId }),
+    });
+    await throwIfNotOk(res, '베이스라인 초기화 실패');
+    return await res.json();
   },
 
   async savePolicy(policy: any, actor?: { id: string; name: string; role: string }): Promise<any> {
-    try {
-      const res = await fetch('/api/policy', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ policy, actor }),
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch {
-      return null;
-    }
+    const res = await fetch('/api/policy', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ policy, actor }),
+    });
+    await throwIfNotOk(res, '보안 정책 저장 실패');
+    return await res.json();
   },
 
   async saveGitConfig(gitConfig: any, actor?: { id: string; name: string; role: string }): Promise<any> {
-    try {
-      const res = await fetch('/api/git-config', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ gitConfig, actor }),
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch {
-      return null;
-    }
+    const res = await fetch('/api/git-config', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ gitConfig, actor }),
+    });
+    await throwIfNotOk(res, 'Git 연동 설정 저장 실패');
+    return await res.json();
   },
 };
 

@@ -41,32 +41,76 @@ export class PostgresDatabaseAdapter {
   }
 
   seedDefaults() {
-    const seedAudit = [
-      {
-        id: 'audit-pg-001',
-        timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
-        actorId: 'ciso-admin',
-        actorName: '강태우 (CISO)',
-        actorRole: '그룹 보안총괄',
-        actionType: 'CLUSTER_INIT',
-        category: 'GOVERNANCE',
-        targetResource: 'PG_CLUSTER_SECUREFLOW_PRIMARY',
-        details: { clusterMode: 'Multi-AZ Active-Standby', pgBouncerPool: 20 },
-        ipAddress: '10.240.1.1',
-        resultStatus: '성공',
-      },
-    ];
-
-    let prevHash = 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000';
-    for (const s of seedAudit) {
-      const payload = `${prevHash}|${s.timestamp}|${s.actorId}|${s.actionType}|${s.category}|${s.targetResource}|${JSON.stringify(s.details)}|${s.resultStatus}`;
-      const hash = crypto.createHash('sha256').update(payload).digest('hex');
-      this.mockStore.auditLogs.push({
-        ...s,
-        previousHash: prevHash,
-        hashSignature: hash,
+    if (!this.mockStore.projects.has('PRJ-AGENTGATE')) {
+      this.mockStore.projects.set('PRJ-AGENTGATE', {
+        id: 'PRJ-AGENTGATE',
+        name: 'AgentGate 보안 게이트웨이 (연동 저장소)',
+        repository: 'github.com/devlee0908/agentgate',
+        defaultBranch: 'main',
+        default_branch: 'main',
+        entityId: 'ENT-01',
+        entityName: '테크솔루션즈',
+        owner: 'devlee0908',
+        owner_email: 'devlee0908@github.internal',
+        department: 'AI보안플랫폼팀',
+        status: '운영 중',
+        createdAt: '2026-10-05',
       });
-      prevHash = hash;
+    }
+
+    if (this.mockStore.channels.size === 0) {
+      this.mockStore.channels.set('chan-slack-secops', {
+        id: 'chan-slack-secops',
+        name: 'SecOps 보안관제 Slack (#secops-alerts)',
+        channel_type: 'slack',
+        webhook_url: 'https://hooks.slack.com/services/T00000000/B00000000/SecureFlowSecOps',
+        events: ['GATE_BLOCK', 'OVERRIDE_APPROVED', 'CRITICAL_FINDING'],
+        isActive: true,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+      this.mockStore.channels.set('chan-teams-ciso', {
+        id: 'chan-teams-ciso',
+        name: 'CISO 임원 보고용 MS Teams 채널',
+        channel_type: 'teams',
+        webhook_url: 'https://outlook.office.com/webhook/secureflow-ciso-channel',
+        events: ['GATE_BLOCK', 'OVERRIDE_APPROVED'],
+        isActive: true,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    if (this.mockStore.auditLogs.length === 0) {
+      const seedAudit = [
+        {
+          id: 'audit-pg-001',
+          timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+          actorId: 'ciso-admin',
+          actorName: '강태우 (CISO)',
+          actorRole: '그룹 보안총괄',
+          actionType: 'CLUSTER_INIT',
+          category: 'GOVERNANCE',
+          targetResource: 'PG_CLUSTER_SECUREFLOW_PRIMARY',
+          details: { clusterMode: 'Multi-AZ Active-Standby', pgBouncerPool: 20 },
+          ipAddress: '10.240.1.1',
+          resultStatus: '성공',
+        },
+      ];
+
+      let prevHash = 'GENESIS_BLOCK_0000000000000000000000000000000000000000000000000000000000000000';
+      for (const s of seedAudit) {
+        const payload = `${prevHash}|${s.timestamp}|${s.actorId}|${s.actionType}|${s.category}|${s.targetResource}|${JSON.stringify(s.details)}|${s.resultStatus}`;
+        const hash = crypto.createHash('sha256').update(payload).digest('hex');
+        this.mockStore.auditLogs.push({
+          ...s,
+          previousHash: prevHash,
+          hashSignature: hash,
+        });
+        prevHash = hash;
+      }
     }
   }
 

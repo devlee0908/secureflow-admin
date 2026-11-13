@@ -206,17 +206,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
     }
     setIsSavingPat(true);
     try {
+      await api.saveGithubPatToVault(trimmed, currentUser.name, currentUser.id);
       localStorage.setItem('secureflow_github_pat', trimmed);
-      try {
-        await api.saveGithubPatToVault(trimmed, currentUser.name, currentUser.id);
-        await refreshVaultStatus();
-      } catch (vaultErr) {
-        console.warn('Vault save warning:', vaultErr);
-      }
+      await refreshVaultStatus();
       toast.success('GitHub PAT가 브라우저 및 백엔드 AES-256 Vault에 안전하게 저장되었습니다.');
       handleVerifyPat(trimmed);
-    } catch {
-      toast.error('PAT 저장 중 오류가 발생했습니다.');
+    } catch (e: any) {
+      toast.error('PAT 금고(Vault) 저장 실패: ' + (e.message || '권한 또는 네트워크 오류가 발생했습니다.'));
     } finally {
       setIsSavingPat(false);
     }
@@ -224,15 +220,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
 
   const handleClearPat = async () => {
     try {
+      await api.clearGithubPatFromVault(currentUser.name, currentUser.id);
       localStorage.removeItem('secureflow_github_pat');
       setGithubPat('');
       setPatDiagnosticResult({ status: null });
-      try {
-        await api.clearGithubPatFromVault(currentUser.name, currentUser.id);
-        await refreshVaultStatus();
-      } catch {}
+      await refreshVaultStatus();
       toast.info('저장된 GitHub PAT가 보안 금고(Vault)에서 초기화되었습니다.');
-    } catch {}
+    } catch (e: any) {
+      toast.error('PAT 금고(Vault) 삭제 실패: ' + (e.message || '권한 오류가 발생했습니다.'));
+    }
   };
 
   const handleVerifyPat = async (tokenToTest?: string) => {
@@ -446,8 +442,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
       });
       toast.success(`[${channel.name}] 알림 채널 상태가 변경되었습니다.`);
       await refreshNotificationData();
-    } catch {
-      toast.error('채널 상태 변경 실패');
+    } catch (e: any) {
+      toast.error('채널 상태 변경 실패: ' + (e.message || '권한 오류가 발생했습니다.'));
     }
   };
 
@@ -456,8 +452,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
       await api.deleteNotificationChannel(id);
       toast.info(`[${name}] 채널이 삭제되었습니다.`);
       await refreshNotificationData();
-    } catch {
-      toast.error('채널 삭제 실패');
+    } catch (e: any) {
+      toast.error('채널 삭제 실패: ' + (e.message || '권한 오류가 발생했습니다.'));
     }
   };
 
@@ -483,8 +479,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
         events: ['GATE_BLOCK', 'OVERRIDE_APPROVED', 'CRITICAL_FINDING'],
       });
       await refreshNotificationData();
-    } catch {
-      toast.error('채널 등록 중 오류가 발생했습니다.');
+    } catch (e: any) {
+      toast.error('채널 등록 실패: ' + (e.message || '권한 오류가 발생했습니다.'));
     }
   };
 

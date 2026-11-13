@@ -202,7 +202,29 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
 
   const [selectedEntityId, setSelectedEntityId] = useState<EntityId | 'ALL'>('ALL');
-  const [currentUserRole, setCurrentUserRole] = useState<UserRole>('group_admin');
+  const [currentUserRole, setCurrentUserRoleState] = useState<UserRole>(() => {
+    try {
+      const saved = localStorage.getItem('secureflow_user_role');
+      if (saved === 'group_admin' || saved === 'entity_manager' || saved === 'developer') {
+        return saved;
+      }
+    } catch {}
+    return 'group_admin';
+  });
+
+  const setCurrentUserRole = (role: UserRole) => {
+    setCurrentUserRoleState(role);
+    try {
+      localStorage.setItem('secureflow_user_role', role);
+    } catch {}
+    const nextUser = DEMO_USERS[role];
+    if (nextUser?.role === 'entity_manager' && nextUser.entityId) {
+      setSelectedEntityId(nextUser.entityId);
+    }
+    if (localStorage.getItem('secureflow_auth') === 'true') {
+      api.loginSession({ role, email: nextUser?.email, provider: 'role-switch' }).catch(() => {});
+    }
+  };
 
   const [demoFaults, setDemoFaults] = useState<DemoFaultFlags>({
     failNextScan: false,
@@ -398,7 +420,11 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (backendRuns && backendRuns.length > 0) {
           const normalized = backendRuns.map((r: any) => normalizeBackendRunToScanRun(r));
           setScans((prev) => {
-            const combined = [...normalized, ...prev];
+            const nonAgentGate = prev.filter((s) => s.projectId !== 'PRJ-AGENTGATE');
+            const validBackend = isBaselineScanned
+              ? normalized
+              : normalized.filter((s: any) => s.projectId !== 'PRJ-AGENTGATE');
+            const combined = [...validBackend, ...nonAgentGate];
             const map = new Map();
             for (const s of combined) map.set(s.id, s);
             return Array.from(map.values());
@@ -529,12 +555,17 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const login = (role?: UserRole) => {
     const resolvedRole = role || currentUserRole;
-    if (role) {
-      setCurrentUserRole(role);
-    }
+    setCurrentUserRoleState(resolvedRole);
+    try {
+      localStorage.setItem('secureflow_user_role', resolvedRole);
+      localStorage.setItem('secureflow_auth', 'true');
+    } catch {}
     setIsAuthenticated(true);
-    localStorage.setItem('secureflow_auth', 'true');
-    api.loginSession({ role: resolvedRole, provider: 'oidc-sso' }).catch(() => {});
+    const targetUser = DEMO_USERS[resolvedRole];
+    if (targetUser?.role === 'entity_manager' && targetUser.entityId) {
+      setSelectedEntityId(targetUser.entityId);
+    }
+    api.loginSession({ role: resolvedRole, email: targetUser?.email, provider: 'oidc-sso' }).catch(() => {});
     toast.success('보안 인증이 완료되었습니다', {
       description: 'RFC 7519 JWT 보안 세션이 발급되어 SecureFlow 대시보드에 접속했습니다.',
     });
@@ -554,13 +585,13 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return DEMO_USERS[currentUserRole];
   }, [currentUserRole]);
 
-  // Adjust entity selector and re-issue role-scoped JWT token when role changes while authenticated
+  // Ensure initial session token exists if user reloads while authenticated
   useEffect(() => {
     if (currentUser.role === 'entity_manager' && currentUser.entityId) {
       setSelectedEntityId(currentUser.entityId);
     }
-    if (isAuthenticated) {
-      api.loginSession({ role: currentUser.role, email: currentUser.email, provider: 'role-switch' }).catch(() => {});
+    if (isAuthenticated && !localStorage.getItem('secureflow_jwt_token')) {
+      api.loginSession({ role: currentUser.role, email: currentUser.email, provider: 'session-restore' }).catch(() => {});
     }
   }, [currentUser, isAuthenticated]);
 
@@ -759,15 +790,31 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const target = projects.find((p) => p.id === id);
     if (!target) return false;
 
-    // Cascade delete from scans, findings, reviews
-    setProjects((prev) => prev.filter((p) => p.id !== id));
-    setScans((prev) => prev.filter((s) => s.projectId !== id));
-    setFindings((prev) => prev.filter((f) => f.projectId !== id));
-    setReviews((prev) => prev.filter((r) => r.projectId !== id));
-    api.deleteProject(id).catch(() => {});
-
-    toast.success(`프로젝트 [${target.name}] 및 연결된 점검/발견사항/배포심사 데이터가 제거되었습니다.`);
-    return true;
+    return executeOptimisticMutation(
+      () => ({
+        projects,
+        scans,
+        findings,
+        reviews,
+      }),
+      () => {
+        setProjects((prev) => prev.filter((p) => p.id !== id));
+        setScans((prev) => prev.filter((s) => s.projectId !== id));
+        setFindings((prev) => prev.filter((f) => f.projectId !== id));
+        setReviews((prev) => prev.filter((r) => r.projectId !== id));
+      },
+      (snap) => {
+        setProjects(snap.projects);
+        setScans(snap.scans);
+        setFindings(snap.findings);
+        setReviews(snap.reviews);
+      },
+      async () => {
+        await api.deleteProject(id);
+      },
+      `프로젝트 [${target.name}] 및 연결된 점검/발견사항/배포심사 데이터가 제거되었습니다.`,
+      '프로젝트 삭제 실패'
+    );
   };
 
   // Scan simulation
@@ -824,6 +871,12 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         `[${nowStr.slice(11)}] [INFO] 격리된 스캐너 컨테이너 기동 중...`,
       ],
     };
+
+    if (project.id === 'PRJ-AGENTGATE') {
+      try {
+        localStorage.setItem('secureflow_agentgate_scanned', 'true');
+      } catch {}
+    }
 
     setScans((prev) => [newScan, ...prev]);
     toast.info(`[${project.name}] 보안 점검 워커 스레드 실행을 시작했습니다.`);
@@ -1165,37 +1218,51 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Policy & Git Config
   const updatePolicy = async (newPolicy: SecurityPolicy): Promise<boolean> => {
-    if (demoFaults.failNextSave) {
-      setDemoFaults((prev) => ({ ...prev, failNextSave: false }));
-      toast.error('저장 실패 시뮬레이션: 정책 저장 오류 발생');
-      return false;
-    }
-    setPolicy(newPolicy);
-    try {
-      localStorage.setItem('secureflow_policy', JSON.stringify(newPolicy));
-    } catch {}
-    api
-      .savePolicy(newPolicy, { id: currentUser.id, name: currentUser.name, role: currentUser.roleTitle })
-      .catch(() => {});
-    toast.success('보안 정책이 성공적으로 저장되었습니다.');
-    return true;
+    const prevPolicy = policy;
+    return executeOptimisticMutation(
+      () => prevPolicy,
+      () => {
+        setPolicy(newPolicy);
+        try {
+          localStorage.setItem('secureflow_policy', JSON.stringify(newPolicy));
+        } catch {}
+      },
+      (snap) => {
+        setPolicy(snap);
+        try {
+          localStorage.setItem('secureflow_policy', JSON.stringify(snap));
+        } catch {}
+      },
+      async () => {
+        await api.savePolicy(newPolicy, { id: currentUser.id, name: currentUser.name, role: currentUser.roleTitle });
+      },
+      '보안 정책이 성공적으로 저장되었습니다.',
+      '보안 정책 저장 실패'
+    );
   };
 
   const updateGitConfig = async (newConfig: GitIntegrationConfig): Promise<boolean> => {
-    if (demoFaults.failNextSave) {
-      setDemoFaults((prev) => ({ ...prev, failNextSave: false }));
-      toast.error('저장 실패 시뮬레이션: Git 연동 설정 저장 실패');
-      return false;
-    }
-    setGitConfig(newConfig);
-    try {
-      localStorage.setItem('secureflow_git_config', JSON.stringify(newConfig));
-    } catch {}
-    api
-      .saveGitConfig(newConfig, { id: currentUser.id, name: currentUser.name, role: currentUser.roleTitle })
-      .catch(() => {});
-    toast.success('사내 Git 서버 연동 정보가 갱신되었습니다.');
-    return true;
+    const prevConfig = gitConfig;
+    return executeOptimisticMutation(
+      () => prevConfig,
+      () => {
+        setGitConfig(newConfig);
+        try {
+          localStorage.setItem('secureflow_git_config', JSON.stringify(newConfig));
+        } catch {}
+      },
+      (snap) => {
+        setGitConfig(snap);
+        try {
+          localStorage.setItem('secureflow_git_config', JSON.stringify(snap));
+        } catch {}
+      },
+      async () => {
+        await api.saveGitConfig(newConfig, { id: currentUser.id, name: currentUser.name, role: currentUser.roleTitle });
+      },
+      '사내 Git 서버 연동 정보가 갱신되었습니다.',
+      'Git 연동 설정 저장 실패'
+    );
   };
 
   const testGitConnection = async (): Promise<boolean> => {
