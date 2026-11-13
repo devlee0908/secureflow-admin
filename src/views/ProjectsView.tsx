@@ -1262,15 +1262,32 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                     <Scan className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
                     최근 보안 점검 결과
                   </h4>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => triggerScan(detailProject.id, '수동')}
-                    className="h-7 text-xs"
-                  >
-                    <Play className="w-3 h-3 mr-1" />
-                    재점검 실행
-                  </Button>
+                  <div className="flex items-center gap-1.5">
+                    {onNavigate && getProjectLatestScan(detailProject.id) && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          const latest = getProjectLatestScan(detailProject.id);
+                          setIsDetailOpen(false);
+                          onNavigate('scans', { scanId: latest?.id });
+                        }}
+                        className="h-7 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 gap-1"
+                      >
+                        <span>점검 이력 보기</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => triggerScan(detailProject.id, '수동')}
+                      className="h-7 text-xs"
+                    >
+                      <Play className="w-3 h-3 mr-1" />
+                      재점검 실행
+                    </Button>
+                  </div>
                 </div>
                 {(() => {
                   const latestScan = getProjectLatestScan(detailProject.id);
@@ -1296,9 +1313,25 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
 
               {/* 3. Related Findings */}
               <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3">
-                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
-                  관련 취약점·발견사항 ({getProjectFindings(detailProject.id).length}건)
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
+                    관련 취약점·발견사항 ({getProjectFindings(detailProject.id).length}건)
+                  </h4>
+                  {onNavigate && getProjectFindings(detailProject.id).length > 0 && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        setIsDetailOpen(false);
+                        onNavigate('findings', { projectId: detailProject.id });
+                      }}
+                      className="h-7 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 gap-1"
+                    >
+                      <span>결함 관리에서 전체 조치</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Button>
+                  )}
+                </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {getProjectFindings(detailProject.id).length === 0 ? (
                     <p className="text-xs text-zinc-400">발견된 보안 취약점이 없습니다.</p>
@@ -1306,7 +1339,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
                     getProjectFindings(detailProject.id).map((f) => (
                       <div
                         key={f.id}
-                        className="p-2.5 rounded border border-zinc-100 dark:border-white/[0.06] bg-zinc-50/50 dark:bg-white/[0.02] hover:bg-zinc-100 dark:hover:bg-white/[0.04] text-xs flex items-center justify-between"
+                        onClick={() => {
+                          if (onNavigate) {
+                            setIsDetailOpen(false);
+                            onNavigate('findings', { projectId: detailProject.id });
+                          }
+                        }}
+                        className="p-2.5 rounded border border-zinc-100 dark:border-white/[0.06] bg-zinc-50/50 dark:bg-white/[0.02] hover:bg-zinc-100 dark:hover:bg-white/[0.04] text-xs flex items-center justify-between cursor-pointer transition-colors"
                       >
                         <div className="truncate mr-2">
                           <div className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">{f.title}</div>
@@ -1323,10 +1362,27 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
 
               {/* 4. Latest Deployment Review */}
               <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-white dark:bg-[#141417] p-4 space-y-3">
-                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
-                  <FileCheck2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  최근 배포 심사 현황
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider flex items-center gap-1.5">
+                    <FileCheck2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    최근 배포 심사 현황
+                  </h4>
+                  {onNavigate && getProjectDeploymentReview(detailProject.id) && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const rev = getProjectDeploymentReview(detailProject.id);
+                        setIsDetailOpen(false);
+                        onNavigate('reviews', { reviewId: rev?.id });
+                      }}
+                      className="h-7 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 gap-1"
+                    >
+                      <span>배포 심사 화면으로 이동</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Button>
+                  )}
+                </div>
                 {(() => {
                   const rev = getProjectDeploymentReview(detailProject.id);
                   if (!rev) {

@@ -161,10 +161,14 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
     policy,
     projects,
     findings,
+    reviews,
+    currentUser,
     hasDummyData,
     getProjectLatestScan,
+    getProjectDeploymentReview,
     commitBaselineScan,
     resolveAgentGateRemediation,
+    reviewDeployment,
   } = useDevSecOps();
 
   // Security Score calculation for current project
@@ -225,58 +229,65 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
     const isAgentGate = project.id === 'PRJ-AGENTGATE';
     const latestScan = getProjectLatestScan(project.id);
     const isBaselineScanned = Boolean(latestScan && latestScan.status === '완료');
+    const projectReview = getProjectDeploymentReview(project.id);
+    const isAgentGateRemediated =
+      isAgentGate &&
+      (projectReview?.approvalStatus === '승인' ||
+        !findings.some(
+          (f) => f.projectId === 'PRJ-AGENTGATE' && f.severity === '치명적' && f.status !== '해결'
+        ));
+
+    // Any project without a completed baseline scan should consistently show the unscanned onboarding state
+    if (!isBaselineScanned) {
+      return [
+        {
+          id: `run-${project.id.toLowerCase()}-unscanned`,
+          author: project.owner,
+          authorEmail: project.ownerEmail,
+          authorRole: '프로젝트 담당자',
+          department: project.department,
+          avatarColor: 'from-indigo-600 to-indigo-400',
+          branch: project.defaultBranch || 'main',
+          targetBranch: project.defaultBranch || 'main',
+          trigger: 'Push',
+          commitId: 'e81a3d9',
+          commitMessage: `Initial commit: ${project.name} repository connected`,
+          startedAt: project.createdAt || '2026-10-05 16:00:00',
+          currentStage: 1, // 1단계 Git 이벤트 수신 완료, 2~5단계는 최초 전체 점검 대기 중!
+          scanStatus: 'pending',
+          scanDuration: 0,
+          toolStatuses: {
+            sast: { count: 0, duration: 0, status: '대기' },
+            sca: { count: 0, duration: 0, status: '대기' },
+            secret: { count: 0, duration: 0, status: '대기' },
+            iac: { count: 0, duration: 0, status: '대기' },
+          },
+          executionLogs: [
+            `[16:00:00] [INFO] Git Webhook connected for ${project.repository} (@e81a3d9) by ${project.owner}`,
+            `[16:00:05] [INFO] Target repository branch: ${project.defaultBranch || 'main'}`,
+            '[16:00:10] [WARN] 최초 소스코드 전체 점검(Full Baseline Scan) 미실행 상태입니다.',
+            '[16:00:15] [INFO] 상단의 [최초 베이스라인 점검 실행] 버튼을 클릭하여 보안 기준선을 수립하세요.',
+          ],
+          gateStatus: 'pending',
+          critCount: 0,
+          highCount: 0,
+          medCount: 0,
+          policyNotes: '최초 전체 소스코드 베이스라인 점검 미실행 (보안 기준선 수립 필요)',
+          reviewStatus: 'not_reached',
+          targetEnvironment: '운영',
+          commitMatch: true,
+          deployStatus: 'pending',
+          cluster: 'k8s-prod-seoul',
+          namespace: `${project.id.toLowerCase()}-svc`,
+          replicas: '0 / 4 (최초 점검 대기)',
+        },
+      ];
+    }
 
     // 1. Real Project (AgentGate) or when dummy data is disabled:
     // Display ONLY authentic owner runs, matching the actual TypeScript gateway architecture
     if (isAgentGate || !hasDummyData) {
-      if (!isBaselineScanned) {
-        // Project registered, awaiting initial full baseline scan
-        return [
-          {
-            id: 'run-agentgate-unscanned',
-            author: project.owner,
-            authorEmail: project.ownerEmail,
-            authorRole: '프로젝트 담당자',
-            department: project.department,
-            avatarColor: 'from-indigo-600 to-indigo-400',
-            branch: project.defaultBranch || 'main',
-            targetBranch: project.defaultBranch || 'main',
-            trigger: 'Push',
-            commitId: 'e81a3d9',
-            commitMessage: 'Initial commit: AgentGate reverse proxy & token filter',
-            startedAt: project.createdAt || '2026-10-05 16:00:00',
-            currentStage: 1, // 1단계 Git 이벤트 수신 완료, 2~5단계는 최초 전체 점검 대기 중!
-            scanStatus: 'pending',
-            scanDuration: 0,
-            toolStatuses: {
-              sast: { count: 0, duration: 0, status: '대기' },
-              sca: { count: 0, duration: 0, status: '대기' },
-              secret: { count: 0, duration: 0, status: '대기' },
-              iac: { count: 0, duration: 0, status: '대기' },
-            },
-            executionLogs: [
-              `[16:00:00] [INFO] Git Webhook connected for ${project.repository} (@e81a3d9) by ${project.owner}`,
-              '[16:00:05] [INFO] Target repository branch: main',
-              '[16:00:10] [WARN] 최초 소스코드 전체 점검(Full Baseline Scan) 미실행 상태입니다.',
-              '[16:00:15] [INFO] 상단의 [파이프라인 실행] 또는 프로젝트 화면의 [최초 전체 점검]을 실행하여 보안 기준선을 수립하세요.',
-            ],
-            gateStatus: 'pending',
-            critCount: 0,
-            highCount: 0,
-            medCount: 0,
-            policyNotes: '최초 전체 소스코드 베이스라인 점검 미실행 (보안 기준선 수립 필요)',
-            reviewStatus: 'not_reached',
-            targetEnvironment: '운영',
-            commitMatch: true,
-            deployStatus: 'pending',
-            cluster: 'k8s-prod-seoul',
-            namespace: 'agentgate-svc',
-            replicas: '0 / 4 (최초 점검 대기)',
-          },
-        ];
-      }
-
-      // Project baseline scanned: return 3 authentic AgentGate runs (all authored by devlee0908, pure TypeScript)
+      // Project baseline scanned: return 3 authentic AgentGate runs (synced with live remediation state)
       return [
         {
           id: 'run-agentgate-main',
@@ -329,41 +340,54 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           authorEmail: project.ownerEmail,
           authorRole: '프로젝트 담당자',
           department: project.department,
-          avatarColor: 'from-rose-600 to-amber-500',
+          avatarColor: isAgentGateRemediated ? 'from-emerald-600 to-teal-400' : 'from-rose-600 to-amber-500',
           branch: 'feat/session-auth',
           targetBranch: 'main',
           trigger: 'PR/MR',
           prNumber: 1,
-          commitId: 'f9c2a10',
-          commitMessage: 'feat: 세션 캐시 Redis 연동 및 쿼리 파라미터 핸들러 추가',
+          commitId: isAgentGateRemediated ? '7d4e91a' : 'f9c2a10',
+          commitMessage: isAgentGateRemediated
+            ? 'fix(security): Prepared Statement 파라미터 바인딩 적용으로 SQLi 조치 완료'
+            : 'feat: 세션 캐시 Redis 연동 및 쿼리 파라미터 핸들러 추가',
           startedAt: '2026-10-05 17:00:00',
-          currentStage: 3, // 3단계: 정책 게이트 차단!
+          currentStage: isAgentGateRemediated ? 5 : 3,
           scanStatus: 'completed',
           scanDuration: 72,
           toolStatuses: {
-            sast: { count: 1, duration: 32, status: '경고' },
+            sast: { count: isAgentGateRemediated ? 0 : 1, duration: 32, status: isAgentGateRemediated ? '성공' : '경고' },
             sca: { count: 0, duration: 18, status: '성공' },
             secret: { count: 0, duration: 10, status: '성공' },
             iac: { count: 0, duration: 12, status: '성공' },
           },
-          executionLogs: [
-            `[17:00:00] [INFO] PR #1 webhook received: feat/session-auth -> main by ${project.owner}`,
-            '[17:00:22] [ERROR] [SonarQube SAST] SQL Injection detected in src/auth/session.ts:34 (CWE-89, Critical)',
-            '[17:00:32] [ERROR] 보안 정책 규칙 위반: 신규 치명적(Critical) 결함으로 CI/CD 게이트 차단',
-            '[17:00:32] [TERMINAL] 🚫 배포 파이프라인 차단 (GitHub PR Checks 실패 상태 리포트 전송)',
-          ],
-          gateStatus: 'blocked',
-          critCount: 1,
+          executionLogs: isAgentGateRemediated
+            ? [
+                `[17:00:00] [INFO] PR #1 webhook received: feat/session-auth -> main by ${project.owner}`,
+                '[17:05:12] [INFO] [PR BOT] 개발자 시큐어 코딩 패치 커밋(@7d4e91a) 수신 -> 재점검 완료(0 defects)',
+                '[17:05:40] [INFO] Quality Gate: 100% 통과 (Pass)',
+                '[17:06:00] [INFO] 배포 심사 승인 완료 및 프로덕션 클러스터 롤링 배포 성공',
+              ]
+            : [
+                `[17:00:00] [INFO] PR #1 webhook received: feat/session-auth -> main by ${project.owner}`,
+                '[17:00:22] [ERROR] [SonarQube SAST] SQL Injection detected in src/auth/session.ts:34 (CWE-89, Critical)',
+                '[17:00:32] [ERROR] 보안 정책 규칙 위반: 신규 치명적(Critical) 결함으로 CI/CD 게이트 차단',
+                '[17:00:32] [TERMINAL] 🚫 배포 파이프라인 차단 (GitHub PR Checks 실패 상태 리포트 전송)',
+              ],
+          gateStatus: isAgentGateRemediated ? 'passed' : 'blocked',
+          critCount: isAgentGateRemediated ? 0 : 1,
           highCount: 0,
           medCount: 0,
-          policyNotes: '신규 치명적 SQL Injection(src/auth/session.ts:34) 결함으로 인해 배포 즉시 차단',
-          reviewStatus: 'not_reached',
+          policyNotes: isAgentGateRemediated
+            ? '시큐어 코딩 패치 완료 - 치명적 결함 0건으로 보안 게이트 통과'
+            : '신규 치명적 SQL Injection(src/auth/session.ts:34) 결함으로 인해 배포 즉시 차단',
+          reviewStatus: isAgentGateRemediated ? 'approved' : 'not_reached',
+          reviewer: isAgentGateRemediated ? (projectReview?.reviewer || '보안 심사관 승인') : undefined,
+          reviewComment: isAgentGateRemediated ? (projectReview?.reviewComment || '결함 조치 확인 및 배포 승인') : undefined,
           targetEnvironment: '운영',
           commitMatch: true,
-          deployStatus: 'blocked',
+          deployStatus: isAgentGateRemediated ? 'deployed' : 'blocked',
           cluster: 'k8s-prod-seoul',
           namespace: 'agentgate-svc',
-          replicas: '0 / 4 (차단됨)',
+          replicas: isAgentGateRemediated ? '4 / 4 Active' : '0 / 4 (차단됨)',
         },
         {
           id: 'run-agentgate-pr2',
@@ -551,7 +575,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
         replicas: '4 / 4 Active',
       },
     ];
-  }, [project, projects, hasDummyData, getProjectLatestScan]);
+  }, [project, projects, findings, reviews, hasDummyData, getProjectLatestScan, getProjectDeploymentReview]);
 
   // Local state for runs
   const [runs, setRuns] = useState<PipelineRunSample[]>(initialRuns);
@@ -1526,7 +1550,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       } else {
         toast.success(`[${activeRun.branch}] 5단계 운영 인프라 배포가 완벽하게 성공했습니다!`);
         setSelectedNodeId('node-deploy');
-        if (runId === 'run-agentgate-unscanned') {
+        if (runId.endsWith('-unscanned')) {
           commitBaselineScan(project.id);
         }
       }
@@ -1535,8 +1559,16 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
     }, 4800);
   };
 
-  // Interactive Simulation: Approve deployment review
+  // Interactive Simulation: Approve deployment review (synced with global DevSecOpsContext & RBAC)
   const handleApproveReview = () => {
+    if (currentUser.role !== 'group_admin') {
+      toast.error('배포 심사 승인은 보안 관리자(Admin) 권한이 필요합니다 (직무 분리 원칙).');
+      return;
+    }
+    const linkedReview = getProjectDeploymentReview(project.id);
+    if (linkedReview && linkedReview.approvalStatus !== '승인') {
+      reviewDeployment(linkedReview.id, '승인', '파이프라인 캔버스에서 보안 결함 조치 계획 확인 및 배포 최종 승인');
+    }
     setRuns((prev) =>
       prev.map((r) => {
         if (r.id === activeRun.id) {
@@ -1544,12 +1576,12 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
             ...r,
             currentStage: 5,
             reviewStatus: 'approved',
-            reviewer: '보안팀 최수민 팀장 (승인 처리)',
+            reviewer: `${currentUser.name} (승인 처리)`,
             reviewComment: '보안 결함 조치 계획서 확인 및 배포 최종 인가',
             deployStatus: 'deployed',
             executionLogs: [
               ...r.executionLogs,
-              `[${new Date().toLocaleTimeString()}] [INFO] 배포 심사위원 최종 승인 완료`,
+              `[${new Date().toLocaleTimeString()}] [INFO] 배포 심사위원(${currentUser.name}) 최종 승인 완료`,
               `[${new Date().toLocaleTimeString()}] [SUCCESS] 운영 클러스터 롤링 배포 성공`,
             ],
           };
@@ -1557,23 +1589,32 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
         return r;
       })
     );
+    setSelectedNodeId('node-deploy');
     toast.success('배포 심사가 승인되어 5단계 운영 인프라 배포가 완료되었습니다!');
   };
 
-  // Interactive Simulation: Reject deployment review
+  // Interactive Simulation: Reject deployment review (synced with global DevSecOpsContext & RBAC)
   const handleRejectReview = () => {
+    if (currentUser.role !== 'group_admin') {
+      toast.error('배포 심사 반려는 보안 관리자(Admin) 권한이 필요합니다 (직무 분리 원칙).');
+      return;
+    }
+    const linkedReview = getProjectDeploymentReview(project.id);
+    if (linkedReview && linkedReview.approvalStatus !== '반려') {
+      reviewDeployment(linkedReview.id, '반려', '파이프라인 캔버스에서 보안 조치 미흡으로 인한 배포 반려 처리');
+    }
     setRuns((prev) =>
       prev.map((r) => {
         if (r.id === activeRun.id) {
           return {
             ...r,
             reviewStatus: 'rejected',
-            reviewer: '보안팀 최수민 팀장 (반려 처리)',
+            reviewer: `${currentUser.name} (반려 처리)`,
             reviewComment: '보안 조치 미흡으로 인한 배포 반려',
             deployStatus: 'blocked',
             executionLogs: [
               ...r.executionLogs,
-              `[${new Date().toLocaleTimeString()}] [WARN] 배포 심사 반려 발생: 배포가 중단되었습니다.`,
+              `[${new Date().toLocaleTimeString()}] [WARN] 배포 심사 반려 발생(${currentUser.name}): 배포가 중단되었습니다.`,
             ],
           };
         }
@@ -1950,15 +1991,15 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setIsPrChecksModalOpen(true)}
+            onClick={() => setIsDevWorkflowModalOpen(true)}
             className="h-8 text-xs gap-1.5 border-white/[0.1] bg-[#141417] hover:bg-zinc-800 text-zinc-200 font-medium"
             title="오류 발생 시 담당자 전달 -> 조치 -> 푸시 -> 플랫폼 반영 워크플로우 안내"
           >
             <Bell className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden xl:inline">담당자 전달 & 조치 현황</span>
             <span className="xl:hidden">통보 현황</span>
-            <span className="px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 text-[10px] font-mono font-semibold border border-rose-500/30">
-              {activeRun.critCount > 0 ? '차단 1' : '정상'}
+            <span className="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 text-[10px] font-mono font-semibold border border-rose-500/30">
+              {activeRun.critCount > 0 ? `차단 ${activeRun.critCount}` : '정상'}
             </span>
           </Button>
 
@@ -1973,8 +2014,8 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
             <GitPullRequest className="w-3.5 h-3.5 text-emerald-400" />
             <span className="hidden xl:inline">GitHub PR Checks 뷰</span>
             <span className="xl:hidden">PR Checks</span>
-            <span className="px-1.5 py-0.2 rounded bg-zinc-900 text-zinc-300 text-[10px] font-mono border border-white/[0.08]">
-              #{activeRun.prNumber || 142}
+            <span className="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-300 text-[10px] font-mono border border-white/[0.08]">
+              #{activeRun.prNumber || 1}
             </span>
           </Button>
 
@@ -2024,7 +2065,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
               ) : (
                 <>
                   <Play className="w-3.5 h-3.5 fill-current" />
-                  시나리오 실행
+                  {activeRun.id.endsWith('-unscanned') ? '최초 베이스라인 점검 실행' : '시나리오 실행'}
                 </>
               )}
             </Button>
@@ -2341,8 +2382,8 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 lifecycleStep={lifecycleStep}
                 onSelectNode={(nodeId) => setSelectedNodeId(nodeId)}
                 selectedNodeId={selectedNodeId}
-                onOpenFixModal={() => setIsPrChecksModalOpen(true)}
-                onOpenDevWorkflowModal={() => setIsPrChecksModalOpen(true)}
+                onOpenFixModal={() => setIsFixBranchModalOpen(true)}
+                onOpenDevWorkflowModal={() => setIsDevWorkflowModalOpen(true)}
                 visibleRuns={visibleRuns}
                 onSelectRun={(runId) => setSelectedRunId(runId)}
                 onOpenPrChecksModal={() => setIsPrChecksModalOpen(true)}
@@ -2358,12 +2399,14 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                 policy={policy}
                 onSelectRun={(runId) => setSelectedRunId(runId)}
                 onSelectNode={(nodeId) => setSelectedNodeId(nodeId)}
-                onOpenFixModal={() => setIsPrChecksModalOpen(true)}
+                onOpenFixModal={() => setIsFixBranchModalOpen(true)}
                 onOpenOverrideModal={() => setIsOverrideModalOpen(true)}
                 onSwitchEnvironment={handleSwitchEnvironment}
                 onRollback={handleRollback}
                 onRetryScanner={handleRetryScanner}
                 onOpenPrChecksModal={() => setIsPrChecksModalOpen(true)}
+                onApproveReview={handleApproveReview}
+                onRejectReview={handleRejectReview}
               />
             )}
         </div>
@@ -2864,7 +2907,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
                             </p>
                             <Button
                               size="sm"
-                              onClick={() => setIsPrChecksModalOpen(true)}
+                              onClick={() => setIsFixBranchModalOpen(true)}
                               className="w-full text-xs h-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-1.5 mt-1"
                             >
                               <GitBranch className="w-3.5 h-3.5" />
@@ -3160,7 +3203,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
         critCount={activeRun.critCount}
         onStartFixFlow={() => {
           setIsDevWorkflowModalOpen(false);
-          setIsPrChecksModalOpen(true);
+          setIsFixBranchModalOpen(true);
         }}
       />
 

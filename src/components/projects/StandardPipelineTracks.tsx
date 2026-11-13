@@ -45,6 +45,8 @@ interface StandardPipelineTracksProps {
   onRollback: () => void;
   onRetryScanner: (tool: 'sast' | 'sca' | 'secret' | 'iac') => void;
   onOpenPrChecksModal?: () => void;
+  onApproveReview?: () => void;
+  onRejectReview?: () => void;
 }
 
 export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
@@ -63,6 +65,8 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
   onRollback,
   onRetryScanner,
   onOpenPrChecksModal,
+  onApproveReview,
+  onRejectReview,
 }) => {
   const nodePositions = {
     'node-trigger': { x: 50, width: 320 },
@@ -1156,6 +1160,35 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                     <div className="text-[11px] text-zinc-400 italic bg-[#09090b]/60 p-2 rounded border border-white/[0.06] truncate">
                       "{r.reviewComment || '심사 진행 중'}"
                     </div>
+
+                    {isRunReviewPending && onApproveReview && onRejectReview && (
+                      <div className="grid grid-cols-2 gap-1.5 pt-1">
+                        <Button
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectRun(r.id);
+                            onApproveReview();
+                          }}
+                          className="h-7 text-[10.5px] bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-1"
+                        >
+                          <CheckCircle2 className="w-3 h-3" />
+                          심사 승인
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectRun(r.id);
+                            onRejectReview();
+                          }}
+                          className="h-7 text-[10.5px] bg-rose-600 hover:bg-rose-500 text-white font-semibold gap-1"
+                        >
+                          <XCircle className="w-3 h-3" />
+                          심사 반려
+                        </Button>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
