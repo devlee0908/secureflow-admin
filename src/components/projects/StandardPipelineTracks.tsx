@@ -426,11 +426,11 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
               }}
             >
               {/* Track Header */}
-              <div className="h-12 px-5 border-b border-white/[0.08] bg-[#141417]/90 flex items-center justify-between pointer-events-auto">
-                <div className="flex items-center gap-3">
+              <div className="h-12 px-5 border-b border-white/[0.08] bg-[#141417]/90 flex items-center justify-between gap-4 pointer-events-auto">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span
                     className={cn(
-                      'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold font-mono border',
+                      'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold font-mono border shrink-0',
                       isSelectedRun
                         ? 'bg-zinc-100 border-zinc-100 text-zinc-950'
                         : 'bg-zinc-900 border-white/[0.1] text-zinc-300'
@@ -439,7 +439,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                     <SlidersHorizontal className="w-3.5 h-3.5" />
                     TRACK {runIndex + 1}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <div
                       className="w-6 h-6 rounded-full bg-zinc-800 border border-white/[0.12] text-zinc-100 font-semibold flex items-center justify-center text-[10px]"
                     >
@@ -450,15 +450,15 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                       ({r.authorRole} · {r.department})
                     </span>
                   </div>
-                  <span className="text-zinc-700">|</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-mono text-zinc-300 bg-[#09090b] px-2 py-0.5 rounded border border-white/[0.08]">
+                  <span className="text-zinc-700 shrink-0">|</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-[11px] font-mono text-zinc-300 bg-[#09090b] px-2 py-0.5 rounded border border-white/[0.08] shrink-0">
                       {r.trigger === 'PR/MR' ? `PR #${r.prNumber}` : 'Push'}
                     </span>
-                    <span className="text-xs font-mono font-semibold text-zinc-100">
+                    <span className="text-xs font-mono font-semibold text-zinc-100 truncate max-w-[180px]">
                       {r.branch}
                     </span>
-                    <span className="text-[11px] font-mono text-zinc-400">
+                    <span className="text-[11px] font-mono text-zinc-400 shrink-0">
                       @{r.commitId}
                     </span>
                     <span className="text-[11px] text-zinc-400 italic truncate max-w-[280px]">
@@ -467,7 +467,7 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 shrink-0">
                   {r.deployStatus === 'deployed' && (
                     <Badge
                       variant="outline"
@@ -595,13 +595,13 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div className="p-2 rounded-lg bg-[#09090b]/80 border border-white/[0.08]">
+                  <div className="p-2 rounded-lg bg-[#09090b]/80 border border-white/[0.08] min-w-0">
                     <span className="text-zinc-500 text-[10px] block">작업 브랜치</span>
-                    <span className="font-mono font-semibold text-zinc-100 truncate block">
+                    <span className="font-mono font-semibold text-zinc-100 truncate block" title={r.branch}>
                       {r.branch}
                     </span>
                   </div>
-                  <div className="p-2 rounded-lg bg-[#09090b]/80 border border-white/[0.08]">
+                  <div className="p-2 rounded-lg bg-[#09090b]/80 border border-white/[0.08] min-w-0">
                     <span className="text-zinc-500 text-[10px] block">커밋 해시</span>
                     <span className="font-mono font-semibold text-zinc-300 block truncate">
                       @{r.commitId}
@@ -1149,8 +1149,8 @@ export const StandardPipelineTracks: React.FC<StandardPipelineTracksProps> = ({
                           일치 (@{r.commitId})
                         </span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-zinc-400">심사위원</span>
+                      <div className="flex items-center justify-between gap-2 min-w-0">
+                        <span className="text-zinc-400 shrink-0">심사위원</span>
                         <span className="text-zinc-200 font-medium truncate max-w-[150px]">
                           {r.reviewer || '보안팀 최수민 팀장'}
                         </span>

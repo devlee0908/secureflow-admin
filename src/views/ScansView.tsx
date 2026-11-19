@@ -730,23 +730,23 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                   실행 메타데이터
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-zinc-400 block text-[10px]">실행 계기</span>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">{detailScan.trigger}</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{detailScan.trigger}</span>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-zinc-400 block text-[10px]">시작 시각 / 소요 시간</span>
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">
                       {detailScan.startedAt} ({detailScan.durationSeconds}초)
                     </span>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-zinc-400 block text-[10px]">검사 유형 ({detailScan.scanTypes.length}개)</span>
-                    <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                    <span className="font-medium text-zinc-700 dark:text-zinc-300 break-words">
                       {detailScan.scanTypes.join(', ')}
                     </span>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-zinc-400 block text-[10px]">발견 결함 건수</span>
                     <span
                       className={`font-bold ${
