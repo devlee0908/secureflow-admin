@@ -213,4 +213,32 @@ describe('SecureFlow Enterprise Security & Cryptographic Engine Suite', () => {
     assert.equal(tamperedDigestCheck.verified, false, 'Modified SBOM component must break SHA-256 digest');
     assert.equal(tamperedDigestCheck.reason, 'SBOM_DIGEST_MISMATCH');
   });
+
+  it('7. Real Codebase SAST, SCA, Secret & IaC Static File Scanner Detection', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const { scanDirectory } = await import('../scanners/realCodeScanner.js');
+
+    const tmpDir = fs.mkdtempSync(path.join('/tmp', 'sf-real-scan-'));
+    try {
+      fs.writeFileSync(
+        path.join(tmpDir, 'auth.ts'),
+        'const rows = await db.query(`SELECT * FROM users WHERE id = ${userId}`);\nconst awsKey = "AKIAIOSFODNN7EXAMPLE";\n'
+      );
+      fs.writeFileSync(
+        path.join(tmpDir, 'package.json'),
+        JSON.stringify({ name: 'sample-app', dependencies: { 'cross-spawn': '^7.0.3' } })
+      );
+      fs.writeFileSync(path.join(tmpDir, 'Dockerfile'), 'FROM node:20-alpine\nWORKDIR /app\n');
+
+      const result = scanDirectory({ targetDir: tmpDir, projectId: 'PRJ-TEST' });
+      assert.equal(result.counts.sast, 1, 'Should detect SQL Injection in auth.ts');
+      assert.equal(result.counts.secret, 1, 'Should detect hardcoded AWS Access Key');
+      assert.equal(result.counts.sca, 1, 'Should detect vulnerable cross-spawn in package.json');
+      assert.equal(result.counts.iac, 1, 'Should detect missing non-root USER in Dockerfile');
+      assert.equal(result.findings.length, 4);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
 });

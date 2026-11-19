@@ -240,6 +240,9 @@ export const api = {
   async triggerWorkerScan(payload: {
     scanId?: string;
     projectId: string;
+    projectName?: string;
+    entityId?: string;
+    entityName?: string;
     repository?: string;
     branch?: string;
     commitId?: string;
@@ -248,6 +251,7 @@ export const api = {
     trigger?: string;
     scanTypes?: string[];
     willFail?: boolean;
+    allowClone?: boolean;
   }) {
     try {
       const res = await fetch('/api/scanners/run', {

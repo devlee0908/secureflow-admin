@@ -886,11 +886,15 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setScans((prev) => [newScan, ...prev]);
     toast.info(`[${project.name}] 보안 점검 워커 스레드 실행을 시작했습니다.`);
 
-    // Dispatch to isolated backend Node.js Worker Thread Pool & persist to SQLite SSOT
-    api
-      .triggerWorkerScan({
+    // Dispatch to isolated backend Node.js Worker Thread Pool (Real File Scanner) & persist to SQLite SSOT
+    let workerResult: any = null;
+    try {
+      workerResult = await api.triggerWorkerScan({
         scanId,
         projectId: project.id,
+        projectName: project.name,
+        entityId: project.entityId,
+        entityName: project.entityName,
         repository: project.repository,
         branch: project.defaultBranch,
         commitId: randomCommit,
@@ -899,10 +903,12 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         trigger,
         scanTypes,
         willFail,
-      })
-      .catch(() => {});
+      });
+    } catch {
+      workerResult = null;
+    }
 
-    // Simulate async completion after 2 seconds
+    // Complete after brief worker feedback delay
     setTimeout(() => {
       if (!willFail && wasAgentGateUnscanned) {
         setScans((prev) => prev.filter((s) => s.id !== scanId));
@@ -911,12 +917,35 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return;
       }
 
-      const activeFindings = findings.filter(
-        (f) =>
-          f.projectId === project.id &&
-          f.status !== '해결' &&
-          f.status !== '오탐' &&
-          f.status !== '예외 승인'
+      const realDiscoveredFindings: Finding[] =
+        !willFail && Array.isArray(workerResult?.findings) ? workerResult.findings : [];
+
+      if (realDiscoveredFindings.length > 0) {
+        setFindings((prev) => {
+          const existingIds = new Set(prev.map((f) => f.id));
+          const uniqueNew = realDiscoveredFindings.filter((f) => !existingIds.has(f.id));
+          return uniqueNew.length > 0 ? [...uniqueNew, ...prev] : prev;
+        });
+      }
+
+      const activeFindings = [
+        ...realDiscoveredFindings,
+        ...findings.filter(
+          (f) =>
+            f.projectId === project.id &&
+            f.status !== '해결' &&
+            f.status !== '오탐' &&
+            f.status !== '예외 승인'
+        ),
+      ];
+
+      const workerTools = workerResult?.run?.toolStatuses;
+      const workerLogs: string[] = Array.isArray(workerResult?.run?.executionLogs)
+        ? workerResult.run.executionLogs
+        : [];
+      const realDurationSec = Math.max(
+        1,
+        Math.round((workerResult?.metrics?.executionDurationMs || 1200) / 1000)
       );
 
       setScans((prev) =>
@@ -937,14 +966,25 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             };
           }
 
-          // Successful scan reflecting actual active unresolved findings for this project
+          // Successful scan using real Worker Thread file scan counts when available
           const toolStatuses = s.toolStatuses.map((t) => {
-            const count = activeFindings.filter((f) => f.scanType === t.category).length;
+            const workerCount =
+              t.category === '소스코드 정적 분석'
+                ? workerTools?.sast?.count
+                : t.category === '의존성 취약점 분석'
+                ? workerTools?.sca?.count
+                : t.category === '비밀정보 탐지'
+                ? workerTools?.secret?.count
+                : workerTools?.iac?.count;
+            const count =
+              typeof workerCount === 'number'
+                ? workerCount
+                : activeFindings.filter((f) => f.scanType === t.category).length;
             return {
               ...t,
               status: (count > 0 ? '경고' : '성공') as '성공' | '경고',
               findingsCount: count,
-              durationSeconds: Math.floor(Math.random() * 30) + 15,
+              durationSeconds: Math.max(1, Math.round((realDurationSec * 10) / 4)),
             };
           });
           const totalFindings = toolStatuses.reduce((acc, t) => acc + t.findingsCount, 0);
@@ -952,15 +992,19 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           return {
             ...s,
             status: '완료',
-            durationSeconds: 45,
+            durationSeconds: realDurationSec,
             findingsCount: totalFindings,
             toolStatuses,
             executionLogs: [
               ...s.executionLogs,
-              `[${new Date().toLocaleTimeString()}] [INFO] 모든 스캐너 엔진 정상 완료 (정적분석/SCA/비밀정보/IaC)`,
-              totalFindings > 0
-                ? `[${new Date().toLocaleTimeString()}] [WARN] 미해결 보안 결함 ${totalFindings}건 검출됨 (정책 게이트 평가 반영)`
-                : `[${new Date().toLocaleTimeString()}] [INFO] 정책 엔진 검증 완료: 결함 0건 클린 통과`,
+              ...(workerLogs.length > 0
+                ? workerLogs
+                : [
+                    `[${new Date().toLocaleTimeString()}] [INFO] 모든 스캐너 엔진 정상 완료 (정적분석/SCA/비밀정보/IaC)`,
+                    totalFindings > 0
+                      ? `[${new Date().toLocaleTimeString()}] [WARN] 미해결 보안 결함 ${totalFindings}건 검출됨 (정책 게이트 평가 반영)`
+                      : `[${new Date().toLocaleTimeString()}] [INFO] 정책 엔진 검증 완료: 결함 0건 클린 통과`,
+                  ]),
             ],
           };
         })
@@ -969,9 +1013,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (willFail) {
         toast.error(`[${project.name}] 점검 실패 재현: 스캐너 컨테이너 오류 발생!`);
       } else {
-        toast.success(`[${project.name}] 보안 점검 완료 (ID: ${scanId})`);
+        toast.success(`[${project.name}] 실제 워커 스레드 보안 점검 완료 (ID: ${scanId})`);
       }
-    }, 2200);
+    }, 1200);
 
     return newScan;
   };

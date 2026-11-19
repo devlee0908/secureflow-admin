@@ -1,5 +1,10 @@
 import { parentPort, threadId } from 'node:worker_threads';
 import crypto from 'node:crypto';
+import {
+  calculateShannonEntropy as calcEntropy,
+  resolveScanTarget,
+  scanDirectory,
+} from '../scanners/realCodeScanner.js';
 
 /**
  * SecureFlow CPU-Bound Static Analysis Scanner Worker
@@ -23,11 +28,15 @@ function calculateShannonEntropy(str) {
   return entropy;
 }
 
-// Deep regex and AST rule matching
+// Deep regex, AST-pattern, SCA, Secret & IaC scanning (Real file scan + webhook event rules)
 function performDeepSecurityScan(eventData) {
   const t0 = performance.now();
   const {
+    scanId,
     projectId = 'PRJ-101',
+    projectName = '보안 점검 대상 프로젝트',
+    entityId = 'ENT-01',
+    entityName = '테크솔루션즈',
     repository = 'unknown-repo',
     branch = 'main',
     commitId = 'HEAD',
@@ -37,11 +46,135 @@ function performDeepSecurityScan(eventData) {
     trigger = 'Push',
     prNumber,
     filesChanged = [],
+    scanTypes = ['소스코드 정적 분석', '의존성 취약점 분석', '비밀정보 탐지', '설정 오류 분석'],
+    realScan = false,
+    localWorkspaceDir,
+    allowClone = false,
   } = eventData;
 
-  const textToScan = `${commitMessage} ${filesChanged.join(' ')} ${branch}`.toLowerCase();
   const nowTime = () => new Date().toLocaleTimeString();
   const startedAt = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+  if (realScan || localWorkspaceDir) {
+    const target = resolveScanTarget({
+      repository,
+      branch,
+      localWorkspaceDir,
+      allowClone,
+    });
+    try {
+      const realRes = scanDirectory({
+        targetDir: target.dir,
+        projectId,
+        projectName,
+        entityId,
+        entityName,
+        scanRunId: scanId || `SCN-${Date.now()}`,
+        commitId: commitId.substring(0, 7),
+        scanTypes,
+      });
+
+      const critCount = realRes.findings.filter((f) => f.severity === '치명적').length;
+      const highCount = realRes.findings.filter((f) => f.severity === '높음').length;
+      const medCount = realRes.findings.filter((f) => f.severity === '중간').length;
+
+      const toolStatuses = {
+        sast: {
+          count: realRes.counts.sast,
+          duration: Math.max(1, Math.round(realRes.executionDurationMs * 0.45)),
+          status: realRes.counts.sast > 0 ? '경고' : '성공',
+        },
+        sca: {
+          count: realRes.counts.sca,
+          duration: Math.max(1, Math.round(realRes.executionDurationMs * 0.25)),
+          status: realRes.counts.sca > 0 ? '경고' : '성공',
+        },
+        secret: {
+          count: realRes.counts.secret,
+          duration: Math.max(1, Math.round(realRes.executionDurationMs * 0.15)),
+          status: realRes.counts.secret > 0 ? '경고' : '성공',
+        },
+        iac: {
+          count: realRes.counts.iac,
+          duration: Math.max(1, Math.round(realRes.executionDurationMs * 0.15)),
+          status: realRes.counts.iac > 0 ? '경고' : '성공',
+        },
+      };
+
+      const gateStatus = critCount > 0 || highCount >= 2 ? 'blocked' : medCount > 0 || highCount > 0 ? 'review' : 'passed';
+      const logs = [
+        `[${nowTime()}] [WORKER-${threadId}] 🧵 Worker Thread 실제 소스코드 스캐너 기동 (${target.cloned ? 'Git Clone' : '로컬 워크스페이스'}: ${target.dir})`,
+        `[${nowTime()}] [FILES] 📂 총 ${realRes.filesScannedCount}개 파일 탐색 (코드 ${realRes.codeFilesScanned}개, npm 패키지 ${realRes.packagesChecked}개 분석)`,
+        `[${nowTime()}] [SAST] 정적 취약점 ${realRes.counts.sast}건 · [SCA] 의존성 ${realRes.counts.sca}건 · [SECRET] 시크릿 ${realRes.counts.secret}건 · [IaC] 설정 ${realRes.counts.iac}건`,
+        gateStatus === 'blocked'
+          ? `[${nowTime()}] [GATE] ❌ 치명적/고위험 결함(${critCount + highCount}건) 탐지로 보안 게이트 차단`
+          : gateStatus === 'review'
+          ? `[${nowTime()}] [GATE] ⚠️ 중간/고위험 결함(${highCount + medCount}건) 탐지로 심사 검토 필요`
+          : `[${nowTime()}] [GATE] ✅ 실제 소스코드 스캔 0건 클린 통과`,
+      ];
+
+      const run = {
+        id: scanId || `run-${Date.now()}`,
+        projectId,
+        author,
+        authorEmail,
+        authorRole: '개발자',
+        department: '개발팀',
+        avatarColor: 'from-indigo-600 to-indigo-400',
+        branch,
+        targetBranch: 'main',
+        trigger,
+        prNumber,
+        commitId: commitId.substring(0, 7),
+        commitMessage,
+        startedAt,
+        currentStage: gateStatus === 'blocked' ? 3 : gateStatus === 'review' ? 4 : 5,
+        scanStatus: 'completed',
+        scanDuration: Math.max(1, Math.round(realRes.executionDurationMs / 1000)),
+        toolStatuses,
+        executionLogs: logs,
+        gateStatus,
+        critCount,
+        highCount,
+        medCount,
+        policyNotes:
+          gateStatus === 'blocked'
+            ? `실제 코드 스캔 결과 치명적(${critCount})/고위험(${highCount}) 결함으로 차단`
+            : gateStatus === 'review'
+            ? `실제 코드 스캔 결과 ${realRes.findings.length}건 결함 검토 필요`
+            : '실제 소스코드 스캔 0건 클린 통과',
+        reviewStatus: gateStatus === 'blocked' ? 'not_reached' : gateStatus === 'review' ? 'pending_review' : 'approved',
+        targetEnvironment: '운영',
+        deployStatus: gateStatus === 'blocked' ? 'blocked' : gateStatus === 'review' ? 'pending' : 'deployed',
+        cluster: 'k8s-prod-seoul',
+        namespace: `${projectId.toLowerCase()}-svc`,
+        replicas: gateStatus === 'blocked' ? '0 / 4 (차단됨)' : '4 / 4 Active',
+        isOverridden: false,
+        workerInfo: {
+          threadId,
+          executionDurationMs: realRes.executionDurationMs,
+          realFileScan: true,
+        },
+      };
+
+      return {
+        run,
+        findings: realRes.findings,
+        metrics: {
+          workerId: threadId,
+          executionDurationMs: realRes.executionDurationMs,
+          filesScannedCount: realRes.filesScannedCount,
+          codeFilesScanned: realRes.codeFilesScanned,
+          packagesChecked: realRes.packagesChecked,
+          rulesEvaluatedCount: 12,
+        },
+      };
+    } finally {
+      target.cleanup();
+    }
+  }
+
+  const textToScan = `${commitMessage} ${filesChanged.join(' ')} ${branch}`.toLowerCase();
 
   // 1. SAST Rules (SQL Injection, Command Injection, Weak Crypto)
   const hasSqlInjection =

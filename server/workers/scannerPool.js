@@ -87,7 +87,7 @@ export class ScannerWorkerPool {
   }
 
   handleWorkerResult(workerEntry, result) {
-    const { jobId, success, run, metrics, error } = result;
+    const { jobId, success, run, findings, metrics, error } = result;
     const active = this.activeJobs.get(jobId);
     if (!active) return;
 
@@ -105,7 +105,7 @@ export class ScannerWorkerPool {
       const duration = metrics?.executionDurationMs || 0;
       this.stats.totalDurationMs += duration;
       this.stats.avgDurationMs = Math.round(this.stats.totalDurationMs / this.stats.totalCompleted);
-      active.resolve({ run, metrics });
+      active.resolve({ run, findings: findings || [], metrics });
     } else {
       this.stats.totalFailed += 1;
       active.reject(new Error(error || 'Worker scan failed'));

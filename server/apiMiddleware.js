@@ -222,6 +222,9 @@ export function apiMiddleware(req, res, next) {
         const {
           scanId,
           projectId = 'PRJ-AGENTGATE',
+          projectName = 'AgentGate 보안 게이트웨이',
+          entityId = 'ENT-01',
+          entityName = '테크솔루션즈',
           repository = 'github.com/devlee0908/agentgate',
           branch = 'main',
           commitId = crypto.randomBytes(4).toString('hex').substring(0, 7),
@@ -229,13 +232,18 @@ export function apiMiddleware(req, res, next) {
           author = '보안운영자',
           authorEmail = 'secops@secureflow.co.kr',
           trigger = '수동',
-          scanTypes = [],
+          scanTypes = ['소스코드 정적 분석', '의존성 취약점 분석', '비밀정보 탐지', '설정 오류 분석'],
           filesChanged = ['src/index.ts'],
           willFail = false,
+          allowClone = false,
         } = parsedBody;
 
-        const { run: evaluatedRun, metrics } = await scannerPool.dispatch({
+        const { run: evaluatedRun, findings: realFindings = [], metrics } = await scannerPool.dispatch({
+          scanId,
           projectId,
+          projectName,
+          entityId,
+          entityName,
           repository,
           branch,
           commitId,
@@ -243,7 +251,11 @@ export function apiMiddleware(req, res, next) {
           author,
           authorEmail,
           trigger,
+          scanTypes,
           filesChanged,
+          realScan: !willFail,
+          localWorkspaceDir: process.cwd(),
+          allowClone: Boolean(allowClone),
         });
 
         const finalRun = {
@@ -255,11 +267,17 @@ export function apiMiddleware(req, res, next) {
           scanStatus: willFail ? 'failed' : 'completed',
           executionLogs: [
             ...(evaluatedRun.executionLogs || []),
-            `[${new Date().toLocaleTimeString()}] [WORKER] 격리된 스캐너 워커 스레드(#${metrics?.workerId || 1}) 정적/SCA/시크릿/IaC 분석 완료 (${metrics?.executionDurationMs || 12}ms)`,
+            `[${new Date().toLocaleTimeString()}] [WORKER] 격리된 스캐너 워커 스레드(#${metrics?.workerId || 1}) 실제 파일 스캔 완료 (${metrics?.filesScannedCount || 0}개 파일, ${metrics?.executionDurationMs || 12}ms)`,
           ],
         };
 
         const savedRun = dbService.saveRun(finalRun);
+
+        if (!willFail && Array.isArray(realFindings) && realFindings.length > 0) {
+          for (const f of realFindings) {
+            dbService.saveFinding(f);
+          }
+        }
 
         dbService.saveAuditLog({
           actorId: 'sec-admin',
@@ -287,6 +305,7 @@ export function apiMiddleware(req, res, next) {
         return sendJson(res, 201, {
           success: true,
           run: savedRun,
+          findings: realFindings,
           metrics,
         });
       }
