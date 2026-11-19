@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect, useRef } from 'react';
 import {
   CorporateEntity,
   Project,
@@ -107,7 +107,7 @@ interface DevSecOpsContextType {
 
   triggerScan: (projectId: string, trigger?: ScanTrigger, scanTypes?: ScanType[]) => Promise<ScanRun | null>;
   triggerBatchScan: (projectIds: string[]) => Promise<void>;
-  retryScan: (scanId: string) => Promise<void>;
+  retryScan: (scanId: string) => Promise<ScanRun | null>;
 
   updateFindingAssigneeAndDueDate: (findingId: string, assignee: string, dueDate: string) => Promise<boolean>;
   batchUpdateAssignee: (findingIds: string[], assignee: string) => Promise<boolean>;
@@ -817,6 +817,8 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     );
   };
 
+    const scanSeqRef = useRef(200);
+
   // Scan simulation
   const triggerScan = async (
     projectId: string,
@@ -834,7 +836,12 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return null;
     }
 
-    const scanId = `SCN-2026-${String(scans.length + 101).padStart(4, '0')}`;
+    let nextNum = Math.max(scanSeqRef.current + 1, scans.length + 101);
+    while (scans.some((s) => s.id === `SCN-2026-${String(nextNum).padStart(4, '0')}`)) {
+      nextNum += 1;
+    }
+    scanSeqRef.current = nextNum;
+    const scanId = `SCN-2026-${String(nextNum).padStart(4, '0')}`;
     const now = new Date();
     const nowStr = `${now.toISOString().replace('T', ' ').substring(0, 19)}`;
     const randomCommit = Math.random().toString(16).substring(2, 9);
@@ -976,11 +983,11 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
-  const retryScan = async (scanId: string): Promise<void> => {
+  const retryScan = async (scanId: string): Promise<ScanRun | null> => {
     const scan = scans.find((s) => s.id === scanId);
-    if (!scan) return;
+    if (!scan) return null;
     toast.info(`점검 [${scanId}] 재시도를 시작합니다...`);
-    await triggerScan(scan.projectId, scan.trigger, scan.scanTypes);
+    return await triggerScan(scan.projectId, scan.trigger, scan.scanTypes);
   };
 
   // Findings mutations with Optimistic Update & Auto Rollback

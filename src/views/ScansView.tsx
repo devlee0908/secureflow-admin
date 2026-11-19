@@ -163,9 +163,20 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
       const updated = scans.find((s) => s.id === detailScan.id);
       if (updated) {
         setDetailScan(updated);
+      } else if (detailScan.status === '실행 중' && detailScan.projectId === 'PRJ-AGENTGATE') {
+        const baseline = scans.find((s) => s.id === 'SCN-AGENTGATE-01');
+        if (baseline) {
+          setDetailScan(baseline);
+        }
       }
     }
-  }, [scans, detailScan?.id]);
+  }, [scans, detailScan?.id, detailScan?.status, detailScan?.projectId]);
+
+  const modalProjects = useMemo(() => {
+    if (selectedEntityId === 'ALL') return projects;
+    const filtered = projects.filter((p) => p.entityId === selectedEntityId);
+    return filtered.length > 0 ? filtered : projects;
+  }, [projects, selectedEntityId]);
 
   // Filtered dataset
   const filteredData = useMemo(() => {
@@ -202,7 +213,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
 
       return true;
     });
-  }, [scans, selectedEntityId, searchQuery, triggerFilter, statusFilter, scanTypeFilter]);
+  }, [currentScans, selectedEntityId, searchQuery, triggerFilter, statusFilter, scanTypeFilter]);
 
   const handleResetFilters = () => {
     setSearchQuery('');
@@ -342,8 +353,15 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
         header: ({ column }) => <DataTableColumnHeader column={column} title="발견사항" />,
         cell: ({ row }) => {
           const count = row.original.findingsCount;
-          if (row.original.status === '실패') {
+          if (row.original.status === '실패' || row.original.status === '취소') {
             return <span className="text-zinc-400 text-xs font-mono">-</span>;
+          }
+          if (row.original.status === '실행 중' || row.original.status === '대기') {
+            return (
+              <span className="text-amber-600 dark:text-amber-400 text-xs font-medium font-mono">
+                집계 중...
+              </span>
+            );
           }
           if (count === 0) {
             return (
@@ -530,7 +548,7 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
             <Button
               size="sm"
               onClick={() => {
-                setSelectedProjectId(projects[0]?.id || '');
+                setSelectedProjectId(modalProjects[0]?.id || '');
                 setIsNewScanOpen(true);
               }}
               className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 text-xs font-medium shadow-none"
@@ -673,7 +691,10 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                     {detailScan.status === '실패' && (
                       <Button
                         size="sm"
-                        onClick={() => retryScan(detailScan.id)}
+                        onClick={async () => {
+                          const retried = await retryScan(detailScan.id);
+                          if (retried) setDetailScan(retried);
+                        }}
                         className="h-7 text-xs bg-amber-600 hover:bg-amber-700 text-white"
                       >
                         <RotateCcw className="w-3.5 h-3.5 mr-1" />
@@ -854,7 +875,13 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
                 </h4>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {relatedScanFindings.length === 0 ? (
-                    <p className="text-xs text-zinc-400">검출된 취약점 또는 결함이 없습니다.</p>
+                    <p className="text-xs text-zinc-400">
+                      {detailScan.status === '실행 중' || detailScan.status === '대기'
+                        ? '보안 스캐너가 분석 중입니다. 완료 후 검출 결함이 표시됩니다.'
+                        : detailScan.status === '실패'
+                        ? '점검 실행 실패로 인해 결함 집계가 완료되지 않았습니다.'
+                        : '검출된 취약점 또는 결함이 없습니다.'}
+                    </p>
                   ) : (
                     relatedScanFindings.map((f) => (
                       <div
@@ -894,18 +921,24 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
           <div className="space-y-4 py-3 text-xs">
             <div className="space-y-1.5">
               <label className="font-semibold text-zinc-700 dark:text-zinc-300">대상 프로젝트</label>
-              <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="프로젝트를 선택하세요" />
-                </SelectTrigger>
-                <SelectContent>
-                  {projects.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.name} ({p.entityName})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {modalProjects.length === 0 ? (
+                <div className="p-2.5 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300 text-xs">
+                  등록된 프로젝트가 없습니다. 프로젝트 자산 메뉴에서 먼저 프로젝트를 등록하거나 더미 데이터를 생성하세요.
+                </div>
+              ) : (
+                <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="프로젝트를 선택하세요" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {modalProjects.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name} ({p.entityName})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -958,8 +991,9 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
             </Button>
             <Button
               size="sm"
+              disabled={!selectedProjectId}
               onClick={handleStartNewScan}
-              className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-950 disabled:opacity-50"
             >
               스캐너 작업 큐 등록
             </Button>
