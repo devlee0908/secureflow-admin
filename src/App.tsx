@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { DevSecOpsProvider, useDevSecOps } from '@/context/DevSecOpsContext';
 import { Sidebar, ActiveMenu } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
@@ -88,11 +88,48 @@ class ViewErrorBoundary extends React.Component<
   }
 }
 
+const VALID_MENUS: ActiveMenu[] = [
+  'dashboard',
+  'projects',
+  'scans',
+  'findings',
+  'reviews',
+  'policies',
+  'audit',
+  'settings',
+];
+
+const parseMenuFromHash = (): ActiveMenu => {
+  try {
+    const raw = window.location.hash.replace(/^#\/?/, '').split('?')[0] as ActiveMenu;
+    return VALID_MENUS.includes(raw) ? raw : 'dashboard';
+  } catch {
+    return 'dashboard';
+  }
+};
+
 const AppContent: React.FC = () => {
-  const [activeMenu, setActiveMenu] = useState<ActiveMenu>('dashboard');
+  const [activeMenu, setActiveMenu] = useState<ActiveMenu>(() => parseMenuFromHash());
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  // Sync activeMenu with URL hash for refresh persistence and browser Back/Forward
+  useEffect(() => {
+    const handleHashChange = () => {
+      const next = parseMenuFromHash();
+      setActiveMenu(next);
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  useEffect(() => {
+    const targetHash = `#/${activeMenu}`;
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    }
+  }, [activeMenu]);
 
   // Navigation payload for filtering across views
   const [navigationFilter, setNavigationFilter] = useState<any>(null);

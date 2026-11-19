@@ -44,7 +44,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isMobileOpen,
   onCloseMobile,
 }) => {
-  const { currentUser, selectedEntityId, entities } = useDevSecOps();
+  const { currentUser, selectedEntityId, entities, findings, reviews, scans } = useDevSecOps();
+
+  const entityFilter = (entityId?: string) =>
+    selectedEntityId === 'ALL' || !entityId || entityId === selectedEntityId;
+
+  const runningScansCount = scans.filter(
+    (s) => entityFilter(s.entityId) && (s.status === '실행 중' || s.status === '대기')
+  ).length;
+  const openCriticalHighCount = findings.filter(
+    (f) =>
+      entityFilter(f.entityId) &&
+      (f.severity === '치명적' || f.severity === '높음') &&
+      f.status !== '해결' &&
+      f.status !== '오탐' &&
+      f.status !== '예외 승인'
+  ).length;
+  const pendingReviewsCount = reviews.filter(
+    (r) => entityFilter(r.entityId) && r.approvalStatus === '대기'
+  ).length;
+
+  const getMenuBadge = (id: ActiveMenu) => {
+    if (id === 'scans' && runningScansCount > 0) {
+      return { count: runningScansCount, tone: 'amber' as const, label: `${runningScansCount}건 실행 중` };
+    }
+    if (id === 'findings' && openCriticalHighCount > 0) {
+      return { count: openCriticalHighCount, tone: 'rose' as const, label: `치명적/높음 미해결 ${openCriticalHighCount}건` };
+    }
+    if (id === 'reviews' && pendingReviewsCount > 0) {
+      return { count: pendingReviewsCount, tone: 'amber' as const, label: `심사 대기 ${pendingReviewsCount}건` };
+    }
+    return null;
+  };
 
   const selectedEntityName =
     selectedEntityId === 'ALL'
@@ -137,6 +168,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {section.items.map((item) => {
               const Icon = item.icon;
               const isActive = activeMenu === item.id;
+              const badge = getMenuBadge(item.id);
               return (
                 <button
                   key={item.id}
@@ -147,7 +179,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       ? 'bg-zinc-100 dark:bg-white/[0.08] text-zinc-950 dark:text-white font-semibold'
                       : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/60 dark:hover:bg-white/[0.04] hover:text-zinc-950 dark:hover:text-zinc-200 font-medium'
                   )}
-                  title={isCollapsed ? item.label : undefined}
+                  title={
+                    isCollapsed
+                      ? badge
+                        ? `${item.label} (${badge.label})`
+                        : item.label
+                      : undefined
+                  }
                 >
                   {isActive && (
                     <span className="absolute left-0 top-1.5 bottom-1.5 w-0.5 bg-zinc-900 dark:bg-white rounded-r" />
@@ -161,7 +199,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     )}
                   />
                   {!isCollapsed && (
-                    <span className="tracking-tight text-xs truncate">{item.label}</span>
+                    <>
+                      <span className="tracking-tight text-xs truncate flex-1 text-left">{item.label}</span>
+                      {badge && (
+                        <span
+                          className={cn(
+                            'px-1.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tabular-nums leading-none shrink-0',
+                            badge.tone === 'rose'
+                              ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/25'
+                              : 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25'
+                          )}
+                        >
+                          {badge.count}
+                        </span>
+                      )}
+                    </>
+                  )}
+                  {isCollapsed && badge && (
+                    <span
+                      className={cn(
+                        'absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full',
+                        badge.tone === 'rose' ? 'bg-rose-500' : 'bg-amber-500'
+                      )}
+                    />
                   )}
                 </button>
               );

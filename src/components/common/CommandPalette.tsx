@@ -152,13 +152,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                 {[
                   { id: 'dashboard', label: '통합 대시보드', icon: Sparkles },
-                  { id: 'projects', label: '프로젝트 관리', icon: FolderGit2 },
-                  { id: 'scans', label: '보안점검 현황', icon: Scan },
-                  { id: 'findings', label: '취약점·발견사항', icon: ShieldAlert },
-                  { id: 'reviews', label: '배포 심사 게이트', icon: GitPullRequest },
+                  { id: 'projects', label: '프로젝트 자산', icon: FolderGit2 },
+                  { id: 'scans', label: '보안점검 파이프라인', icon: Scan },
+                  { id: 'findings', label: '취약점·결함 관리', icon: ShieldAlert },
+                  { id: 'reviews', label: '배포 통제 심사 게이트', icon: GitPullRequest },
                   { id: 'policies', label: '보안 정책 관리', icon: ShieldCheck },
-                  { id: 'audit', label: '보안 감사·전자서명', icon: FileCheck },
-                  { id: 'settings', label: '시스템·연동 설정', icon: Sliders },
+                  { id: 'audit', label: '보안 감사 및 전자서명', icon: FileCheck },
+                  { id: 'settings', label: '시스템 및 연동 설정', icon: Sliders },
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
