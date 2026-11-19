@@ -202,58 +202,111 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
             </div>
 
             {/* Track 2: Fix Remediation Branch (Middle Lane) */}
-            <div
-              className="absolute rounded-xl border border-emerald-500/25 bg-[#0f0f11]/60 transition-all overflow-hidden"
-              style={{ left: '740px', top: `${offsetY + 390}px`, width: '1090px', height: '260px' }}
-            >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-emerald-500/20 bg-emerald-950/20">
-                <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold text-xs font-mono">
-                    <GitFork className="w-3.5 h-3.5 text-emerald-400" />
-                    TRACK 2
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-zinc-100 text-xs">Fix 조치 브랜치</span>
-                    <span className="text-[11px] text-emerald-300 font-mono bg-[#09090b] px-2 py-0.5 rounded border border-emerald-500/30">
-                      fix/revoke-leaked-secret (PR #153)
-                    </span>
+            {(() => {
+              const isRemediated = runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed';
+              return (
+                <div
+                  className={cn(
+                    'absolute rounded-xl border transition-all overflow-hidden',
+                    isRemediated
+                      ? 'border-emerald-500/25 bg-[#0f0f11]/60'
+                      : 'border-amber-500/25 bg-[#0f0f11]/45 opacity-80'
+                  )}
+                  style={{ left: '740px', top: `${offsetY + 390}px`, width: '1090px', height: '260px' }}
+                >
+                  <div
+                    className={cn(
+                      'flex items-center justify-between px-5 py-3 border-b',
+                      isRemediated ? 'border-emerald-500/20 bg-emerald-950/20' : 'border-amber-500/20 bg-amber-950/15'
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={cn(
+                          'flex items-center gap-1.5 px-2.5 py-1 rounded-md border font-semibold text-xs font-mono',
+                          isRemediated
+                            ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                            : 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+                        )}
+                      >
+                        <GitFork className={cn('w-3.5 h-3.5', isRemediated ? 'text-emerald-400' : 'text-amber-400')} />
+                        TRACK 2
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-zinc-100 text-xs">Fix 조치 브랜치</span>
+                        <span
+                          className={cn(
+                            'text-[11px] font-mono bg-[#09090b] px-2 py-0.5 rounded border',
+                            isRemediated
+                              ? 'text-emerald-300 border-emerald-500/30'
+                              : 'text-amber-300 border-amber-500/30'
+                          )}
+                        >
+                          {isRemediated
+                            ? `${runItem.branch?.startsWith('fix/') ? runItem.branch : 'fix/security-remediation'} (PR #${runItem.prNumber || 2})`
+                            : 'fix/security-remediation (생성 대기)'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isRemediated ? (
+                        <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          4대 점검 재실행 클린 통과
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-amber-500/40 text-amber-300 bg-amber-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
+                          <Clock className="w-3.5 h-3.5 text-amber-400" />
+                          조치 브랜치 패치 대기 중
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    4대 점검 재실행 클린 통과
-                  </Badge>
-                </div>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* Track 3: Main Production Branch (Bottom Lane) */}
-            <div
-              className="absolute rounded-xl border border-white/[0.12] bg-[#0f0f11]/60 transition-all overflow-hidden"
-              style={{ left: '1450px', top: `${offsetY + 740}px`, width: '760px', height: '260px' }}
-            >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.08] bg-[#141417]/80">
-                <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.08] border border-white/[0.15] text-zinc-100 font-semibold text-xs font-mono">
-                    <GitMerge className="w-3.5 h-3.5 text-zinc-300" />
-                    TRACK 3
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-zinc-100 text-xs">Main 프로덕션 브랜치</span>
-                    <span className="text-[11px] text-zinc-300 font-mono bg-[#09090b] px-2 py-0.5 rounded border border-white/[0.1]">
-                      main (릴리즈 통합 배포)
-                    </span>
+            {(() => {
+              const isRemediated = runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed';
+              return (
+                <div
+                  className={cn(
+                    'absolute rounded-xl border bg-[#0f0f11]/60 transition-all overflow-hidden',
+                    isRemediated ? 'border-white/[0.12]' : 'border-rose-500/20 opacity-65'
+                  )}
+                  style={{ left: '1450px', top: `${offsetY + 740}px`, width: '760px', height: '260px' }}
+                >
+                  <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.08] bg-[#141417]/80">
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.08] border border-white/[0.15] text-zinc-100 font-semibold text-xs font-mono">
+                        <GitMerge className="w-3.5 h-3.5 text-zinc-300" />
+                        TRACK 3
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-zinc-100 text-xs">Main 프로덕션 브랜치</span>
+                        <span className="text-[11px] text-zinc-300 font-mono bg-[#09090b] px-2 py-0.5 rounded border border-white/[0.1]">
+                          main (릴리즈 통합 배포)
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isRemediated ? (
+                        <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
+                          <Rocket className="w-3.5 h-3.5 text-emerald-400" />
+                          K8s 무중단 배포 완료
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-rose-500/40 text-rose-300 bg-rose-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
+                          <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
+                          보안 게이트 차단으로 배포 중단
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
-                    <Rocket className="w-3.5 h-3.5 text-emerald-400" />
-                    K8s 무중단 배포 완료
-                  </Badge>
-                </div>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* ========================================================================= */}
             {/* 2. SVG CONNECTING CABLES */}
@@ -512,213 +565,254 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
-            {/* ------------------- TRACK 2 NODES ------------------- */}
-            {/* Node L-R1: Fix Commit & Patch */}
-            <div
-              onClick={() => {
-                onSelectRun?.(runItem.id);
-                onSelectNode('node-policy');
-              }}
-              className="workflow-node absolute rounded-xl border border-emerald-500/50 p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
-              style={{ left: '770px', top: `${offsetY + 454}px`, width: '310px', height: '172px' }}
-            >
-              {/* Input Port Top */}
-              <div className="absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
-                    4
-                  </div>
-                  <div>
-                    <h5 className="font-semibold text-zinc-100 text-xs">4. 조치 커밋 반영</h5>
-                    <span className="text-[10px] text-emerald-400 font-mono">Secret Removed</span>
-                  </div>
-                </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
-                  패치 완료
-                </Badge>
-              </div>
-              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
-                <div className="text-emerald-400 truncate">fix/revoke-leaked-secret (@c82e1f4)</div>
-                <div className="text-zinc-300">AWS Secret → Vault API 마이그레이션</div>
-              </div>
-              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
-                <span>조치 담당자</span>
-                <span className="text-zinc-100 font-mono">{runItem.author}</span>
-              </div>
-              {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-            </div>
-
-            {/* Node L-R2: Fix Branch Re-Scan */}
-            <div
-              onClick={() => {
-                onSelectRun?.(runItem.id);
-                onSelectNode('node-scanners');
-              }}
-              className="workflow-node absolute rounded-xl border border-emerald-500/50 p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
-              style={{ left: '1140px', top: `${offsetY + 454}px`, width: '290px', height: '172px' }}
-            >
-              {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
-                    5
-                  </div>
-                  <div>
-                    <h5 className="font-semibold text-zinc-100 text-xs">5. fix/ 재점검 통과</h5>
-                    <span className="text-[10px] text-emerald-400 font-mono">0 Defects Pass</span>
-                  </div>
-                </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
-                  통과 (0건)
-                </Badge>
-              </div>
-              <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
-                  Secret: 0건
-                </div>
-                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
-                  SAST: 0건
-                </div>
-                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
-                  SCA: 0건
-                </div>
-                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-emerald-400">
-                  IaC: 0건
-                </div>
-              </div>
-              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
-                <span>정책 게이트 판정</span>
-                <span className="text-emerald-400 font-semibold">PASS (승인 가능)</span>
-              </div>
-              {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-            </div>
-
-            {/* Node L-R3: PR Approval & Merge */}
-            <div
-              onClick={() => {
-                onSelectRun?.(runItem.id);
-                onSelectNode('node-review');
-              }}
-              className="workflow-node absolute rounded-xl border border-white/[0.2] p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
-              style={{ left: '1490px', top: `${offsetY + 454}px`, width: '310px', height: '172px' }}
-            >
-              {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md bg-white/[0.08] text-zinc-200 border border-white/[0.12] flex items-center justify-center font-semibold text-xs">
-                    6
-                  </div>
-                  <div>
-                    <h5 className="font-semibold text-zinc-100 text-xs">6. PR 심사 & main 머지</h5>
-                    <span className="text-[10px] text-zinc-400 font-mono">Approved & Merged</span>
-                  </div>
-                </div>
-                <Badge className="bg-zinc-100 text-zinc-950 text-[10px] font-semibold">
-                  Merge 완료
-                </Badge>
-              </div>
-              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1">
-                <div className="text-zinc-300">심사위원: <strong className="text-zinc-100">보안팀 최수민 팀장</strong></div>
-                <div className="text-emerald-400 text-[10px] font-mono">"보안 취약점 조치 확인 완료, 머지 승인"</div>
-              </div>
-              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
-                <span>병합 대상: main</span>
-                {onOpenPrChecksModal ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenPrChecksModal();
+            {/* ------------------- TRACK 2 & 3 NODES (State-Aware) ------------------- */}
+            {(() => {
+              const isRemediated = runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed';
+              const fixBranchLabel = runItem.branch?.startsWith('fix/') ? runItem.branch : 'fix/security-remediation';
+              return (
+                <>
+                  {/* Node L-R1: Fix Commit & Patch */}
+                  <div
+                    onClick={() => {
+                      onSelectRun?.(runItem.id);
+                      onSelectNode('node-policy');
                     }}
-                    className="text-zinc-200 hover:text-white font-semibold underline cursor-pointer flex items-center gap-1"
+                    className={cn(
+                      'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                      isRemediated ? 'border-emerald-500/50' : 'border-amber-500/40 opacity-75'
+                    )}
+                    style={{ left: '770px', top: `${offsetY + 454}px`, width: '310px', height: '172px' }}
                   >
-                    <span>PR Checks 뷰</span>
-                    <ExternalLink className="w-2.5 h-2.5" />
-                  </button>
-                ) : (
-                  <span className="text-emerald-400 font-semibold">Fast-Forward</span>
-                )}
-              </div>
-              {/* Output Port Bottom */}
-              <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-            </div>
+                    <div className={cn('absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-amber-500')} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={cn('w-7 h-7 rounded-md border flex items-center justify-center font-semibold text-xs', isRemediated ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/15 text-amber-400 border-amber-500/30')}>
+                          4
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-zinc-100 text-xs">4. 조치 커밋 반영</h5>
+                          <span className={cn('text-[10px] font-mono', isRemediated ? 'text-emerald-400' : 'text-amber-400')}>
+                            {isRemediated ? 'Patch Applied' : 'Pending Fix'}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge className={cn('text-white text-[10px] font-semibold', isRemediated ? 'bg-emerald-600' : 'bg-amber-600')}>
+                        {isRemediated ? '패치 완료' : '대기 중'}
+                      </Badge>
+                    </div>
+                    <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
+                      <div className={cn('truncate', isRemediated ? 'text-emerald-400' : 'text-amber-300')}>
+                        {isRemediated ? `${fixBranchLabel} (@${runItem.commitId})` : '상단 3단계 버튼으로 fix/ 분기 필요'}
+                      </div>
+                      <div className="text-zinc-300 truncate">
+                        {isRemediated ? '보안 결함 시큐어 코딩 패치 적용' : '취약점 패치 커밋 미반영'}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-zinc-400 flex items-center justify-between">
+                      <span>조치 담당자</span>
+                      <span className="text-zinc-100 font-mono">{runItem.author}</span>
+                    </div>
+                    <div className={cn('absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-zinc-700')} />
+                  </div>
 
-            {/* ------------------- TRACK 3 NODES ------------------- */}
-            {/* Node L-M1: Main Integration Scan */}
-            <div
-              onClick={() => {
-                onSelectRun?.(runItem.id);
-                onSelectNode('node-scanners');
-              }}
-              className="workflow-node absolute rounded-xl border border-emerald-500/50 p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between"
-              style={{ left: '1490px', top: `${offsetY + 804}px`, width: '310px', height: '172px' }}
-            >
-              {/* Input Port Top */}
-              <div className="absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
-                    7
+                  {/* Node L-R2: Fix Branch Re-Scan */}
+                  <div
+                    onClick={() => {
+                      onSelectRun?.(runItem.id);
+                      onSelectNode('node-scanners');
+                    }}
+                    className={cn(
+                      'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                      isRemediated ? 'border-emerald-500/50' : 'border-white/[0.1] opacity-65'
+                    )}
+                    style={{ left: '1140px', top: `${offsetY + 454}px`, width: '290px', height: '172px' }}
+                  >
+                    <div className={cn('absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-zinc-700')} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={cn('w-7 h-7 rounded-md border flex items-center justify-center font-semibold text-xs', isRemediated ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-zinc-800 text-zinc-400 border-white/[0.1]')}>
+                          5
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-zinc-100 text-xs">5. fix/ 재점검 통과</h5>
+                          <span className={cn('text-[10px] font-mono', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                            {isRemediated ? '0 Defects Pass' : 'Waiting Scan'}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge className={cn('text-white text-[10px] font-semibold', isRemediated ? 'bg-emerald-600' : 'bg-zinc-700')}>
+                        {isRemediated ? '통과 (0건)' : '대기'}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+                      <div className={cn('p-1 rounded bg-[#09090b] border border-white/[0.08]', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                        Secret: {isRemediated ? '0건' : '-'}
+                      </div>
+                      <div className={cn('p-1 rounded bg-[#09090b] border border-white/[0.08]', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                        SAST: {isRemediated ? '0건' : '-'}
+                      </div>
+                      <div className={cn('p-1 rounded bg-[#09090b] border border-white/[0.08]', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                        SCA: {isRemediated ? '0건' : '-'}
+                      </div>
+                      <div className={cn('p-1 rounded bg-[#09090b] border border-white/[0.08]', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                        IaC: {isRemediated ? '0건' : '-'}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-zinc-400 flex items-center justify-between">
+                      <span>정책 게이트 판정</span>
+                      <span className={cn('font-semibold', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                        {isRemediated ? 'PASS (승인 가능)' : '패치 후 재평가'}
+                      </span>
+                    </div>
+                    <div className={cn('absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-zinc-700')} />
                   </div>
-                  <div>
-                    <h5 className="font-semibold text-zinc-100 text-xs">7. main 통합 무결점 재점검</h5>
-                    <span className="text-[10px] text-emerald-400 font-mono">Regression Clean</span>
-                  </div>
-                </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
-                  검증 완료
-                </Badge>
-              </div>
-              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
-                <div className="text-zinc-300">main 브랜치 최신 베이스 통합 빌드</div>
-                <div className="text-emerald-400 text-[10.5px]">회귀 취약점 0건 (Total 0 defects)</div>
-              </div>
-              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
-                <span>Cosign 이미지 서명 유효</span>
-                <span className="text-zinc-200 font-mono">SLSA Level 3</span>
-              </div>
-              {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-            </div>
 
-            {/* Node L-M2: Production K8s Deployment */}
-            <div
-              onClick={() => {
-                onSelectRun?.(runItem.id);
-                onSelectNode('node-deploy');
-              }}
-              className="workflow-node absolute rounded-xl border border-emerald-400/70 p-4 bg-[#141417] shadow-lg transition-all cursor-pointer flex flex-col justify-between"
-              style={{ left: '1860px', top: `${offsetY + 804}px`, width: '310px', height: '172px' }}
-            >
-              {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-semibold text-xs">
-                    8
+                  {/* Node L-R3: PR Approval & Merge */}
+                  <div
+                    onClick={() => {
+                      onSelectRun?.(runItem.id);
+                      onSelectNode('node-review');
+                    }}
+                    className={cn(
+                      'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                      isRemediated ? 'border-white/[0.2]' : 'border-white/[0.08] opacity-60'
+                    )}
+                    style={{ left: '1490px', top: `${offsetY + 454}px`, width: '310px', height: '172px' }}
+                  >
+                    <div className={cn('absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-zinc-700')} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-md bg-white/[0.08] text-zinc-200 border border-white/[0.12] flex items-center justify-center font-semibold text-xs">
+                          6
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-zinc-100 text-xs">6. PR 심사 & main 머지</h5>
+                          <span className="text-[10px] text-zinc-400 font-mono">
+                            {isRemediated ? 'Approved & Merged' : 'Not Reached'}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge className={cn('text-[10px] font-semibold', isRemediated ? 'bg-zinc-100 text-zinc-950' : 'bg-zinc-800 text-zinc-400')}>
+                        {isRemediated ? 'Merge 완료' : '미진행'}
+                      </Badge>
+                    </div>
+                    <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1">
+                      <div className="text-zinc-300 truncate">
+                        심사위원: <strong className="text-zinc-100">{runItem.reviewer || '보안팀 심사 대기'}</strong>
+                      </div>
+                      <div className={cn('text-[10px] font-mono truncate', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                        {isRemediated ? `"${runItem.reviewComment || '보안 취약점 조치 확인 완료, 머지 승인'}"` : '5단계 재점검 통과 후 심사 활성화'}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-zinc-400 flex items-center justify-between">
+                      <span>병합 대상: main</span>
+                      {onOpenPrChecksModal ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenPrChecksModal();
+                          }}
+                          className="text-zinc-200 hover:text-white font-semibold underline cursor-pointer flex items-center gap-1"
+                        >
+                          <span>PR Checks 뷰</span>
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </button>
+                      ) : (
+                        <span className={isRemediated ? 'text-emerald-400 font-semibold' : 'text-zinc-500'}>
+                          {isRemediated ? 'Fast-Forward' : '대기'}
+                        </span>
+                      )}
+                    </div>
+                    <div className={cn('absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-zinc-700')} />
                   </div>
-                  <div>
-                    <h5 className="font-semibold text-zinc-100 text-xs">8. 운영 K8s 클러스터 배포</h5>
-                    <span className="text-[10px] text-emerald-400 font-mono">Production Serving</span>
+
+                  {/* Node L-M1: Main Integration Scan */}
+                  <div
+                    onClick={() => {
+                      onSelectRun?.(runItem.id);
+                      onSelectNode('node-scanners');
+                    }}
+                    className={cn(
+                      'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                      isRemediated ? 'border-emerald-500/50' : 'border-white/[0.08] opacity-55'
+                    )}
+                    style={{ left: '1490px', top: `${offsetY + 804}px`, width: '310px', height: '172px' }}
+                  >
+                    <div className={cn('absolute left-1/2 -top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-zinc-700')} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={cn('w-7 h-7 rounded-md border flex items-center justify-center font-semibold text-xs', isRemediated ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-zinc-800 text-zinc-400 border-white/[0.1]')}>
+                          7
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-zinc-100 text-xs">7. main 통합 무결점 재점검</h5>
+                          <span className={cn('text-[10px] font-mono', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                            {isRemediated ? 'Regression Clean' : 'Pending Merge'}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge className={cn('text-white text-[10px] font-semibold', isRemediated ? 'bg-emerald-600' : 'bg-zinc-700')}>
+                        {isRemediated ? '검증 완료' : '미진행'}
+                      </Badge>
+                    </div>
+                    <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
+                      <div className="text-zinc-300">main 브랜치 최신 베이스 통합 빌드</div>
+                      <div className={cn('text-[10.5px]', isRemediated ? 'text-emerald-400' : 'text-zinc-500')}>
+                        {isRemediated ? '회귀 취약점 0건 (Total 0 defects)' : 'PR 머지 승인 후 통합 검증 실행'}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-zinc-400 flex items-center justify-between">
+                      <span>{isRemediated ? 'Cosign 이미지 서명 유효' : '서명 대기'}</span>
+                      <span className="text-zinc-200 font-mono">SLSA Level 3</span>
+                    </div>
+                    <div className={cn('absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-zinc-700')} />
                   </div>
-                </div>
-                <Badge className="bg-emerald-600 text-white text-[10px] font-semibold">
-                  배포 성공
-                </Badge>
-              </div>
-              <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
-                <div className="text-zinc-300">클러스터: k8s-prod-seoul (v1.29)</div>
-                <div className="text-emerald-400 font-semibold">Pod: 4 / 4 Active Serving</div>
-              </div>
-              <div className="text-[10px] text-zinc-400 flex items-center justify-between">
-                <span>무중단 롤링 업데이트</span>
-                <span className="text-emerald-400 font-semibold">HTTP 200 OK</span>
-              </div>
-            </div>
+
+                  {/* Node L-M2: Production K8s Deployment */}
+                  <div
+                    onClick={() => {
+                      onSelectRun?.(runItem.id);
+                      onSelectNode('node-deploy');
+                    }}
+                    className={cn(
+                      'workflow-node absolute rounded-xl border p-4 bg-[#141417] shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                      isRemediated ? 'border-emerald-400/70' : 'border-rose-500/35 opacity-60'
+                    )}
+                    style={{ left: '1860px', top: `${offsetY + 804}px`, width: '310px', height: '172px' }}
+                  >
+                    <div className={cn('absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isRemediated ? 'bg-emerald-500' : 'bg-rose-500')} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={cn('w-7 h-7 rounded-md border flex items-center justify-center font-semibold text-xs', isRemediated ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border-rose-500/30')}>
+                          8
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-zinc-100 text-xs">8. 운영 K8s 클러스터 배포</h5>
+                          <span className={cn('text-[10px] font-mono', isRemediated ? 'text-emerald-400' : 'text-rose-400')}>
+                            {isRemediated ? 'Production Serving' : 'Deploy Blocked'}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge className={cn('text-white text-[10px] font-semibold', isRemediated ? 'bg-emerald-600' : 'bg-rose-600')}>
+                        {isRemediated ? '배포 성공' : '배포 차단'}
+                      </Badge>
+                    </div>
+                    <div className="p-2 rounded bg-[#09090b] border border-white/[0.08] text-[11px] space-y-1 font-mono">
+                      <div className="text-zinc-300">클러스터: {runItem.cluster || 'k8s-prod-seoul'} (v1.29)</div>
+                      <div className={cn('font-semibold', isRemediated ? 'text-emerald-400' : 'text-rose-400')}>
+                        {isRemediated ? 'Pod: 4 / 4 Active Serving' : 'Pod: 0 / 4 (보안 게이트 차단됨)'}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-zinc-400 flex items-center justify-between">
+                      <span>{isRemediated ? '무중단 롤링 업데이트' : '조치 완료 후 배포 재개'}</span>
+                      <span className={cn('font-semibold', isRemediated ? 'text-emerald-400' : 'text-rose-400')}>
+                        {isRemediated ? 'HTTP 200 OK' : 'BLOCKED'}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         );
       })}
