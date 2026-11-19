@@ -887,25 +887,28 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     toast.info(`[${project.name}] 보안 점검 워커 스레드 실행을 시작했습니다.`);
 
     // Dispatch to isolated backend Node.js Worker Thread Pool (Real File Scanner) & persist to SQLite SSOT
+    // Skip for unscanned AgentGate since it transitions directly into commitBaselineScan('PRJ-AGENTGATE')
     let workerResult: any = null;
-    try {
-      workerResult = await api.triggerWorkerScan({
-        scanId,
-        projectId: project.id,
-        projectName: project.name,
-        entityId: project.entityId,
-        entityName: project.entityName,
-        repository: project.repository,
-        branch: project.defaultBranch,
-        commitId: randomCommit,
-        commitMessage: `manual(${trigger}): security scan requested by ${currentUser.name}`,
-        author: currentUser.name,
-        trigger,
-        scanTypes,
-        willFail,
-      });
-    } catch {
-      workerResult = null;
+    if (!wasAgentGateUnscanned || willFail) {
+      try {
+        workerResult = await api.triggerWorkerScan({
+          scanId,
+          projectId: project.id,
+          projectName: project.name,
+          entityId: project.entityId,
+          entityName: project.entityName,
+          repository: project.repository,
+          branch: project.defaultBranch,
+          commitId: randomCommit,
+          commitMessage: `manual(${trigger}): security scan requested by ${currentUser.name}`,
+          author: currentUser.name,
+          trigger,
+          scanTypes,
+          willFail,
+        });
+      } catch {
+        workerResult = null;
+      }
     }
 
     // Complete after brief worker feedback delay
@@ -966,7 +969,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             };
           }
 
-          // Successful scan using real Worker Thread file scan counts when available
+          // Successful scan combining real Worker Thread file scan counts with active unresolved project findings
           const toolStatuses = s.toolStatuses.map((t) => {
             const workerCount =
               t.category === '소스코드 정적 분석'
@@ -976,10 +979,8 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 : t.category === '비밀정보 탐지'
                 ? workerTools?.secret?.count
                 : workerTools?.iac?.count;
-            const count =
-              typeof workerCount === 'number'
-                ? workerCount
-                : activeFindings.filter((f) => f.scanType === t.category).length;
+            const activeCount = activeFindings.filter((f) => f.scanType === t.category).length;
+            const count = Math.max(typeof workerCount === 'number' ? workerCount : 0, activeCount);
             return {
               ...t,
               status: (count > 0 ? '경고' : '성공') as '성공' | '경고',

@@ -206,8 +206,15 @@ export function scanDirectory({
       continue;
     }
 
-    // Skip scanner rule definitions themselves to avoid self-matching regex literals
-    if (relPath.endsWith('realCodeScanner.js') || relPath.endsWith('security.test.js')) {
+    // Skip scanner rule definitions, test fixtures, mock data, DB seed templates, and UI demo modals
+    // that intentionally contain example vulnerability strings.
+    if (
+      relPath.endsWith('realCodeScanner.js') ||
+      relPath.endsWith('security.test.js') ||
+      relPath.startsWith('src/mock/') ||
+      relPath.startsWith('server/db/') ||
+      relPath.endsWith('Modal.tsx')
+    ) {
       continue;
     }
 
@@ -224,7 +231,7 @@ export function scanDirectory({
           if (rule) {
             counts.sca += 1;
             findings.push({
-              id: `FND-REAL-${crypto.createHash('sha1').update(`${scanRunId}:${relPath}:${depName}`).digest('hex').slice(0, 8).toUpperCase()}`,
+              id: `FND-REAL-${crypto.createHash('sha1').update(`${projectId}:${relPath}:${depName}`).digest('hex').slice(0, 8).toUpperCase()}`,
               projectId,
               projectName,
               entityId,
@@ -261,7 +268,7 @@ export function scanDirectory({
       if (baseName === 'Dockerfile' && !/^\s*USER\s+(?!root\b)\S+/m.test(content)) {
         counts.iac += 1;
         findings.push({
-          id: `FND-REAL-${crypto.createHash('sha1').update(`${scanRunId}:${relPath}:docker-root`).digest('hex').slice(0, 8).toUpperCase()}`,
+          id: `FND-REAL-${crypto.createHash('sha1').update(`${projectId}:${relPath}:docker-root`).digest('hex').slice(0, 8).toUpperCase()}`,
           projectId,
           projectName,
           entityId,
@@ -289,7 +296,7 @@ export function scanDirectory({
         if (ext === '.tf' && /acl\s*=\s*["']public-read["']/.test(line)) {
           counts.iac += 1;
           findings.push({
-            id: `FND-REAL-${crypto.createHash('sha1').update(`${scanRunId}:${relPath}:${idx + 1}:acl`).digest('hex').slice(0, 8).toUpperCase()}`,
+            id: `FND-REAL-${crypto.createHash('sha1').update(`${projectId}:${relPath}:${idx + 1}:acl`).digest('hex').slice(0, 8).toUpperCase()}`,
             projectId,
             projectName,
             entityId,
@@ -333,7 +340,7 @@ export function scanDirectory({
             if (rule.pattern.test(line)) {
               counts.secret += 1;
               findings.push({
-                id: `FND-REAL-${crypto.createHash('sha1').update(`${scanRunId}:${relPath}:${i + 1}:${rule.id}`).digest('hex').slice(0, 8).toUpperCase()}`,
+                id: `FND-REAL-${crypto.createHash('sha1').update(`${projectId}:${relPath}:${i + 1}:${rule.id}`).digest('hex').slice(0, 8).toUpperCase()}`,
                 projectId,
                 projectName,
                 entityId,
@@ -365,7 +372,7 @@ export function scanDirectory({
             if (rule.pattern.test(line)) {
               counts.sast += 1;
               findings.push({
-                id: `FND-REAL-${crypto.createHash('sha1').update(`${scanRunId}:${relPath}:${i + 1}:${rule.id}`).digest('hex').slice(0, 8).toUpperCase()}`,
+                id: `FND-REAL-${crypto.createHash('sha1').update(`${projectId}:${relPath}:${i + 1}:${rule.id}`).digest('hex').slice(0, 8).toUpperCase()}`,
                 projectId,
                 projectName,
                 entityId,
