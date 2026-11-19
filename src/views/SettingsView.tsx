@@ -78,6 +78,16 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export interface SettingsViewProps {
   initialTab?: 'git' | 'notifications' | 'theme' | 'sandbox';
@@ -85,6 +95,7 @@ export interface SettingsViewProps {
 
 export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }) => {
   const [activeTab, setActiveTab] = useState<'git' | 'notifications' | 'theme' | 'sandbox'>(initialTab);
+  const [confirmResetAction, setConfirmResetAction] = useState<'reset' | 'clear_dummy' | 'empty' | null>(null);
 
   useEffect(() => {
     if (initialTab) {
@@ -2041,7 +2052,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={resetDemoData}
+                    onClick={() => setConfirmResetAction('reset')}
                     className="text-xs border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/40"
                   >
                     <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
@@ -2051,7 +2062,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={clearDummyData}
+                      onClick={() => setConfirmResetAction('clear_dummy')}
                       className="text-xs border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
                     >
                       <Trash2 className="w-3.5 h-3.5 mr-1.5" />
@@ -2070,7 +2081,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={setEmptyState}
+                    onClick={() => setConfirmResetAction('empty')}
                     className="text-xs border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/40"
                   >
                     빈 상태로 초기화 (0건)
@@ -2081,6 +2092,47 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ initialTab = 'git' }
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Destructive Data Reset Confirmation Dialog (Human Error Guard) */}
+      <AlertDialog
+        open={Boolean(confirmResetAction)}
+        onOpenChange={(open) => !open && setConfirmResetAction(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmResetAction === 'empty'
+                ? '전체 데이터를 빈 상태(0건)로 초기화하시겠습니까?'
+                : confirmResetAction === 'clear_dummy'
+                ? '샘플 더미 데이터를 모두 제거하시겠습니까?'
+                : '시스템 데이터를 기본값으로 복원하시겠습니까?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-600 dark:text-zinc-400">
+              {confirmResetAction === 'empty'
+                ? '현재 화면의 프로젝트, 점검 이력, 취약점 및 배포 심사 목록이 모두 비워집니다.'
+                : confirmResetAction === 'clear_dummy'
+                ? '더미 프로젝트와 샘플 점검 이력이 삭제되며 실제 연동된 AgentGate 프로젝트만 유지됩니다.'
+                : '정책·연동 설정 및 데모 상태가 초기 클린 상태로 되돌아갑니다.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmResetAction(null)}>
+              취소
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (confirmResetAction === 'empty') setEmptyState();
+                else if (confirmResetAction === 'clear_dummy') clearDummyData();
+                else if (confirmResetAction === 'reset') resetDemoData();
+                setConfirmResetAction(null);
+              }}
+              className="bg-rose-600 hover:bg-rose-700 text-white"
+            >
+              확인 및 실행
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* New Notification Channel Modal */}
       <Dialog open={isAddChannelDialogOpen} onOpenChange={setIsAddChannelDialogOpen}>

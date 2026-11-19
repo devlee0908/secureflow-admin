@@ -213,8 +213,9 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Delete Alert Dialog state
+  // Delete & Reset Alert Dialog state
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [confirmResetAgentGate, setConfirmResetAgentGate] = useState(false);
 
   // Date range validation
   useEffect(() => {
@@ -952,7 +953,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => resetBaselineScan(agentgateProject?.id || 'PRJ-AGENTGATE')}
+              onClick={() => setConfirmResetAgentGate(true)}
               className="h-6 px-2 text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 gap-1"
               title="다시 미점검 상태로 리셋하여 최초 점검 경고 알림 플로우를 테스트합니다"
             >
@@ -1698,6 +1699,35 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
               className="bg-rose-600 hover:bg-rose-700 text-white font-semibold"
             >
               연결 데이터 포함 삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* AgentGate Baseline Reset Confirmation (Human Error Guard) */}
+      <AlertDialog
+        open={confirmResetAgentGate}
+        onOpenChange={setConfirmResetAgentGate}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>AgentGate를 최초 미점검 상태로 리셋할까요?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-600 dark:text-zinc-400">
+              실행 시 AgentGate의 기존 점검 이력, 발견 결함, 조치 내역 및 배포 심사 상태가 초기화되어 최초 온보딩 대기 상태로 돌아갑니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmResetAgentGate(false)}>
+              취소
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                resetBaselineScan(agentgateProject?.id || 'PRJ-AGENTGATE');
+                setConfirmResetAgentGate(false);
+              }}
+              className="bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              미점검 상태로 리셋
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
