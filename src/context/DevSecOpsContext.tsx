@@ -873,9 +873,8 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         durationSeconds: 5,
       })),
       executionLogs: [
-        `[${nowStr.slice(11)}] [INFO] 점검 작업 큐 등록 (Worker 할당 대기)`,
-        `[${nowStr.slice(11)}] [INFO] Git 저장소 체크아웃: ${project.repository} (Commit: ${randomCommit})`,
-        `[${nowStr.slice(11)}] [INFO] 격리된 스캐너 컨테이너 기동 중...`,
+        `[${nowStr.slice(11)}] [INFO] 백엔드 Worker Thread 풀(/api/scanners/run)에 스캔 작업 요청`,
+        `[${nowStr.slice(11)}] [INFO] 대상 저장소: ${project.repository} (Branch: ${project.defaultBranch})`,
       ],
     };
 
@@ -905,6 +904,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           trigger,
           scanTypes,
           willFail,
+          allowClone: true,
         });
       } catch {
         workerResult = null;

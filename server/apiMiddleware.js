@@ -235,8 +235,13 @@ export function apiMiddleware(req, res, next) {
           scanTypes = ['소스코드 정적 분석', '의존성 취약점 분석', '비밀정보 탐지', '설정 오류 분석'],
           filesChanged = ['src/index.ts'],
           willFail = false,
-          allowClone = false,
+          allowClone = true,
         } = parsedBody;
+
+        let vaultGithubToken = '';
+        try {
+          vaultGithubToken = dbService.getDecryptedCredential('github_pat') || '';
+        } catch {}
 
         const { run: evaluatedRun, findings: realFindings = [], metrics } = await scannerPool.dispatch({
           scanId,
@@ -256,6 +261,7 @@ export function apiMiddleware(req, res, next) {
           realScan: !willFail,
           localWorkspaceDir: process.cwd(),
           allowClone: Boolean(allowClone),
+          githubToken: vaultGithubToken,
         });
 
         const finalRun = {

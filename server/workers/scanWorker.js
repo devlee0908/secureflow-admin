@@ -50,6 +50,7 @@ function performDeepSecurityScan(eventData) {
     realScan = false,
     localWorkspaceDir,
     allowClone = false,
+    githubToken = '',
   } = eventData;
 
   const nowTime = () => new Date().toLocaleTimeString();
@@ -61,6 +62,7 @@ function performDeepSecurityScan(eventData) {
       branch,
       localWorkspaceDir,
       allowClone,
+      githubToken,
     });
     try {
       const realRes = scanDirectory({
@@ -102,15 +104,20 @@ function performDeepSecurityScan(eventData) {
       };
 
       const gateStatus = critCount > 0 || highCount >= 2 ? 'blocked' : medCount > 0 || highCount > 0 ? 'review' : 'passed';
+      const findingLogLines = realRes.findings.slice(0, 15).map(
+        (f) =>
+          `[${nowTime()}] [${f.severity === '치명적' || f.severity === '높음' ? 'ERROR' : 'WARN'}] [${f.tool}] ${f.title} — ${f.filePath} (${f.lineNumber})`
+      );
       const logs = [
-        `[${nowTime()}] [WORKER-${threadId}] 🧵 Worker Thread 실제 소스코드 스캐너 기동 (${target.cloned ? 'Git Clone' : '로컬 워크스페이스'}: ${target.dir})`,
-        `[${nowTime()}] [FILES] 📂 총 ${realRes.filesScannedCount}개 파일 탐색 (코드 ${realRes.codeFilesScanned}개, npm 패키지 ${realRes.packagesChecked}개 분석)`,
-        `[${nowTime()}] [SAST] 정적 취약점 ${realRes.counts.sast}건 · [SCA] 의존성 ${realRes.counts.sca}건 · [SECRET] 시크릿 ${realRes.counts.secret}건 · [IaC] 설정 ${realRes.counts.iac}건`,
+        `[${nowTime()}] [INFO] [WORKER-${threadId}] Node.js 격리 Worker Thread 스캐너 기동 (${target.cloned ? `실제 Git Clone: ${target.cloneUrl}` : target.reason || '로컬 워크스페이스'})`,
+        `[${nowTime()}] [INFO] [FILES] 대상 경로(${target.dir}) 총 ${realRes.filesScannedCount}개 파일 탐색 (소스코드 ${realRes.codeFilesScanned}개, npm 패키지 ${realRes.packagesChecked}개)`,
+        `[${nowTime()}] [INFO] [ENGINE] SAST ${realRes.counts.sast}건 · SCA ${realRes.counts.sca}건 · Secret ${realRes.counts.secret}건 · IaC ${realRes.counts.iac}건 (${realRes.executionDurationMs}ms)`,
+        ...findingLogLines,
         gateStatus === 'blocked'
-          ? `[${nowTime()}] [GATE] ❌ 치명적/고위험 결함(${critCount + highCount}건) 탐지로 보안 게이트 차단`
+          ? `[${nowTime()}] [ERROR] [GATE] 치명적/고위험 결함(${critCount + highCount}건) 탐지로 보안 게이트 차단`
           : gateStatus === 'review'
-          ? `[${nowTime()}] [GATE] ⚠️ 중간/고위험 결함(${highCount + medCount}건) 탐지로 심사 검토 필요`
-          : `[${nowTime()}] [GATE] ✅ 실제 소스코드 스캔 0건 클린 통과`,
+          ? `[${nowTime()}] [WARN] [GATE] 중간/고위험 결함(${highCount + medCount}건) 탐지로 심사 검토 필요`
+          : `[${nowTime()}] [INFO] [GATE] 실제 소스코드 스캔 0건 클린 통과`,
       ];
 
       const run = {

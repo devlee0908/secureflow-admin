@@ -139,25 +139,53 @@ function walkFiles(rootDir, collected = []) {
  * Resolve repository URL to a local directory (clones to /tmp if remote URL & allowClone=true,
  * otherwise scans localWorkspaceDir).
  */
-export function resolveScanTarget({ repository, branch = 'main', localWorkspaceDir, allowClone = false }) {
-  if (allowClone && repository && (repository.startsWith('http://') || repository.startsWith('https://') || repository.startsWith('github.com/'))) {
-    const cloneUrl = repository.startsWith('http') ? repository : `https://${repository}.git`;
+export function resolveScanTarget({ repository, branch = 'main', localWorkspaceDir, allowClone = false, githubToken = '' }) {
+  const isDummyInternal = !repository || repository.includes('internal-corp.net') || repository.includes('example.com');
+  if (allowClone && !isDummyInternal && (repository.startsWith('http://') || repository.startsWith('https://') || repository.startsWith('github.com/'))) {
+    const cleanRepo = repository.replace(/\.git$/, '');
+    const cloneUrl = cleanRepo.startsWith('http') ? `${cleanRepo}.git` : `https://${cleanRepo}.git`;
     const slug = crypto.createHash('sha1').update(`${cloneUrl}:${branch}`).digest('hex').slice(0, 10);
     const targetDir = path.join('/tmp', `secureflow-scan-${slug}`);
     try {
       if (fs.existsSync(targetDir)) {
         fs.rmSync(targetDir, { recursive: true, force: true });
       }
-      execFileSync('git', ['clone', '--depth', '1', '--branch', branch, cloneUrl, targetDir], {
+      const gitArgs = ['clone', '--depth', '1', '--branch', branch];
+      if (githubToken) {
+        const basicAuth = Buffer.from(`x-access-token:${githubToken}`).toString('base64');
+        gitArgs.unshift('-c', `http.extraheader=AUTHORIZATION: basic ${basicAuth}`);
+      }
+      gitArgs.push(cloneUrl, targetDir);
+
+      execFileSync('git', gitArgs, {
         timeout: 15000,
         stdio: 'pipe',
+        env: { ...process.env, GIT_TERMINAL_PROMPT: '0' },
       });
-      return { dir: targetDir, cloned: true, cleanup: () => fs.rmSync(targetDir, { recursive: true, force: true }) };
-    } catch {
-      // Fallback to local workspace if remote clone fails (offline/private repo)
+      return {
+        dir: targetDir,
+        cloned: true,
+        cloneUrl,
+        reason: null,
+        cleanup: () => fs.rmSync(targetDir, { recursive: true, force: true }),
+      };
+    } catch (err) {
+      return {
+        dir: localWorkspaceDir || process.cwd(),
+        cloned: false,
+        cloneUrl,
+        reason: `원격 저장소 클론 실패(${err?.message?.split('\n')[0] || '네트워크/권한 오류'}) — 로컬 워크스페이스로 폴백`,
+        cleanup: () => {},
+      };
     }
   }
-  return { dir: localWorkspaceDir || process.cwd(), cloned: false, cleanup: () => {} };
+  return {
+    dir: localWorkspaceDir || process.cwd(),
+    cloned: false,
+    cloneUrl: null,
+    reason: isDummyInternal ? '가상 사내 저장소 URL — 로컬 워크스페이스 스캔' : '로컬 워크스페이스 직접 스캔',
+    cleanup: () => {},
+  };
 }
 
 /**
