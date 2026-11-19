@@ -234,7 +234,12 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       isAgentGate &&
       (projectReview?.approvalStatus === '승인' ||
         !findings.some(
-          (f) => f.projectId === 'PRJ-AGENTGATE' && f.severity === '치명적' && f.status !== '해결'
+          (f) =>
+            f.projectId === 'PRJ-AGENTGATE' &&
+            f.severity === '치명적' &&
+            f.status !== '해결' &&
+            f.status !== '오탐' &&
+            f.status !== '예외 승인'
         ));
 
     // Any project without a completed baseline scan should consistently show the unscanned onboarding state
@@ -386,7 +391,13 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
     }
 
     // 2. Other Projects: Build authentic track directly from the project's actual latest scan & findings
-    const projFindings = findings.filter((f) => f.projectId === project.id && f.status !== '해결' && f.status !== '오탐');
+    const projFindings = findings.filter(
+      (f) =>
+        f.projectId === project.id &&
+        f.status !== '해결' &&
+        f.status !== '오탐' &&
+        f.status !== '예외 승인'
+    );
     const critCount = projFindings.filter((f) => f.severity === '치명적').length;
     const highCount = projFindings.filter((f) => f.severity === '높음').length;
     const medCount = projFindings.filter((f) => f.severity === '중간').length;

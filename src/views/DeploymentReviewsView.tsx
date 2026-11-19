@@ -776,11 +776,11 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
                   </div>
                 </div>
                 <div className="space-y-1.5 max-h-40 overflow-y-auto">
-                  {projectActiveFindings.filter((f) => f.status !== '해결').length === 0 ? (
+                  {projectActiveFindings.filter((f) => f.status !== '해결' && f.status !== '오탐' && f.status !== '예외 승인').length === 0 ? (
                     <p className="text-zinc-400 py-2">미해결 결함이 없습니다.</p>
                   ) : (
                     projectActiveFindings
-                      .filter((f) => f.status !== '해결')
+                      .filter((f) => f.status !== '해결' && f.status !== '오탐' && f.status !== '예외 승인')
                       .slice(0, 4)
                       .map((f) => (
                         <div
