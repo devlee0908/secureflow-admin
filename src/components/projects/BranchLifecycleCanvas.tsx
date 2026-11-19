@@ -367,20 +367,31 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               <path
                 d={`M 710 ${offsetY + 190} L 770 ${offsetY + 190}`}
                 fill="none"
-                stroke="#f43f5e"
+                stroke={runItem.gateStatus === 'passed' ? '#10b981' : '#f43f5e'}
                 strokeWidth="3"
-                strokeDasharray="5,5"
-                className={isL2Blocked ? 'animate-cable-dash' : ''}
+                strokeDasharray={runItem.gateStatus === 'passed' ? 'none' : '5,5'}
+                className={isL2Blocked && runItem.gateStatus !== 'passed' ? 'animate-cable-dash' : ''}
               />
 
               {/* DOWNWARD BRANCH CABLE: F3 (Feature Gate) -> R1 (Fix Commit) */}
-              {/* From F3 bottom (925, offsetY + 276) straight down to R1 top (925, offsetY + 454) - 178px length */}
               <path
                 d={`M 925 ${offsetY + 276} L 925 ${offsetY + 454}`}
                 fill="none"
-                stroke={isL3Branching ? '#6366f1' : '#10b981'}
+                stroke={
+                  isL3Branching
+                    ? '#6366f1'
+                    : runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed'
+                    ? '#10b981'
+                    : '#52525b'
+                }
                 strokeWidth={isL3Branching ? '4' : '3'}
-                strokeDasharray={isL3Branching ? '6,6' : 'none'}
+                strokeDasharray={
+                  isL3Branching
+                    ? '6,6'
+                    : runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed'
+                    ? 'none'
+                    : '5,5'
+                }
                 className={isL3Branching ? 'animate-cable-dash' : ''}
               />
 
@@ -389,9 +400,21 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               <path
                 d={`M 1080 ${offsetY + 540} L 1140 ${offsetY + 540}`}
                 fill="none"
-                stroke={isL4ReScan ? '#6366f1' : '#10b981'}
+                stroke={
+                  isL4ReScan
+                    ? '#6366f1'
+                    : runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed'
+                    ? '#10b981'
+                    : '#52525b'
+                }
                 strokeWidth={isL4ReScan ? '4' : '3'}
-                strokeDasharray={isL4ReScan ? '6,6' : 'none'}
+                strokeDasharray={
+                  isL4ReScan
+                    ? '6,6'
+                    : runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed'
+                    ? 'none'
+                    : '5,5'
+                }
                 className={isL4ReScan ? 'animate-cable-dash' : ''}
               />
 
@@ -399,18 +422,30 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               <path
                 d={`M 1430 ${offsetY + 540} L 1490 ${offsetY + 540}`}
                 fill="none"
-                stroke="#10b981"
+                stroke={runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed' ? '#10b981' : '#52525b'}
                 strokeWidth="3"
+                strokeDasharray={runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed' ? 'none' : '5,5'}
               />
 
               {/* DOWNWARD MERGE CABLE: R3 (PR Merge) -> M1 (Main Scan) */}
-              {/* From R3 bottom (1645, offsetY + 626) straight down to M1 top (1645, offsetY + 804) - 178px length */}
               <path
                 d={`M 1645 ${offsetY + 626} L 1645 ${offsetY + 804}`}
                 fill="none"
-                stroke={isL5Merged ? '#6366f1' : '#10b981'}
+                stroke={
+                  isL5Merged
+                    ? '#6366f1'
+                    : runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed'
+                    ? '#10b981'
+                    : '#52525b'
+                }
                 strokeWidth={isL5Merged ? '4' : '3'}
-                strokeDasharray={isL5Merged ? '6,6' : 'none'}
+                strokeDasharray={
+                  isL5Merged
+                    ? '6,6'
+                    : runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed'
+                    ? 'none'
+                    : '5,5'
+                }
                 className={isL5Merged ? 'animate-cable-dash' : ''}
               />
 
@@ -419,9 +454,19 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               <path
                 d={`M 1800 ${offsetY + 890} L 1860 ${offsetY + 890}`}
                 fill="none"
-                stroke={isL6MainScan || isL7Deployed ? '#10b981' : '#64748b'}
+                stroke={
+                  isL6MainScan || (runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed')
+                    ? '#10b981'
+                    : '#52525b'
+                }
                 strokeWidth="3"
-                strokeDasharray={isL6MainScan ? '6,6' : 'none'}
+                strokeDasharray={
+                  isL6MainScan
+                    ? '6,6'
+                    : runItem.gateStatus === 'passed' && runItem.deployStatus === 'deployed'
+                    ? 'none'
+                    : '5,5'
+                }
                 className={isL6MainScan ? 'animate-cable-dash' : ''}
               />
             </svg>
