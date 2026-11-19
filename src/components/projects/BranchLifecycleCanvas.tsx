@@ -440,25 +440,25 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
                   </div>
                 </div>
                 <Badge variant="destructive" className="text-[10px] font-semibold">
-                  결함 2건 탐지
+                  결함 {runItem.toolStatuses.sast.count + runItem.toolStatuses.sca.count + runItem.toolStatuses.secret.count + runItem.toolStatuses.iac.count}건 탐지
                 </Badge>
               </div>
               <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                <div className="p-1 rounded bg-rose-950/30 border border-rose-500/30 text-rose-300">
-                  Secret: 1건
+                <div className={cn('p-1 rounded border', runItem.toolStatuses.secret.count > 0 ? 'bg-rose-950/30 border-rose-500/30 text-rose-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                  Secret: {runItem.toolStatuses.secret.count}건
                 </div>
-                <div className="p-1 rounded bg-amber-950/30 border border-amber-500/30 text-amber-300">
-                  SAST: 1건
+                <div className={cn('p-1 rounded border', runItem.toolStatuses.sast.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                  SAST: {runItem.toolStatuses.sast.count}건
                 </div>
-                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-zinc-400">
-                  SCA: 0건
+                <div className={cn('p-1 rounded border', runItem.toolStatuses.sca.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                  SCA: {runItem.toolStatuses.sca.count}건
                 </div>
-                <div className="p-1 rounded bg-[#09090b] border border-white/[0.08] text-zinc-400">
-                  IaC: 0건
+                <div className={cn('p-1 rounded border', runItem.toolStatuses.iac.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                  IaC: {runItem.toolStatuses.iac.count}건
                 </div>
               </div>
               <div className="text-[10px] text-zinc-500 flex items-center justify-between">
-                <span>분석 소요: 68초</span>
+                <span>분석 소요: {runItem.scanDuration || 68}초</span>
                 <span className="text-rose-400 font-semibold">임계치 초과</span>
               </div>
               {/* Output Port Right */}
@@ -495,7 +495,7 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               </div>
               <div className="p-2 rounded-lg bg-rose-950/30 border border-rose-500/40 text-[11px] text-rose-200 flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
-                <span className="truncate">치명적 결함(AWS 시크릿)으로 차단</span>
+                <span className="truncate">{runItem.policyNotes || '치명적 보안 결함으로 배포 차단'}</span>
               </div>
               <Button
                 size="sm"

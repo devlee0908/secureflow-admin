@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   GitPullRequest,
@@ -105,6 +105,9 @@ export const GitHubPrChecksModal: React.FC<GitHubPrChecksModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'conversation' | 'checks' | 'files' | 'publish'>('conversation');
   const [currentStatus, setCurrentStatus] = useState<'failed' | 'passed' | 'running'>(initialCheckStatus);
+  useEffect(() => {
+    setCurrentStatus(initialCheckStatus);
+  }, [initialCheckStatus, isOpen]);
   const [isFixing, setIsFixing] = useState(false);
   const [isWaiverRequested, setIsWaiverRequested] = useState(false);
   const [githubPat, setGithubPat] = useState<string>(() => {

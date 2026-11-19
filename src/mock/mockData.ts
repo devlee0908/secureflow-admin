@@ -455,19 +455,19 @@ export const BASELINE_AGENTGATE_SCAN: ScanRun = {
   durationSeconds: 142,
   findingsCount: 3,
   toolStatuses: [
-    { name: 'SonarQube SAST', category: '소스코드 정적 분석', status: '경고', findingsCount: 1, durationSeconds: 52 },
+    { name: 'SonarQube SAST', category: '소스코드 정적 분석', status: '경고', findingsCount: 2, durationSeconds: 52 },
     { name: 'Trivy SCA', category: '의존성 취약점 분석', status: '경고', findingsCount: 1, durationSeconds: 38 },
     { name: 'Gitleaks', category: '비밀정보 탐지', status: '성공', findingsCount: 0, durationSeconds: 18 },
-    { name: 'Checkov IaC', category: '설정 오류 분석', status: '경고', findingsCount: 1, durationSeconds: 34 },
+    { name: 'Checkov IaC', category: '설정 오류 분석', status: '성공', findingsCount: 0, durationSeconds: 34 },
   ],
   executionLogs: [
     '[16:30:00] [BASELINE] 🚀 devlee0908/agentgate 전체 소스코드 최초 베이스라인 풀 스캔 개시',
     '[16:30:14] [CLONE] main 브랜치 전체 워킹 트리 체크아웃 (@e81a3d9, 48개 소스 파일)',
     '[16:30:32] [SECRET] Gitleaks 전체 히스토리 점검: 누출된 API 키 0건 (Clean Pass)',
-    '[16:31:10] [SAST] Semgrep/SonarQube 분석: 1건 중간(Medium) 결함 (src/auth/jwt.ts:28)',
-    '[16:31:48] [SCA] Trivy 의존성 분석: 1건 의존성 취약점 (package-lock.json)',
-    '[16:32:22] [IaC] Checkov 인프라 분석: Dockerfile 루트 권한 설정 1건 (Dockerfile:14)',
-    '[16:32:22] [COMPLETE] 최초 베이스라인 보안 점수 88점(B+ 등급)으로 인벤토리에 등록 완료',
+    '[16:31:10] [SAST] Semgrep/SonarQube 분석: 치명적(Critical) SQLi 1건(src/auth/session.ts:34) + 중간(Medium) JWT 1건(src/auth/jwt.ts:28)',
+    '[16:31:48] [SCA] Trivy 의존성 분석: 1건 중간(Medium) 취약점 (cross-spawn CVE-2024-21538)',
+    '[16:32:22] [IaC] Checkov 인프라 분석: 설정 오류 0건 (Clean Pass)',
+    '[16:32:22] [GATE] ❌ 보안 점수 73점(C 등급) — 치명적 SQLi 결함으로 3단계 보안 정책 게이트 차단',
   ],
 };
 
@@ -1233,7 +1233,7 @@ export const BASELINE_AGENTGATE_FINDINGS: Finding[] = [
   },
 ];
 
-// 1-2. 실 연동 프로젝트 신규 PR 결함 템플릿 (AgentGate PR #1: feat/session-auth)
+// 1-2. 실 연동 프로젝트 최초 점검 치명적 결함 템플릿 (AgentGate Baseline Critical Finding)
 export const BASELINE_AGENTGATE_PR_FINDINGS: Finding[] = [
   {
     id: 'FND-AGENTGATE-03',
@@ -1241,8 +1241,8 @@ export const BASELINE_AGENTGATE_PR_FINDINGS: Finding[] = [
     projectName: 'AgentGate 보안 게이트웨이 (연동 저장소)',
     entityId: 'ENT-01',
     entityName: '테크솔루션즈',
-    scanRunId: 'SCN-AGENTGATE-02',
-    commitId: 'f9c2a10',
+    scanRunId: 'SCN-AGENTGATE-01',
+    commitId: 'e81a3d9',
     scanType: '소스코드 정적 분석',
     tool: 'SonarQube SAST',
     title: 'SQL Injection 취약점 탐지 (CWE-89)',
@@ -1254,10 +1254,10 @@ export const BASELINE_AGENTGATE_PR_FINDINGS: Finding[] = [
     remediationGuide: '문자열 템플릿 결합 대신 파라미터화된 쿼리(Prepared Statement)를 적용하십시오: db.query("SELECT * FROM user_sessions WHERE session_token = $1", [token])',
     assignee: 'devlee0908',
     status: '신규',
-    createdAt: '2026-10-05 17:00:00',
+    createdAt: '2026-10-05 16:30:00',
     dueDate: '2026-10-08',
     history: [
-      { timestamp: '2026-10-05 17:00:00', actor: '시스템', action: 'PR #1 증분(Delta) 점검에서 신규 치명적 결함 탐지' },
+      { timestamp: '2026-10-05 16:30:00', actor: '시스템', action: '최초 베이스라인 풀 스캔 결과 등록 (치명적 SQL Injection 결함 탐지)' },
     ],
     rescanResult: '미실행',
   },
@@ -2464,7 +2464,7 @@ export const DUMMY_FINDINGS: Finding[] = [
 export const INITIAL_FINDINGS: Finding[] = REAL_FINDINGS;
 export const ALL_SAMPLE_FINDINGS: Finding[] = [...REAL_FINDINGS, ...DUMMY_FINDINGS];
 
-// 1. 실 연동 프로젝트 배포 심사 (AgentGate 베이스라인 완료 후 연동되는 PR #1 심사 목록)
+// 1. 실 연동 프로젝트 배포 심사 (AgentGate 베이스라인 완료 후 연동되는 배포 심사)
 export const BASELINE_AGENTGATE_REVIEWS: DeploymentReview[] = [
   {
     id: 'REV-AGENTGATE-01',
@@ -2473,15 +2473,15 @@ export const BASELINE_AGENTGATE_REVIEWS: DeploymentReview[] = [
     entityId: 'ENT-01',
     entityName: '테크솔루션즈',
     targetEnvironment: '운영',
-    requestCommitId: 'f9c2a10',
-    scanCommitId: 'f9c2a10',
-    scanCompletedAt: '2026-10-05 17:01:12',
+    requestCommitId: 'e81a3d9',
+    scanCommitId: 'e81a3d9',
+    scanCompletedAt: '2026-10-05 16:32:22',
     requiredScansCompleted: true,
     securityVerdict: '차단',
-    verdictReason: '신규 치명적(Critical) SQL Injection(src/auth/session.ts:34) 결함 탐지로 인한 배포 차단',
+    verdictReason: '치명적(Critical) SQL Injection(src/auth/session.ts:34) 결함 탐지로 인한 배포 차단',
     approvalStatus: '대기',
     requester: 'devlee0908',
-    requestedAt: '2026-10-05 17:00:00',
+    requestedAt: '2026-10-05 16:32:22',
   },
 ];
 

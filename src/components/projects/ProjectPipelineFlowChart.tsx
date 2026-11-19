@@ -213,7 +213,7 @@ export const ProjectPipelineFlowChart: React.FC<ProjectPipelineFlowChartProps> =
             </code>{' '}
             브랜치로 <strong className="text-zinc-900 dark:text-zinc-100">{triggerType}</strong>를 실행하였으며, 현재{' '}
             <strong className="text-zinc-950 dark:text-zinc-50">
-              {currentStepNumber}단계 [{currentStepNumber === 2 ? '보안점검' : currentStepNumber === 3 ? '게이트 평가' : currentStepNumber === 4 ? '배포 심사' : '배포 완료'}]
+              {currentStepNumber}단계 [{currentStepNumber === 1 ? '최초 점검 대기' : currentStepNumber === 2 ? '보안점검' : currentStepNumber === 3 ? '게이트 평가' : currentStepNumber === 4 ? '배포 심사' : '배포 완료'}]
             </strong>
             에 위치합니다.
           </div>

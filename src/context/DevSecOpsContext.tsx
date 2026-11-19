@@ -153,7 +153,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   });
   const [scans, setScans] = useState<ScanRun[]>(() => {
     const isBaselineScanned = localStorage.getItem('secureflow_agentgate_scanned') === 'true';
-    const agentgateScans = isBaselineScanned ? [BASELINE_AGENTGATE_SCAN, BASELINE_AGENTGATE_PR_SCAN] : [];
+    const agentgateScans = isBaselineScanned ? [BASELINE_AGENTGATE_SCAN] : [];
     const saved = localStorage.getItem('secureflow_has_dummy');
     if (saved === 'true') {
       return [...agentgateScans, ...DUMMY_SCANS];
@@ -872,11 +872,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       ],
     };
 
-    if (project.id === 'PRJ-AGENTGATE') {
-      try {
-        localStorage.setItem('secureflow_agentgate_scanned', 'true');
-      } catch {}
-    }
+    const wasAgentGateUnscanned =
+      project.id === 'PRJ-AGENTGATE' &&
+      localStorage.getItem('secureflow_agentgate_scanned') !== 'true';
 
     setScans((prev) => [newScan, ...prev]);
     toast.info(`[${project.name}] 보안 점검 워커 스레드 실행을 시작했습니다.`);
@@ -899,6 +897,21 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // Simulate async completion after 2 seconds
     setTimeout(() => {
+      if (!willFail && wasAgentGateUnscanned) {
+        setScans((prev) => prev.filter((s) => s.id !== scanId));
+        commitBaselineScan('PRJ-AGENTGATE');
+        toast.success(`[${project.name}] 최초 베이스라인 보안 점검 완료 (결함 3건 탐지 · 배포 게이트 차단)`);
+        return;
+      }
+
+      const activeFindings = findings.filter(
+        (f) =>
+          f.projectId === project.id &&
+          f.status !== '해결' &&
+          f.status !== '오탐' &&
+          f.status !== '예외 승인'
+      );
+
       setScans((prev) =>
         prev.map((s) => {
           if (s.id !== scanId) return s;
@@ -917,23 +930,30 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             };
           }
 
-          // Successful scan
-          const toolStatuses = s.toolStatuses.map((t) => ({
-            ...t,
-            status: '성공' as const,
-            findingsCount: 0,
-            durationSeconds: Math.floor(Math.random() * 30) + 15,
-          }));
+          // Successful scan reflecting actual active unresolved findings for this project
+          const toolStatuses = s.toolStatuses.map((t) => {
+            const count = activeFindings.filter((f) => f.scanType === t.category).length;
+            return {
+              ...t,
+              status: (count > 0 ? '경고' : '성공') as '성공' | '경고',
+              findingsCount: count,
+              durationSeconds: Math.floor(Math.random() * 30) + 15,
+            };
+          });
+          const totalFindings = toolStatuses.reduce((acc, t) => acc + t.findingsCount, 0);
 
           return {
             ...s,
             status: '완료',
             durationSeconds: 45,
+            findingsCount: totalFindings,
             toolStatuses,
             executionLogs: [
               ...s.executionLogs,
               `[${new Date().toLocaleTimeString()}] [INFO] 모든 스캐너 엔진 정상 완료 (정적분석/SCA/비밀정보/IaC)`,
-              `[${new Date().toLocaleTimeString()}] [INFO] 정책 엔진 검증 완료: 정상 완료 기록`,
+              totalFindings > 0
+                ? `[${new Date().toLocaleTimeString()}] [WARN] 미해결 보안 결함 ${totalFindings}건 검출됨 (정책 게이트 평가 반영)`
+                : `[${new Date().toLocaleTimeString()}] [INFO] 정책 엔진 검증 완료: 결함 0건 클린 통과`,
             ],
           };
         })
@@ -1366,8 +1386,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     setScans((prev) => [
       scanRecord,
-      BASELINE_AGENTGATE_PR_SCAN,
-      ...prev.filter((s) => s.id !== scanRecord.id && s.id !== BASELINE_AGENTGATE_PR_SCAN.id),
+      ...prev.filter((s) => s.projectId !== projectId && s.id !== scanRecord.id),
     ]);
     setFindings((prev) => [
       ...BASELINE_AGENTGATE_FINDINGS,
@@ -1382,9 +1401,9 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // Add alert notification
     const newNoti: NotificationItem = {
       id: `NOTI-BASELINE-${Date.now()}`,
-      type: 'success',
-      title: 'AgentGate 베이스라인 완료 및 신규 PR #1 수신',
-      message: '전체 소스코드 점검 완료 후, 신규 PR #1 (feat/session-auth)이 감지되어 배포 게이트 심사 목록에 등록되었습니다.',
+      type: 'warning',
+      title: 'AgentGate 최초 베이스라인 점검 완료 (3건 탐지)',
+      message: '전체 소스코드 점검 결과 치명적 SQLi 1건 포함 총 3건의 취약점이 탐지되어 배포 게이트가 차단되었습니다.',
       timestamp: '방금 전',
       read: false,
       linkMenu: 'reviews',
@@ -1441,12 +1460,18 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const resolveAgentGateRemediation = (customComment?: string) => {
+    const now = new Date();
+    const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
     // 1. Update review: REV-AGENTGATE-01 to 승인 / 통과
     setReviews((prev) =>
       prev.map((r) => {
         if (r.id === 'REV-AGENTGATE-01' || r.projectId === 'PRJ-AGENTGATE') {
           return {
             ...r,
+            requestCommitId: '7d4e91a',
+            scanCommitId: '7d4e91a',
+            scanCompletedAt: nowStr,
             securityVerdict: '통과' as SecurityVerdict,
             verdictReason: '3건 보안 결함(SQLi, JWT, cross-spawn) 패치 커밋 푸시 확인으로 배포 게이트 통과',
             approvalStatus: '승인' as const,
@@ -1454,7 +1479,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             reviewComment:
               customComment ||
               '3건 보안 취약점 조치 패치 커밋 푸시 확인 완료 — 운영 배포 자동 승인',
-            reviewedAt: new Date().toLocaleString(),
+            reviewedAt: nowStr,
           };
         }
         return r;
@@ -1481,27 +1506,54 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           return {
             ...f,
             status: '해결' as const,
+            rescanResult: '확인 완료(해결)' as const,
+            history: [
+              ...f.history,
+              {
+                timestamp: nowStr,
+                actor: `${currentUser.name} (보안 패치 브랜치)`,
+                action: 'fix/security-remediation (@7d4e91a) 패치 적용 및 재검증 통과 -> [해결] 전환',
+              },
+            ],
           };
         }
         return f;
       })
     );
 
-    // 4. Update scan: mark latest PR scan as '통과'
-    setScans((prev) =>
-      prev.map((s) => {
-        if (s.projectId === 'PRJ-AGENTGATE' && (s.branch?.includes('security-remediation') || s.branch?.includes('session-auth'))) {
-          return {
-            ...s,
-            status: '완료' as const,
-            critCount: 0,
-            highCount: 0,
-            medCount: 0,
-          };
-        }
-        return s;
-      })
-    );
+    // 4. Add clean remediation scan SCN-AGENTGATE-02
+    const remediationScan: ScanRun = {
+      id: 'SCN-AGENTGATE-02',
+      projectId: 'PRJ-AGENTGATE',
+      projectName: 'AgentGate 보안 게이트웨이 (연동 저장소)',
+      entityId: 'ENT-01',
+      entityName: '테크솔루션즈',
+      branch: 'fix/security-remediation',
+      commitId: '7d4e91a',
+      trigger: 'PR/MR',
+      scanTypes: ['소스코드 정적 분석', '의존성 취약점 분석', '비밀정보 탐지', '설정 오류 분석'],
+      status: '완료',
+      startedAt: nowStr,
+      durationSeconds: 68,
+      findingsCount: 0,
+      toolStatuses: [
+        { name: 'SonarQube SAST', category: '소스코드 정적 분석', status: '성공', findingsCount: 0, durationSeconds: 28 },
+        { name: 'Trivy SCA', category: '의존성 취약점 분석', status: '성공', findingsCount: 0, durationSeconds: 18 },
+        { name: 'Gitleaks', category: '비밀정보 탐지', status: '성공', findingsCount: 0, durationSeconds: 10 },
+        { name: 'Checkov IaC', category: '설정 오류 분석', status: '성공', findingsCount: 0, durationSeconds: 12 },
+      ],
+      executionLogs: [
+        `[${nowStr.slice(11)}] [PR #2] 🔀 fix/security-remediation -> main (@7d4e91a) 보안 패치 검증 개시`,
+        `[${nowStr.slice(11)}] [SAST] SQL Injection(CWE-89) & JWT 알고리즘(CWE-327) 패치 확인 — 결함 0건`,
+        `[${nowStr.slice(11)}] [SCA] cross-spawn >= 7.0.6 업그레이드 확인 — 결함 0건`,
+        `[${nowStr.slice(11)}] [GATE] ✅ 모든 보안 정책 게이트 통과 (Clean Pass) — 운영 배포 자동 승인`,
+      ],
+    };
+
+    setScans((prev) => [
+      remediationScan,
+      ...prev.filter((s) => s.id !== remediationScan.id),
+    ]);
 
     // 5. Persist via Zero-Trust Vault GitHub Orchestrator (/api/github/orchestrate)
     api
@@ -1522,7 +1574,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const baseProjects = existingReal.length > 0 ? existingReal : REAL_PROJECTS;
 
     const isBaselineScanned = localStorage.getItem('secureflow_agentgate_scanned') === 'true';
-    const agentgateScans = isBaselineScanned ? [BASELINE_AGENTGATE_SCAN, BASELINE_AGENTGATE_PR_SCAN] : [];
+    const agentgateScans = isBaselineScanned ? [BASELINE_AGENTGATE_SCAN] : [];
     const agentgateFindings = isBaselineScanned ? [...BASELINE_AGENTGATE_FINDINGS, ...BASELINE_AGENTGATE_PR_FINDINGS] : [];
     const agentgateReviews = isBaselineScanned ? BASELINE_AGENTGATE_REVIEWS : [];
 
@@ -1541,7 +1593,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const finalProjects = onlyRealProjects.length > 0 ? onlyRealProjects : REAL_PROJECTS;
 
     const isBaselineScanned = localStorage.getItem('secureflow_agentgate_scanned') === 'true';
-    const agentgateScans = isBaselineScanned ? [BASELINE_AGENTGATE_SCAN, BASELINE_AGENTGATE_PR_SCAN] : [];
+    const agentgateScans = isBaselineScanned ? [BASELINE_AGENTGATE_SCAN] : [];
     const agentgateFindings = isBaselineScanned ? [...BASELINE_AGENTGATE_FINDINGS, ...BASELINE_AGENTGATE_PR_FINDINGS] : [];
     const agentgateReviews = isBaselineScanned ? BASELINE_AGENTGATE_REVIEWS : [];
 

@@ -424,10 +424,18 @@ export const ScansView: React.FC<ScansViewProps> = ({ initialFilter }) => {
     getRowId: (row) => row.id,
   });
 
-  // Findings related to current detail scan
+  // Findings related to current detail scan (with fallback for manual re-scans on active unresolved findings)
   const relatedScanFindings = useMemo(() => {
     if (!detailScan) return [];
-    return findings.filter((f) => f.scanRunId === detailScan.id);
+    const direct = findings.filter((f) => f.scanRunId === detailScan.id);
+    if (direct.length > 0 || detailScan.findingsCount === 0) return direct;
+    return findings.filter(
+      (f) =>
+        f.projectId === detailScan.projectId &&
+        f.status !== '해결' &&
+        f.status !== '오탐' &&
+        f.status !== '예외 승인'
+    );
   }, [detailScan, findings]);
 
   // Filtered execution logs for detail view

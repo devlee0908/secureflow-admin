@@ -636,18 +636,28 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
 
           return (
             <div className="flex items-center gap-1">
-              {(p.id === 'PRJ-AGENTGATE' || p.repository?.includes('agentgate')) && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsOnboardingPrModalOpen(true)}
-                  title="점검 결과 생성된 보안 에러 PR(3건) 확인"
-                  className="h-7 px-2 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-semibold gap-1 shrink-0 bg-rose-50/50 dark:bg-rose-950/20"
-                >
-                  <GitPullRequest className="w-3 h-3 text-rose-500" />
-                  <span>PR #1 에러 (3건)</span>
-                </Button>
-              )}
+              {(p.id === 'PRJ-AGENTGATE' || p.repository?.includes('agentgate')) && (() => {
+                const openCount = getProjectFindings(p.id).filter(
+                  (f) => f.status !== '해결' && f.status !== '오탐' && f.status !== '예외 승인'
+                ).length;
+                const isRemediated = openCount === 0 || agentgateReview?.securityVerdict === '통과';
+                return (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsOnboardingPrModalOpen(true)}
+                    title={isRemediated ? '보안 에러 PR 조치 완료 확인' : `점검 결과 생성된 보안 에러 PR(${openCount}건) 확인`}
+                    className={
+                      isRemediated
+                        ? 'h-7 px-2 text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-900/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 text-[11px] font-semibold gap-1 shrink-0 bg-emerald-50/50 dark:bg-emerald-950/20'
+                        : 'h-7 px-2 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-semibold gap-1 shrink-0 bg-rose-50/50 dark:bg-rose-950/20'
+                    }
+                  >
+                    <GitPullRequest className={isRemediated ? 'w-3 h-3 text-emerald-500' : 'w-3 h-3 text-rose-500'} />
+                    <span>{isRemediated ? 'PR #1 조치완료 (0건)' : `PR #1 에러 (${openCount}건)`}</span>
+                  </Button>
+                );
+              })()}
               <Button
                 variant="ghost"
                 size="iconSm"
@@ -1721,10 +1731,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
         authorEmail="devlee0908@github.internal"
         sourceBranch="fix/security-remediation"
         targetBranch="main"
-        commitId="f9c2a10"
+        commitId={agentgateReview?.requestCommitId || 'e81a3d9'}
         projectName={targetScanProject?.name || agentgateProject?.name || 'AgentGate 보안 게이트웨이 (연동 저장소)'}
         repoFullName={targetScanProject?.repository || agentgateProject?.repository || 'devlee0908/agentgate'}
-        initialCheckStatus="failed"
+        initialCheckStatus={agentgateReview?.securityVerdict === '통과' ? 'passed' : 'failed'}
         isDeltaBaselineMode={true}
         baselineDebtCount={2}
         detectedIssues={AGENTGATE_ALL_SCAN_ISSUES}

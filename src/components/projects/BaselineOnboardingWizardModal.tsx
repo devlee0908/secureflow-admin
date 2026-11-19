@@ -82,7 +82,7 @@ export const BaselineOnboardingWizardModal: React.FC<BaselineOnboardingWizardMod
       name: 'Checkov (IaC / Dockerfile)',
       desc: '클라우드 인프라 및 컨테이너 보안 설정 오류 분석',
       fileCount: 'Dockerfile & Config',
-      result: '1건 설정 권고 (Dockerfile root 권한)',
+      result: '0건 설정 오류 (Clean Pass)',
       status: 'clean',
     },
   ];
@@ -346,17 +346,23 @@ export const BaselineOnboardingWizardModal: React.FC<BaselineOnboardingWizardMod
                               'text-[9px] font-mono',
                               t.status === 'clean'
                                 ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+                                : t.status === 'error'
+                                ? 'border-rose-500/40 text-rose-600 dark:text-rose-400 bg-rose-500/10'
                                 : 'border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10'
                             )}
                           >
-                            {t.status === 'clean' ? '통과' : '경고 1건'}
+                            {t.status === 'clean'
+                              ? '통과 (0건)'
+                              : t.status === 'error'
+                              ? '치명적 1 · 중간 1'
+                              : '중간 1건'}
                           </Badge>
                         ) : (
                           <span className="text-[10px] text-zinc-400 font-mono">대기</span>
                         )}
                       </div>
                       <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                        {t.desc}
+                        {isDone ? t.result : t.desc}
                       </p>
                     </div>
 
