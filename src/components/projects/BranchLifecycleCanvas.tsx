@@ -174,32 +174,69 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
             {/* 1. SWIMLANE BACKGROUND TRACKS (Feature -> Fix -> Main) */}
             {/* ========================================================================= */}
 
-            {/* Track 1: Feature Branch (Top Lane) */}
-            <div
-              className="absolute rounded-xl border border-rose-500/25 bg-[#0f0f11]/60 transition-all overflow-hidden"
-              style={{ left: '40px', top: `${offsetY + 40}px`, width: '1070px', height: '260px' }}
-            >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-rose-500/20 bg-rose-950/20">
-                <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-500/15 border border-rose-500/30 text-rose-300 font-semibold text-xs font-mono">
-                    <GitBranch className="w-3.5 h-3.5 text-rose-400" />
-                    TRACK 1
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-zinc-100 text-xs">Feature 개발 브랜치</span>
-                    <span className="text-[11px] text-rose-300 font-mono bg-[#09090b] px-2 py-0.5 rounded border border-rose-500/30">
-                      {runItem.branch}
-                    </span>
+            {/* Track 1: Feature / Source Branch (Top Lane) */}
+            {(() => {
+              const isTrack1Passed = runItem.gateStatus === 'passed';
+              return (
+                <div
+                  className={cn(
+                    'absolute rounded-xl border bg-[#0f0f11]/60 transition-all overflow-hidden',
+                    isTrack1Passed ? 'border-emerald-500/25' : 'border-rose-500/25'
+                  )}
+                  style={{ left: '40px', top: `${offsetY + 40}px`, width: '1070px', height: '260px' }}
+                >
+                  <div
+                    className={cn(
+                      'flex items-center justify-between px-5 py-3 border-b',
+                      isTrack1Passed ? 'border-emerald-500/20 bg-emerald-950/20' : 'border-rose-500/20 bg-rose-950/20'
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={cn(
+                          'flex items-center gap-1.5 px-2.5 py-1 rounded-md border font-semibold text-xs font-mono',
+                          isTrack1Passed
+                            ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                            : 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+                        )}
+                      >
+                        <GitBranch className={cn('w-3.5 h-3.5', isTrack1Passed ? 'text-emerald-400' : 'text-rose-400')} />
+                        TRACK 1
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-zinc-100 text-xs">
+                          {runItem.branch?.startsWith('fix/') ? '조치 브랜치 (PR)' : 'Feature 개발 브랜치'}
+                        </span>
+                        <span
+                          className={cn(
+                            'text-[11px] font-mono bg-[#09090b] px-2 py-0.5 rounded border',
+                            isTrack1Passed
+                              ? 'text-emerald-300 border-emerald-500/30'
+                              : 'text-rose-300 border-rose-500/30'
+                          )}
+                        >
+                          {runItem.branch}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'text-[11px] font-semibold gap-1.5 px-2.5 py-1',
+                          isTrack1Passed
+                            ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
+                            : 'border-rose-500/40 text-rose-400 bg-rose-500/10'
+                        )}
+                      >
+                        <span className={cn('w-1.5 h-1.5 rounded-full', isTrack1Passed ? 'bg-emerald-500' : 'bg-rose-500')} />
+                        {isTrack1Passed ? '보안 정책 게이트 통과' : '정책 게이트 배포 차단'}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-rose-500/40 text-rose-400 bg-rose-500/10 text-[11px] font-semibold gap-1.5 px-2.5 py-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                    정책 게이트 배포 차단
-                  </Badge>
-                </div>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* Track 2: Fix Remediation Branch (Middle Lane) */}
             {(() => {
@@ -468,102 +505,156 @@ export const BranchLifecycleCanvas: React.FC<BranchLifecycleCanvasProps> = ({
               <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
             </div>
 
-            {/* Node L-F2: Feature CI/CD Scanners */}
-            <div
-              onClick={() => {
-                onSelectRun?.(runItem.id);
-                onSelectNode('node-scanners');
-              }}
-              className={cn(
-                'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
-                isThisRunActive && selectedNodeId === 'node-scanners' ? 'border-rose-400 ring-2 ring-rose-500/20' : 'border-rose-500/40 hover:border-rose-400/70'
-              )}
-              style={{ left: '420px', top: `${offsetY + 104}px`, width: '290px', height: '172px' }}
-            >
-              {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-semibold text-xs">
-                    2
+            {/* Node L-F2 & L-F3: Feature CI/CD Scanners & Policy Gate */}
+            {(() => {
+              const totalDefects =
+                runItem.toolStatuses.sast.count +
+                runItem.toolStatuses.sca.count +
+                runItem.toolStatuses.secret.count +
+                runItem.toolStatuses.iac.count;
+              const isTrack1Passed = runItem.gateStatus === 'passed';
+              return (
+                <>
+                  <div
+                    onClick={() => {
+                      onSelectRun?.(runItem.id);
+                      onSelectNode('node-scanners');
+                    }}
+                    className={cn(
+                      'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                      isTrack1Passed
+                        ? isThisRunActive && selectedNodeId === 'node-scanners'
+                          ? 'border-emerald-400 ring-2 ring-emerald-500/20'
+                          : 'border-emerald-500/40 hover:border-emerald-400/70'
+                        : isThisRunActive && selectedNodeId === 'node-scanners'
+                        ? 'border-rose-400 ring-2 ring-rose-500/20'
+                        : 'border-rose-500/40 hover:border-rose-400/70'
+                    )}
+                    style={{ left: '420px', top: `${offsetY + 104}px`, width: '290px', height: '172px' }}
+                  >
+                    <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn(
+                            'w-7 h-7 rounded-md border flex items-center justify-center font-semibold text-xs',
+                            isTrack1Passed
+                              ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                              : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          )}
+                        >
+                          2
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-zinc-100 text-xs">2. CI/CD 보안점검</h5>
+                          <span className={cn('text-[10px] font-mono', isTrack1Passed ? 'text-emerald-400' : 'text-rose-400')}>
+                            {isTrack1Passed ? 'Clean Pass' : 'Defects Found'}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge className={cn('text-white text-[10px] font-semibold', isTrack1Passed ? 'bg-emerald-600' : 'bg-rose-600')}>
+                        {isTrack1Passed ? '클린 (0건)' : `결함 ${totalDefects}건 탐지`}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+                      <div className={cn('p-1 rounded border', runItem.toolStatuses.secret.count > 0 ? 'bg-rose-950/30 border-rose-500/30 text-rose-300' : isTrack1Passed ? 'bg-[#09090b] border-white/[0.08] text-emerald-400' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                        Secret: {runItem.toolStatuses.secret.count}건
+                      </div>
+                      <div className={cn('p-1 rounded border', runItem.toolStatuses.sast.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : isTrack1Passed ? 'bg-[#09090b] border-white/[0.08] text-emerald-400' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                        SAST: {runItem.toolStatuses.sast.count}건
+                      </div>
+                      <div className={cn('p-1 rounded border', runItem.toolStatuses.sca.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : isTrack1Passed ? 'bg-[#09090b] border-white/[0.08] text-emerald-400' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                        SCA: {runItem.toolStatuses.sca.count}건
+                      </div>
+                      <div className={cn('p-1 rounded border', runItem.toolStatuses.iac.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : isTrack1Passed ? 'bg-[#09090b] border-white/[0.08] text-emerald-400' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
+                        IaC: {runItem.toolStatuses.iac.count}건
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-zinc-500 flex items-center justify-between">
+                      <span>분석 소요: {runItem.scanDuration || 68}초</span>
+                      <span className={cn('font-semibold', isTrack1Passed ? 'text-emerald-400' : 'text-rose-400')}>
+                        {isTrack1Passed ? '임계치 이내' : '임계치 초과'}
+                      </span>
+                    </div>
+                    <div className={cn('absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isTrack1Passed ? 'bg-emerald-500' : 'bg-rose-500')} />
                   </div>
-                  <div>
-                    <h5 className="font-semibold text-zinc-100 text-xs">2. CI/CD 보안점검</h5>
-                    <span className="text-[10px] text-rose-400 font-mono">Defects Found</span>
-                  </div>
-                </div>
-                <Badge variant="destructive" className="text-[10px] font-semibold">
-                  결함 {runItem.toolStatuses.sast.count + runItem.toolStatuses.sca.count + runItem.toolStatuses.secret.count + runItem.toolStatuses.iac.count}건 탐지
-                </Badge>
-              </div>
-              <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                <div className={cn('p-1 rounded border', runItem.toolStatuses.secret.count > 0 ? 'bg-rose-950/30 border-rose-500/30 text-rose-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
-                  Secret: {runItem.toolStatuses.secret.count}건
-                </div>
-                <div className={cn('p-1 rounded border', runItem.toolStatuses.sast.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
-                  SAST: {runItem.toolStatuses.sast.count}건
-                </div>
-                <div className={cn('p-1 rounded border', runItem.toolStatuses.sca.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
-                  SCA: {runItem.toolStatuses.sca.count}건
-                </div>
-                <div className={cn('p-1 rounded border', runItem.toolStatuses.iac.count > 0 ? 'bg-amber-950/30 border-amber-500/30 text-amber-300' : 'bg-[#09090b] border-white/[0.08] text-zinc-400')}>
-                  IaC: {runItem.toolStatuses.iac.count}건
-                </div>
-              </div>
-              <div className="text-[10px] text-zinc-500 flex items-center justify-between">
-                <span>분석 소요: {runItem.scanDuration || 68}초</span>
-                <span className="text-rose-400 font-semibold">임계치 초과</span>
-              </div>
-              {/* Output Port Right */}
-              <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-[#09090b]" />
-            </div>
 
-            {/* Node L-F3: Feature Policy Gate (Blocked!) */}
-            <div
-              onClick={() => {
-                onSelectRun?.(runItem.id);
-                onSelectNode('node-policy');
-              }}
-              className={cn(
-                'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 border-rose-500/60 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
-                isThisRunActive && selectedNodeId === 'node-policy' ? 'border-amber-400 ring-2 ring-amber-500/20' : ''
-              )}
-              style={{ left: '770px', top: `${offsetY + 104}px`, width: '310px', height: '172px' }}
-            >
-              {/* Input Port Left */}
-              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-[#09090b]" />
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-semibold text-xs">
-                    3
+                  {/* Node L-F3: Feature Policy Gate */}
+                  <div
+                    onClick={() => {
+                      onSelectRun?.(runItem.id);
+                      onSelectNode('node-policy');
+                    }}
+                    className={cn(
+                      'workflow-node absolute rounded-xl border p-4 bg-[#141417]/95 shadow-lg transition-all cursor-pointer flex flex-col justify-between',
+                      isTrack1Passed ? 'border-emerald-500/50' : 'border-rose-500/60',
+                      isThisRunActive && selectedNodeId === 'node-policy' ? 'border-amber-400 ring-2 ring-amber-500/20' : ''
+                    )}
+                    style={{ left: '770px', top: `${offsetY + 104}px`, width: '310px', height: '172px' }}
+                  >
+                    <div className={cn('absolute -left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#09090b]', isTrack1Passed ? 'bg-emerald-500' : 'bg-rose-500')} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn(
+                            'w-7 h-7 rounded-md border flex items-center justify-center font-semibold text-xs',
+                            isTrack1Passed
+                              ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                              : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          )}
+                        >
+                          3
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-zinc-100 text-xs">3. 보안 정책 게이트</h5>
+                          <span className={cn('text-[10px] font-mono', isTrack1Passed ? 'text-emerald-400' : 'text-rose-400')}>
+                            {isTrack1Passed ? 'Policy Passed' : 'Policy Blocked'}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge className={cn('text-white text-[10px] font-semibold', isTrack1Passed ? 'bg-emerald-600' : 'bg-rose-600')}>
+                        {isTrack1Passed ? '게이트 통과' : '배포 차단 (Block)'}
+                      </Badge>
+                    </div>
+                    <div
+                      className={cn(
+                        'p-2 rounded-lg border text-[11px] flex items-center gap-2',
+                        isTrack1Passed
+                          ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200'
+                          : 'bg-rose-950/30 border-rose-500/40 text-rose-200'
+                      )}
+                    >
+                      {isTrack1Passed ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      ) : (
+                        <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
+                      )}
+                      <span className="truncate">
+                        {runItem.policyNotes || (isTrack1Passed ? '보안 정책 기준선 충족' : '치명적 보안 결함으로 배포 차단')}
+                      </span>
+                    </div>
+                    {isTrack1Passed ? (
+                      <div className="h-7 flex items-center justify-center rounded-md bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-semibold text-emerald-300">
+                        조치 완료 · 4~8단계 배포 승인 진행
+                      </div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenFixModal();
+                        }}
+                        className="w-full h-7 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-1"
+                      >
+                        <GitFork className="w-3.5 h-3.5" />
+                        fix/ 브랜치로 분기 & 패치
+                      </Button>
+                    )}
+                    <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
                   </div>
-                  <div>
-                    <h5 className="font-semibold text-zinc-100 text-xs">3. 보안 정책 게이트</h5>
-                    <span className="text-[10px] text-rose-400 font-mono">Policy Blocked</span>
-                  </div>
-                </div>
-                <Badge variant="destructive" className="text-[10px] font-semibold">
-                  배포 차단 (Block)
-                </Badge>
-              </div>
-              <div className="p-2 rounded-lg bg-rose-950/30 border border-rose-500/40 text-[11px] text-rose-200 flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
-                <span className="truncate">{runItem.policyNotes || '치명적 보안 결함으로 배포 차단'}</span>
-              </div>
-              <Button
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenFixModal();
-                }}
-                className="w-full h-7 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold gap-1"
-              >
-                <GitFork className="w-3.5 h-3.5" />
-                fix/ 브랜치로 분기 & 패치
-              </Button>
-              {/* Output Port Bottom */}
-              <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#09090b]" />
-            </div>
+                </>
+              );
+            })()}
 
             {/* ------------------- TRACK 2 & 3 NODES (State-Aware) ------------------- */}
             {(() => {
