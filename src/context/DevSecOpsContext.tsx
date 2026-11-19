@@ -133,6 +133,7 @@ interface DevSecOpsContextType {
   resetBaselineScan: (projectId?: string) => void;
   simulateAgentGatePr: (scenario?: 'block' | 'clean') => Promise<void>;
   resolveAgentGateRemediation: (customComment?: string) => void;
+  resolveProjectRemediation: (projectId: string, customComment?: string, asException?: boolean, expiresAt?: string) => void;
 
   // Dummy data management
   hasDummyData: boolean;
@@ -1621,6 +1622,73 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .catch(() => {});
   };
 
+  const resolveProjectRemediation = (
+    projectId: string,
+    customComment?: string,
+    asException = false,
+    expiresAt?: string
+  ) => {
+    if (projectId === 'PRJ-AGENTGATE') {
+      resolveAgentGateRemediation(customComment);
+      return;
+    }
+
+    const now = new Date();
+    const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    const targetStatus = asException ? ('예외 승인' as const) : ('해결' as const);
+
+    setFindings((prev) =>
+      prev.map((f) => {
+        if (f.projectId === projectId && f.status !== '해결' && f.status !== '오탐' && f.status !== '예외 승인') {
+          return {
+            ...f,
+            status: targetStatus,
+            ...(asException
+              ? {
+                  exceptionReason: customComment || 'CISO 긴급 보안 예외 승인',
+                  exceptionExpiresAt: expiresAt || new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+                }
+              : {
+                  rescanResult: '확인 완료(해결)' as const,
+                }),
+            history: [
+              ...f.history,
+              {
+                timestamp: nowStr,
+                actor: currentUser.name,
+                action: asException
+                  ? `CISO 긴급 보안 예외 승인 (만료: ${expiresAt || '7일'})`
+                  : customComment || '파이프라인 클린 통과/패치 검증 완료 -> [해결] 전환',
+              },
+            ],
+          };
+        }
+        return f;
+      })
+    );
+
+    setReviews((prev) =>
+      prev.map((r) => {
+        if (r.projectId === projectId) {
+          return {
+            ...r,
+            securityVerdict: '통과' as SecurityVerdict,
+            verdictReason: customComment || '보안 정책 게이트 통과 및 운영 배포 인가',
+            approvalStatus: '승인' as const,
+            reviewer: currentUser.name,
+            reviewComment: customComment || '보안 검증 통과 및 운영 배포 승인',
+            reviewedAt: nowStr,
+          };
+        }
+        return r;
+      })
+    );
+
+    setProjects((prev) =>
+      prev.map((p) => (p.id === projectId ? { ...p, status: '운영 중' as const } : p))
+    );
+  };
+
   const generateDummyData = () => {
     const existingReal = projects.filter((p) => p.id === 'PRJ-AGENTGATE' || !p.id.startsWith('PRJ-0'));
     const baseProjects = existingReal.length > 0 ? existingReal : REAL_PROJECTS;
@@ -1741,6 +1809,7 @@ export const DevSecOpsProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       resetBaselineScan,
       simulateAgentGatePr,
       resolveAgentGateRemediation,
+      resolveProjectRemediation,
       hasDummyData,
       generateDummyData,
       clearDummyData,

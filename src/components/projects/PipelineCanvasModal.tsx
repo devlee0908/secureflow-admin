@@ -167,7 +167,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
     getProjectLatestScan,
     getProjectDeploymentReview,
     commitBaselineScan,
-    resolveAgentGateRemediation,
+    resolveProjectRemediation,
     reviewDeployment,
   } = useDevSecOps();
 
@@ -789,6 +789,13 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       })
     );
     setIsOverrideModalOpen(false);
+    const expiresAt = new Date(Date.now() + (data.slaHours || 24) * 3600000).toISOString().slice(0, 10);
+    resolveProjectRemediation(
+      project.id,
+      `[CISO 긴급 예외 승인] ${data.reason}: ${data.detail}`,
+      true,
+      expiresAt
+    );
     toast.success(`[CISO 긴급 승인 완료] ${data.approver} 인가로 운영 인프라 배포가 완료되었습니다.`);
     setSelectedNodeId('node-deploy');
   };
@@ -905,9 +912,10 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       );
       toast.success(`[${data.branchName}] 배포 심사 승인 및 운영 인프라 배포가 완벽하게 성공했습니다!`);
       setSelectedNodeId('node-deploy');
-      if (project.id === 'PRJ-AGENTGATE') {
-        resolveAgentGateRemediation(`${data.branchName} 조치 브랜치 검증 완료 — 운영 배포 자동 승인`);
-      }
+      resolveProjectRemediation(
+        project.id,
+        `${data.branchName} 조치 브랜치 검증 완료 — 운영 배포 자동 승인`
+      );
     }, 2600);
   };
 
@@ -1498,9 +1506,10 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
       } else {
         toast.success(`[${activeRun.branch}] 5단계 운영 인프라 배포가 완벽하게 성공했습니다!`);
         setSelectedNodeId('node-deploy');
-        if (runId.endsWith('-unscanned')) {
-          commitBaselineScan(project.id);
-        }
+        resolveProjectRemediation(
+          project.id,
+          '정상 통과(Clean Pass) 시나리오 검증 완료 — 결함 0건 운영 배포 승인'
+        );
       }
 
       setSimulationStage(null);
@@ -1671,9 +1680,7 @@ export const PipelineCanvasModal: React.FC<PipelineCanvasModalProps> = ({
   }, [activeRun]);
 
   const handlePrFixPushed = () => {
-    if (project.id === 'PRJ-AGENTGATE') {
-      resolveAgentGateRemediation();
-    }
+    resolveProjectRemediation(project.id, 'GitHub PR Checks 수정 커밋 푸시 확인 완료 — 운영 배포 승인');
     const nowTime = () => new Date().toLocaleTimeString();
     setRuns((prev) =>
       prev.map((r) =>
