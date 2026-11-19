@@ -785,29 +785,6 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate, initialF
         subtitle="각 법인에서 개발 및 운영 중인 Git 저장소 프로젝트를 등록하고 보안 점검 정책을 할당합니다."
         actionButtons={
           <div className="flex items-center gap-2">
-            {hasDummyData ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearDummyData}
-                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
-                title="기존 더미 파일들을 삭제하고 실제 연동된 프로젝트만 유지합니다"
-              >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
-                더미 파일 제거
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={generateDummyData}
-                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
-                title="테스트 및 시뮬레이션을 위한 샘플 더미 프로젝트를 즉시 생성합니다"
-              >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
-                더미 파일 생성
-              </Button>
-            )}
             <Button
               variant="outline"
               size="sm"

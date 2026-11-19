@@ -531,29 +531,6 @@ export const DeploymentReviewsView: React.FC<DeploymentReviewsViewProps> = ({
         subtitle="운영 및 검증 환경 배포 전, 필수 보안점검 완료 여부 및 커밋 일치성을 정책 규칙에 따라 자동 평가합니다."
         actionButtons={
           <div className="flex items-center gap-2">
-            {hasDummyData ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearDummyData}
-                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
-                title="기존 더미 파일들을 삭제하고 실제 연동된 프로젝트만 유지합니다"
-              >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
-                더미 파일 제거
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={generateDummyData}
-                className="h-8 text-xs border-zinc-200 dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-[#121214] hover:bg-zinc-50 dark:hover:bg-white/[0.06]"
-                title="테스트 및 시뮬레이션을 위한 샘플 더미 프로젝트를 즉시 생성합니다"
-              >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
-                더미 파일 생성
-              </Button>
-            )}
             <Button
               size="sm"
               onClick={() => simulateAgentGatePr('clean')}
